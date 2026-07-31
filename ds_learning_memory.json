@@ -1,0 +1,53 @@
+{
+  "history": [
+    {
+      "timestamp": "2026-07-26 19:02:41",
+      "dataset_name": "postgresql://localhost/sample_db/orders",
+      "operation": "db_import",
+      "column": null,
+      "metrics": {
+        "engine": "postgresql",
+        "table_name": "orders",
+        "row_count": 1500,
+        "column_count": 12
+      }
+    },
+    {
+      "timestamp": "2026-07-26 19:03:08",
+      "dataset_name": "sqlite://database/users",
+      "operation": "db_import",
+      "column": null,
+      "metrics": {
+        "engine": "sqlite",
+        "database": "database",
+        "table_name": "users",
+        "query": "SELECT * FROM users LIMIT 10000",
+        "row_count": 2,
+        "column_count": 2
+      }
+    },
+    {
+      "timestamp": "2026-07-26 19:03:08",
+      "dataset_name": "sqlite://database/query",
+      "operation": "db_import",
+      "column": null,
+      "metrics": {
+        "engine": "sqlite",
+        "database": "database",
+        "table_name": null,
+        "query": "SELECT * FROM users WHERE id=1",
+        "row_count": 1,
+        "column_count": 2
+      }
+    }
+  ],
+  "total_operations_executed": 3,
+  "total_datasets_processed": 3,
+  "learned_rules": {
+    "numeric_imputation": "mean_or_median_based_on_skewness",
+    "categorical_imputation": "mode_or_unknown",
+    "encoding_strategy": "one_hot_if_cardinality_under_20",
+    "outlier_strategy": "iqr_capping_1.5x",
+    "model_strategy": "random_forest_ensemble"
+  }
+}

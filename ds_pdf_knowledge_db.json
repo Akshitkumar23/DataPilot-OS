@@ -1,0 +1,146 @@
+{
+  "knowledge_source": "DataPilot OS Master AI Brain Domain Knowledge",
+  "methods_knowledge_count": 20,
+  "ds_methods_kb": [
+    {
+      "method": "Mean Imputation",
+      "category": "Data Cleaning & Imputation",
+      "when_to_apply": "When numerical column has missing null values and skewness is low (between -1.0 and +1.0).",
+      "why_to_apply": "Preserves dataset sample size without altering mean distribution for normally distributed data.",
+      "how_to_apply": "df['col'] = pd.to_numeric(df['col'], errors='coerce').fillna(df['col'].mean().round(2))"
+    },
+    {
+      "method": "Median Imputation",
+      "category": "Data Cleaning & Imputation",
+      "when_to_apply": "When numerical column has missing null values and heavy skewness (> 1.0 or < -1.0) or extreme outliers.",
+      "why_to_apply": "Median is robust against extreme outliers and skewed distributions, unlike Mean.",
+      "how_to_apply": "df['col'] = pd.to_numeric(df['col'], errors='coerce').fillna(df['col'].median().round(2))"
+    },
+    {
+      "method": "Mode Imputation",
+      "category": "Data Cleaning & Imputation",
+      "when_to_apply": "When categorical (string/object) column has missing null values.",
+      "why_to_apply": "Replaces missing categories with the most frequent value without introducing invalid levels.",
+      "how_to_apply": "df['col'] = df['col'].fillna(df['col'].mode()[0])"
+    },
+    {
+      "method": "Interquartile Range (IQR) Outlier Capping",
+      "category": "Outlier Detection & Capping",
+      "when_to_apply": "When continuous numeric features contain extreme high/low values beyond [Q1 - 1.5*IQR, Q3 + 1.5*IQR].",
+      "why_to_apply": "Prevents extreme outliers from corrupting Machine Learning model weights while retaining row count.",
+      "how_to_apply": "Q1 = df['col'].quantile(0.25)\nQ3 = df['col'].quantile(0.75)\nIQR = Q3 - Q1\ndf['col'] = df['col'].clip(lower=Q1-1.5*IQR, upper=Q3+1.5*IQR)"
+    },
+    {
+      "method": "One-Hot Encoding",
+      "category": "Feature Engineering & Encoding",
+      "when_to_apply": "When categorical feature has nominal (unordered) text categories and unique levels < 20.",
+      "why_to_apply": "Converts categorical strings into numerical binary dummy columns required by linear & tree models.",
+      "how_to_apply": "df = pd.get_dummies(df, columns=['col'], drop_first=True, dtype=int)"
+    },
+    {
+      "method": "Standard Scaling (Z-Score Normalization)",
+      "category": "Feature Scaling",
+      "when_to_apply": "When features have varying numeric scales before training Distance/Gradient models (KNN, SVM, Linear Regression).",
+      "why_to_apply": "Transforms features to mean=0 and variance=1 so large magnitude features do not dominate model learning.",
+      "how_to_apply": "from sklearn.preprocessing import StandardScaler\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)"
+    },
+    {
+      "method": "Random Forest Classifier & Regressor",
+      "category": "Supervised Machine Learning",
+      "when_to_apply": "When target label is discrete categorical (Classification) or continuous numeric float (Regression).",
+      "why_to_apply": "Ensemble of decision trees that reduces variance, resists overfitting, and measures feature importances.",
+      "how_to_apply": "from sklearn.ensemble import RandomForestClassifier\nmodel = RandomForestClassifier(n_estimators=100, random_state=42)\nmodel.fit(X_train, y_train)"
+    },
+    {
+      "method": "Histogram & Distribution Plotting",
+      "category": "Exploratory Data Analysis & Matplotlib",
+      "when_to_apply": "When analyzing frequency distribution, bell-curve normality, and skewness of a numeric column.",
+      "why_to_apply": "Visually confirms whether a feature is Gaussian or skewed before deciding imputation strategy.",
+      "how_to_apply": "import matplotlib.pyplot as plt\nplt.hist(df['col'], bins=20, color='skyblue', edgecolor='black')\nplt.title('Distribution of col')\nplt.show()"
+    },
+    {
+      "method": "Boxplot Outlier Visualization",
+      "category": "Exploratory Data Analysis & Seaborn",
+      "when_to_apply": "When identifying extreme outlier points, median, and interquartile range boundaries.",
+      "why_to_apply": "Displays five-number summary (Min, Q1, Median, Q3, Max) and isolated outlier dots.",
+      "how_to_apply": "import seaborn as sns\nsns.boxplot(x=df['col'], color='teal')\nplt.title('Boxplot of col')\nplt.show()"
+    },
+    {
+      "method": "Scatter Plot & Correlation Heatmap",
+      "category": "Exploratory Data Analysis & Seaborn",
+      "when_to_apply": "When assessing linear/non-linear relationships between two continuous numeric features.",
+      "why_to_apply": "Discovers collinearity and strong predictor candidates for target variable.",
+      "how_to_apply": "import seaborn as sns\nsns.heatmap(df.corr(), annot=True, cmap='coolwarm')\nplt.show()"
+    },
+    {
+      "method": "K-Means Unsupervised Clustering",
+      "category": "Unsupervised Machine Learning",
+      "when_to_apply": "When discovering natural groupings, customer segments, or un-labeled clusters in data.",
+      "why_to_apply": "Partitions observations into K distinct clusters minimizing within-cluster variance (inertia).",
+      "how_to_apply": "from sklearn.cluster import KMeans\nkmeans = KMeans(n_clusters=3, random_state=42)\ndf['Cluster'] = kmeans.fit_predict(X_scaled)"
+    },
+    {
+      "method": "Principal Component Analysis (PCA)",
+      "category": "Dimensionality Reduction",
+      "when_to_apply": "When dataset contains high-dimensional collinear features (20+ columns) that need compression for visualization.",
+      "why_to_apply": "Projects high-dimensional space onto 2 principal orthogonal axes retaining maximum variance.",
+      "how_to_apply": "from sklearn.decomposition import PCA\npca = PCA(n_components=2)\nX_pca = pca.fit_transform(X_scaled)"
+    },
+    {
+      "method": "VIF Multicollinearity Check",
+      "category": "Statistical Diagnostics",
+      "when_to_apply": "When multiple numerical predictor columns show strong inter-correlations (VIF > 5.0).",
+      "why_to_apply": "Detects redundant predictor variables that destabilize linear regression coefficients.",
+      "how_to_apply": "from statsmodels.stats.outliers_influence import variance_inflation_factor\nvif = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]"
+    },
+    {
+      "method": "Yeo-Johnson Power Transformation",
+      "category": "Advanced Feature Engineering",
+      "when_to_apply": "When numeric features exhibit strong non-Gaussian skewness and contain zero or negative values.",
+      "why_to_apply": "Transforms non-normal skewed feature distributions into Gaussian bell curves to satisfy linear assumptions.",
+      "how_to_apply": "from sklearn.preprocessing import PowerTransformer\npt = PowerTransformer(method='yeo-johnson')\ndf['col'] = pt.fit_transform(df[['col']])"
+    },
+    {
+      "method": "Datetime Decomposition Extraction",
+      "category": "Feature Engineering & Time Series",
+      "when_to_apply": "When dataset contains timestamp strings or datetime objects.",
+      "why_to_apply": "Extracts granular temporal components (Year, Month, Day, Hour, DayOfWeek, Is_Weekend) for ML algorithms.",
+      "how_to_apply": "df['year'] = pd.to_datetime(df['date']).dt.year\ndf['is_weekend'] = pd.to_datetime(df['date']).dt.dayofweek >= 5"
+    },
+    {
+      "method": "SelectKBest Feature Selection",
+      "category": "Feature Selection & Reduction",
+      "when_to_apply": "When dataset has hundreds of feature columns and only top K informative features are needed.",
+      "why_to_apply": "Ranks features using ANOVA F-score or Mutual Information to eliminate uninformative noise.",
+      "how_to_apply": "from sklearn.feature_selection import SelectKBest, f_classif\nselector = SelectKBest(score_func=f_classif, k=10)\nX_new = selector.fit_transform(X, y)"
+    },
+    {
+      "method": "Annotated Seaborn Bar Chart",
+      "category": "Publication Data Visualization",
+      "when_to_apply": "When visualizing aggregated group totals or percentages with exact value labels on top of bars.",
+      "why_to_apply": "Displays clean, publication-ready bar plots with high-contrast text annotations and custom color palettes.",
+      "how_to_apply": "import seaborn as sns\nimport matplotlib.pyplot as plt\nax = sns.barplot(data=df, x='x_col', y='y_col', palette='Blues_r')\nfor p in ax.patches:\n    ax.annotate(f'{p.get_height():.1f}', (p.get_x() + p.get_width() / 2., p.get_height()), ha='center', va='center', xytext=(0, 5), textcoords='offset points')\nplt.show()"
+    },
+    {
+      "method": "Shapiro-Wilk Normality Test",
+      "category": "Statistical Diagnostics",
+      "when_to_apply": "When testing whether a continuous numeric column follows a normal Gaussian bell curve distribution.",
+      "why_to_apply": "Computes p-value to statistically confirm Gaussian normality before parametric hypothesis testing.",
+      "how_to_apply": "from scipy.stats import shapiro\nstat, p_val = shapiro(df['col'].dropna())\nprint(f'Shapiro Statistic: {stat:.4f}, p-value: {p_val:.4e}')"
+    },
+    {
+      "method": "RFE Recursive Feature Elimination",
+      "category": "Feature Selection & Reduction",
+      "when_to_apply": "When iteratively selecting top K features by recursively pruning non-predictive variables.",
+      "why_to_apply": "Recursively fits a model and removes the weakest features to optimize generalization score.",
+      "how_to_apply": "from sklearn.feature_selection import RFE\nfrom sklearn.ensemble import RandomForestClassifier\nselector = RFE(RandomForestClassifier(), n_features_to_select=5)\nselector.fit(X, y)"
+    },
+    {
+      "method": "Lasso L1 Feature Selection",
+      "category": "Feature Selection & Reduction",
+      "when_to_apply": "When driving coefficients of uninformative collinear features exactly to zero.",
+      "why_to_apply": "Applies L1 regularization penalty to perform automated feature pruning.",
+      "how_to_apply": "from sklearn.linear_model import LassoCV\nlasso = LassoCV().fit(X, y)\nselected_features = X.columns[lasso.coef_ != 0]"
+    }
+  ]
+}
