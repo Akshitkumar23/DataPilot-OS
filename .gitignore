@@ -1,0 +1,45 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Virtual Environments & Dependencies
+.venv/
+env/
+venv/
+node_modules/
+
+# Build & Dist Artifacts
+dist/
+dist-ssr/
+dist-electron/
+build/
+
+# Cache & Temp Files
+__pycache__/
+*.pyc
+scratch/
+__MACOSX/
+.DS_Store
+*.local
+
+# Editor settings
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary Customer Datasets & Outputs (Exclude raw uploaded files)
+*.csv
+*.xlsx
+*.xls
+*.parquet
+*_cleaned.*
+*_processed.*
+*_output.*
+output/
