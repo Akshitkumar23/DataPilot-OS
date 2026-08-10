@@ -1,0 +1,71 @@
+import pandas as pd
+import numpy as np
+
+{% if is_audit or not target_col %}
+print('=' * 60)
+print('       DATA QUALITY & INCONSISTENCY AUDIT REPORT')
+print('=' * 60)
+
+# 1. Duplicates Detection & Removal
+init_rows = len({{ df_var }})
+dup_count = {{ df_var }}.duplicated().sum()
+print('\n🔁 DUPLICATES AUDIT:')
+if dup_count > 0:
+    {{ df_var }} = {{ df_var }}.drop_duplicates().copy()
+    print(f'  ⚠️ Found & Removed {dup_count:,} duplicate rows.')
+else:
+    print('  ✅ No duplicate rows found (0.00%).')
+
+# 2. Missing Values Audit
+null_series = {{ df_var }}.isna().sum()
+null_cols = null_series[null_series > 0]
+print(f'\n🔍 MISSING VALUE INCONSISTENCIES ({len(null_cols)} columns):')
+if len(null_cols) > 0:
+    for col, count in null_cols.items():
+        pct = (count / len({{ df_var }})) * 100
+        print(f'  • {col:30s}: {count:,} nulls ({pct:.2f}%)')
+else:
+    print('  ✅ No missing values detected.')
+
+# 3. Numeric Value Anomalies
+num_cols = {{ df_var }}.select_dtypes(include='number').columns
+neg_inconsistencies = {}
+for col in num_cols:
+    if any(k in col.lower() for k in ['cost', 'price', 'quantity', 'age', 'rating']):
+        neg_count = ({{ df_var }}[col] < 0).sum()
+        if neg_count > 0:
+            neg_inconsistencies[col] = neg_count
+
+print('\n⚠️ NUMERIC VALUE INCONSISTENCIES (Negative/Impossible values):')
+if neg_inconsistencies:
+    for col, count in neg_inconsistencies.items():
+        print(f'  • {col:30s}: {count:,} negative/invalid values detected')
+else:
+    print('  ✅ No negative value anomalies in price/cost/age/quantity columns.')
+
+# 4. Text Category Whitespace Inconsistencies
+cat_cols = {{ df_var }}.select_dtypes(include=['object', 'category']).columns
+whitespace_issues = {}
+for col in cat_cols[:10]:
+    ws_count = {{ df_var }}[col].astype(str).str.contains(r'^\s+|\s+$', regex=True).sum()
+    if ws_count > 0:
+        whitespace_issues[col] = ws_count
+
+print('\n🔤 TEXT CATEGORY INCONSISTENCIES (Un-trimmed spaces):')
+if whitespace_issues:
+    for col, count in whitespace_issues.items():
+        print(f'  • {col:30s}: {count:,} rows with un-trimmed leading/trailing spaces')
+else:
+    print('  ✅ All string categories are clean & properly formatted.')
+
+print('\n' + '=' * 60)
+print(f'[SUCCESS] Data Quality & Inconsistency Audit complete! Clean dataset shape: { {{ df_var }}.shape }')
+print('=' * 60)
+{% elif strategy == 'mode' %}
+mode_val = {{ df_var }}['{{ target_col }}'].mode()[0]
+{{ df_var }}['{{ target_col }}'] = {{ df_var }}['{{ target_col }}'].fillna(mode_val)
+print(f'[SUCCESS] Imputed {{ null_count }} nulls in "{{ target_col }}" with Mode ({mode_val})!')
+{% else %}
+{{ df_var }}['{{ target_col }}'] = pd.to_numeric({{ df_var }}['{{ target_col }}'], errors='coerce').fillna({{ df_var }}['{{ target_col }}'].{{ strategy or 'median' }}().round(2))
+print(f'[SUCCESS] Imputed {{ null_count }} nulls in "{{ target_col }}" using {{ (strategy or "median").capitalize() }} (skew={{ skewness | default(0.0) | round(2) }})!')
+{% endif %}

@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { RefreshCw, TerminalSquare, Trash2, PlusCircle, Download } from 'lucide-react';
 
-const API = import.meta.env.VITE_API_URL || window.ENV_API_URL || 'http://localhost:8000';
+import { API, getAuthHeaders } from '../apiConfig';
 
-function TerminalBlock({ item, onUpdateCode, onRunCode, onDelete }) {
+function TerminalBlock({ item, onUpdateCode, onRunCode, onDelete, onZoomImage }) {
   const gutterRef = useRef(null);
   const textareaRef = useRef(null);
   const codeLines = item.code ? item.code.split('\n') : [''];
@@ -123,19 +123,19 @@ function TerminalBlock({ item, onUpdateCode, onRunCode, onDelete }) {
           onClick={onRunCode}
           disabled={item.isRunning}
           style={{
-            background: '#22c55e',
+            background: 'linear-gradient(135deg, #22c55e, #16a34a)',
             color: '#000000',
             border: 'none',
             borderRadius: 16,
-            padding: '6px 20px',
+            padding: '6px 22px',
             fontSize: 13,
             fontWeight: 800,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: 6,
-            boxShadow: '0 2px 10px rgba(34,197,94,0.4)',
-            transition: 'transform 0.1s',
+            boxShadow: '0 3px 14px rgba(34, 197, 94, 0.55)',
+            transition: 'all 0.15s ease',
           }}
         >
           {item.isRunning ? <RefreshCw size={14} className="spinner" /> : <span>► RUN CODE</span>}
@@ -183,7 +183,7 @@ function TerminalBlock({ item, onUpdateCode, onRunCode, onDelete }) {
               href={item.plotImage}
               download={`plot_session_${item.id}.png`}
               style={{
-                background: '#0284c7',
+                background: 'linear-gradient(135deg, #10b981, #059669)',
                 color: '#ffffff',
                 textDecoration: 'none',
                 borderRadius: 4,
@@ -212,7 +212,11 @@ function TerminalBlock({ item, onUpdateCode, onRunCode, onDelete }) {
             <img
               src={item.plotImage}
               alt={`Visualization Plot Session ${item.id}`}
-              style={{ maxHeight: 240, width: 'auto', maxWidth: '100%', borderRadius: 4, objectFit: 'contain' }}
+              title="Click image to zoom & inspect full screen 🔍"
+              onClick={() => onZoomImage && onZoomImage(item.plotImage)}
+              style={{ maxHeight: 240, width: 'auto', maxWidth: '100%', borderRadius: 4, objectFit: 'contain', cursor: 'zoom-in', transition: 'transform 0.15s ease' }}
+              onMouseOver={e => e.currentTarget.style.transform = 'scale(1.02)'}
+              onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
             />
           </div>
         </div>
@@ -221,7 +225,7 @@ function TerminalBlock({ item, onUpdateCode, onRunCode, onDelete }) {
   );
 }
 
-export default function TerminalHUD({ schema, rowCount, pipelineSteps, onRefresh, externalCodeToRun, onPlotGenerated }) {
+export default function TerminalHUD({ schema, rowCount, pipelineSteps, onRefresh, externalCodeToRun, onPlotGenerated, onZoomImage }) {
   const [executions, setExecutions] = useState([
     {
       id: 1,
@@ -244,7 +248,7 @@ export default function TerminalHUD({ schema, rowCount, pipelineSteps, onRefresh
     try {
       const res = await fetch(`${API}/api/terminal/execute`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ code: codeToRun }),
       });
       const data = await res.json();
@@ -361,7 +365,7 @@ export default function TerminalHUD({ schema, rowCount, pipelineSteps, onRefresh
               }, 100);
             }}
             style={{
-              background: '#0284c7',
+              background: '#10b981',
               color: '#ffffff',
               border: 'none',
               borderRadius: 5,
@@ -425,6 +429,7 @@ export default function TerminalHUD({ schema, rowCount, pipelineSteps, onRefresh
               setExecutions([{ id: 1, title: "Python Execution Terminal", code: "", output: "", plotImage: null, isRunning: false }]);
             }
           }}
+          onZoomImage={onZoomImage}
         />
       ))}
     </div>

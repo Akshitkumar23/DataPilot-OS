@@ -1,4 +1,4 @@
-# 🚀 DataPilot OS — Air-Gapped, Privacy-First Data Science & Analytics Operating System
+# 🚀 DataPilot OS — The AI Operating System for Data Work
 
 ```text
   ____        _        ____  _ _       _      ____  ____  
@@ -8,107 +8,203 @@
  |____/ \__,_|\__\__,_|_|   |_|_|\___/ \__|  \____|____/ 
 ```
 
-**DataPilot OS** is a 100% offline, privacy-first Data Science Operating System designed for enterprise data scientists, financial analysts, healthcare researchers, and corporate teams. Built with a **zero-data-leakage architecture**, DataPilot OS processes datasets locally using **DuckDB**, **Pandas**, **Scikit-Learn**, and an integrated **Local Ollama LLM (`qwen3:8b`)** — ensuring sensitive corporate data never leaves your local machine or company network.
+<p align="center">
+  <img src="https://img.shields.io/badge/Security-100%25%20Air--Gapped%20%26%20Offline-success?style=for-the-badge&logo=shield" alt="Air-Gapped Privacy">
+  <img src="https://img.shields.io/badge/Architecture-AI--Native%20OS-blue?style=for-the-badge&logo=cpu" alt="AI Native OS Architecture">
+  <img src="https://img.shields.io/badge/Engine-DuckDB%20%2B%20Pandas-orange?style=for-the-badge&logo=python" alt="DuckDB Engine">
+  <img src="https://img.shields.io/badge/LLM-Local%20Ollama%20(qwen3:8b)-purple?style=for-the-badge&logo=meta" alt="Local Ollama">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License">
+</p>
 
 ---
 
-## 🌟 Key Highlights & Enterprise Features
-
-- 🛡️ **100% Air-Gapped & Offline Privacy**: Zero external cloud API calls. Complete GDPR, HIPAA, and PCI-DSS compliance out of the box.
-- 🗄️ **Multi-Source Data Connectors**: Connect to `.csv`, `.xlsx`, `.parquet`, `.json`, and live **PostgreSQL**, **MySQL**, **SQLite**, **DuckDB**, and **Custom SQL Server** databases in one click.
-- ⚡ **High-Performance DuckDB Engine**: Query millions of rows in milliseconds using columnar OLAP storage and DuckDB SQL.
-- 🤖 **AutoML & Model Serialization**: Visual classification & regression pipeline with zero data leakage (split before scaling), metric evaluation ($R^2$, MSE, Accuracy, F1, Precision, Recall), and model persistence (`models/*.pkl`).
-- 🦙 **Local AI CoPilot (`qwen3:8b`)**: Natural language data science assistant running locally via Ollama with 60s timeout resilience and rule-based RAG fallback.
-- 📸 **Native Windows OCR Screen Context Scanner**: Captures active workspace window context (pgAdmin, DBeaver, Excel, DataPilot OS) and screen text for contextual AI assistance.
-- 💻 **Cross-Platform Standalone Desktop Shell**: Packaged with Electron 30, Chromium security sandboxing (`webSecurity: true`, `sandbox: true`), and automated backend health polling.
+> ### 🎯 **"From Business Questions to Trusted Decisions."**
+> **An AI-Native Data Intelligence Platform that understands business intent, validates data schema, reasons through complex analytical problems, executes modular workflows, and produces explainable business decisions — 100% locally on your infrastructure.**
 
 ---
 
-## 📐 System Architecture & Flowchart
+## 🌟 The Core Value Proposition
+
+> **"Business asks questions. DataPilot produces validated decisions."**
+
+Traditional data software forces analysts to perform tedious manual labor (clean nulls ➔ select column ➔ pick chart ➔ fit model ➔ format matrix ➔ copy into slides). 
+
+**DataPilot OS** operates on an **Intent-Driven Orchestration Architecture**. It understands natural language business questions (in English or Phonetic Hinglish), validates schema constraints to prevent hallucinations, plans a multi-step analytical workflow, dispatches tasks across specialized engines, and delivers executive-ready **Decision Intelligence** — all with **zero data leakage**.
+
+---
+
+## 💼 Enterprise Business Use Cases
+
+Enterprise organizations don't evaluate tools by feature checkboxes; they evaluate platforms by **business outcomes**:
+
+| Domain | Business Question / Objective | Automated Output Delivered by DataPilot OS |
+| :--- | :--- | :--- |
+| 🏦 **Finance & Banking** | *"Why did customer churn increase in Q3?"* | Root Cause Analysis (RCA), loss driver ranking, churn risk segments, and executive PDF report. |
+| 🛍️ **Retail & E-Commerce** | *"Why did our marketing campaign underperform?"* | Cohort breakdown, conversion drop-off funnel, feature attribution, and next-quarter demand forecast. |
+| 🏥 **Healthcare & Clinical** | *"Why is patient readmission spiking?"* | Readmission risk factor isolation, clinical segment profiling, and HIPAA-compliant audit lineage. |
+| 📈 **SaaS & Growth** | *"What if we increase subscription prices by 12%?"* | What-If scenario simulation, price elasticity curve, revenue impact forecast, and presentation slides. |
+| 🔒 **Fraud & Security** | *"Detect anomalous transaction spikes."* | Statistical anomaly isolation (IQR/z-score), transaction lineage, and automated security alert logs. |
+
+---
+
+## 🎯 7-Step Reliable & Reproducible Reasoning Lifecycle
+
+DataPilot OS replaces unconstrained LLM chatbot guesswork with a **deterministic, explainable reasoning pipeline**:
 
 ```mermaid
 flowchart TD
-    subgraph Client["💻 Client Layer"]
-        Electron["Electron Shell (Chromium Sandbox)"]
-        UI["React 18 + Vite UI (Ribbon, Studio, Panels)"]
-        OCR["Native Windows OCR & Screen Scanner"]
-    end
-
-    subgraph Server["⚡ Local FastAPI Backend (Port 8000)"]
-        API["FastAPI REST Endpoints"]
-        State["Thread-Safe SessionState"]
-        Engine["DuckDB + Pandas Analytical Engine"]
-        ML["Scikit-Learn AutoML Pipeline"]
-        RAG["RAG Knowledge Engine & Memory"]
-    end
-
-    subgraph LLM["🦙 Local AI Engine"]
-        Ollama["Local Ollama Service (http://localhost:11434)"]
-        Model["qwen3:8b (Offline LLM)"]
-    end
-
-    subgraph Data["💾 Storage & Database Layer"]
-        LocalFiles["Local Datasets (.csv, .xlsx, .parquet)"]
-        SQLDB["SQL Databases (PostgreSQL, MySQL, SQLite, DuckDB)"]
-        MLModels["Serialized Models (models/*.pkl)"]
-    end
-
-    Electron --> UI
-    UI --> API
-    OCR --> API
-    API --> State
-    State --> Engine
-    Engine --> ML
-    API --> RAG
-    API --> Ollama
-    Ollama --> Model
-    Engine --> LocalFiles
-    Engine --> SQLDB
-    ML --> MLModels
+    User["👤 Business Question / Intent\n'Why did hospital readmission spike in Q3?'"] --> Intent["1. 🎯 Intent Understanding Engine\n(Phonetic Hinglish + Multi-Intent Hybrid Parser)"]
+    Intent --> Reasoning["2. 🧠 Reasoning & Strategy Engine\n(Context Decomposition & Analytical Goal Formulation)"]
+    Reasoning --> Planning["3. 🗺️ AI Planning Agent\n(Multi-Step Action Plan DAG Generation)"]
+    Planning --> Validation["4. 🛡️ Validation & Ambiguity Guard\n(Schema Ambiguity Check & Formula Synthesis)"]
+    Validation --> Execution["5. ⚙️ Modular Execution Sub-Engines\n(Data ➔ Analytics ➔ ML ➔ Forecast ➔ Viz ➔ Report)"]
+    Execution --> Explanation["6. 🗣️ Explanation & Insight Engine\n(Human-Readable RCA & Natural Language Synthesis)"]
+    Explanation --> Governance["7. 🔒 Governance & Export Engine\n(Audit Lineage Tree, Reproducible Code, Model .pkl, Executive PDF)"]
 ```
 
 ---
 
-## 🔄 Data Processing & AutoML Workflow Flowchart
+## 🏛️ The 6 Core Specialized Engines Architecture
 
 ```mermaid
-flowchart LR
-    A["📥 Ingest Data (Files / SQL DB)"] --> B["🧹 Visual Data Cleaning"]
-    B --> C["⚙️ Feature Transformation & Encoding"]
-    C --> D["📊 Exploratory Data Analysis (EDA)"]
-    D --> E["🤖 AutoML Training Pipeline"]
-    E --> F["🔒 Leakage-Free Train/Test Split"]
-    F --> G["📈 Feature Scaling & Model Fitting"]
-    G --> H["💾 Serialize Model (.pkl) & Evaluate Metrics"]
+flowchart TD
+    subgraph CoreKernel["🚀 DataPilot OS Kernel"]
+        ReasoningEng["🧭 Reasoning & Orchestration Engine\n(AI Planner, Context Engine, Intent Parser)"]
+        ValGuard["🛡️ Validation & Ambiguity Guard"]
+        KnowledgeEng["📚 Enterprise Knowledge Engine\n(Business Glossary, Metric Formulas, Domain Packs)"]
+        GovEngine["🔒 Governance & Compliance Engine\n(Audit Logs, Data Lineage Tree, Reproducibility)"]
+    end
+
+    subgraph ExecutionSubEngines["⚙️ Modular Execution Sub-Engines"]
+        DataSub["⚡ Data Engine (DuckDB OLAP, Cleaning, Profiling)"]
+        AnalyticsSub["📊 Analytics Engine (KPIs, Cohorts, EDA, Insights)"]
+        MLSub["🤖 ML Engine (Scikit-Learn AutoML Leaderboard)"]
+        ForecastSub["📈 Forecast Engine (Time-Series ARIMA/Prophet)"]
+        VizSub["🎨 Visualization Engine (Seaborn/Matplotlib Charts)"]
+        ReportSub["📄 Report Engine (Automated Executive Summaries)"]
+    end
+
+    ReasoningEng --> ValGuard
+    ValGuard --> ExecutionSubEngines
+    ExecutionSubEngines --> KnowledgeEng
+    KnowledgeEng --> GovEngine
 ```
+
+---
+
+## ⚙️ Core Engine Breakdown
+
+### 1. 🧭 Reasoning & Orchestration Engine (System Brain)
+- **Natural Language Intent Hierarchy Parser**: Parses complex English and Phonetic Hinglish queries (`"Sales kyun gira"`, `"Agar price 10% badha de तो kya hoga?"`).
+- **AI Planning Agent**: Decomposes abstract questions into executable directed acyclic graph (DAG) analytical steps.
+- **Workspace Context Engine (Native OCR Scanner)**: Proactively monitors active desktop tools (Excel, VS Code, pgAdmin, Power BI) via native Windows OCR to offer real-time contextual suggestions.
+
+### 2. 🛡️ Validation Engine & Ambiguity Guard (Hallucination Prevention)
+- **Metric Formula Synthesis**: Detects missing metrics in user prompts and automatically derives them (e.g. if `Profit` is missing, derives `Profit = Revenue - Cost`; if `Gross Margin` is missing, derives `(Revenue - Cost) / Revenue`).
+- **AST Security Guard**: Pre-execution Abstract Syntax Tree scanner that intercepts malicious python system calls before execution.
+
+### 3. ⚡ Modular Execution Engine (Multi-Engine Dispatcher)
+- **Data Sub-Engine**: Multi-source ingestion (`.csv`, `.xlsx`, `.parquet`, `.json`, PostgreSQL, MySQL, SQLite, DuckDB, SQL Server) powered by DuckDB OLAP columnar storage.
+- **Analytics Sub-Engine**: Automated business metrics calculation, cohort analysis, funnel tracking, and distribution profiling.
+- **ML Sub-Engine**: Automated classification & regression pipeline featuring multi-model benchmark leaderboards (RandomForest, XGBoost, LightGBM, CatBoost, Logistic Regression) with zero data leakage.
+- **Forecast Sub-Engine**: Time-series trend decomposition and multi-horizon predictions.
+- **Visualization Sub-Engine**: Dynamic statistical charts (Heatmaps, Distributions, Pairplots, Forecasts).
+- **Report Sub-Engine**: Executive summary markdown and PDF/HTML report generation.
+
+### 4. 🧠 Intelligence Engine (Decision Intelligence)
+- **Root Cause Analysis (RCA)**: Identifies primary degradation drivers and segment error distributions.
+- **What-If Scenario Simulation**: Evaluates hypothetical business adjustments (price changes, discount shifts).
+- **Explainable AI (XAI)**: SHAP-style feature importances and decision justifications.
+
+### 5. 📚 Enterprise Knowledge Engine (Business Memory & Context)
+- **Enterprise Business Glossary**: Standardized company metric dictionary (`Revenue`, `Gross Margin`, `Churn Rate`, `CLV`, `Readmission Rate`).
+- **Domain Knowledge Packs**: Pre-configured analytical rules for Financial, Healthcare, Retail, and SaaS metrics.
+- **Learning Memory (`ds_learning_memory.json`)**: Remembers user preferences, custom metric formulas, and past analytical choices across sessions.
+
+### 6. 🔒 Governance & Compliance Engine (Air-Gapped Security)
+- **Data Lineage Tree**: Maintains complete step-by-step transformation lineage from raw file ingestion to final output.
+- **Structured Audit Logging**: Chronological JSON logging of user queries, actions, timestamps, and execution statuses.
+- **Automated Reproducibility Exporter**: Generates a clean, standalone Python script replicating the exact data pipeline.
+- **100% Offline & Local**: Zero remote API calls, zero telemetry, GDPR, HIPAA, and PCI-DSS compliant out-of-the-box.
 
 ---
 
 ## 🧰 Technology Stack
 
-| Layer | Technology Used |
+| Layer | Technology |
 | :--- | :--- |
-| **Frontend Framework** | React 18, Vite 8, Lucide Icons, Vanilla CSS Design System |
-| **Desktop Shell** | Electron 30 (ContextIsolation, Sandboxed, IPC Protocol Guard) |
-| **Backend Framework** | Python 3.10+, FastAPI, Uvicorn, Pydantic |
-| **Data Engine** | DuckDB, Pandas, PyArrow, NumPy |
-| **Machine Learning** | Scikit-Learn, Joblib, StandardScaler, RobustScaler |
-| **Local AI / LLM** | Ollama (`qwen3:8b`), Local Rule-Based Knowledge Engine (RAG) |
-| **Database Support** | SQLAlchemy, SQLite3, PyMySQL, Psycopg2, DuckDB |
-| **Screen OCR** | Windows Native OCR (`winocr`), Pillow, Ctypes Foreground Window Capture |
+| **Frontend UI** | React 19, Vite 8, Lucide Icons, Vanilla CSS Design System |
+| **Desktop Shell** | Electron 41 (ContextIsolation, Sandboxed, IPC Guard) |
+| **Backend API** | Python 3.10+, FastAPI, Uvicorn, Pydantic |
+| **OLAP Data Engine** | DuckDB Columnar Storage, Pandas, PyArrow, NumPy |
+| **Decision Intelligence** | Scikit-Learn, Joblib, SciPy, Matplotlib, Seaborn |
+| **Local LLM Engine** | Ollama (`qwen3:8b`), Local Rule-Based RAG Brain |
+| **Database Support** | SQLAlchemy, PyMySQL, Psycopg2, DuckDB, SQLite3 |
+| **Context OCR Scanner** | Native Windows OCR (`winocr`), Pillow, Ctypes Window Capture |
 
 ---
 
-## ⚙️ Complete Setup & Installation Guide
+## 📁 Repository Directory Structure
+
+```text
+DataPilot-OS/
+├── electron/
+│   ├── main.cjs               # Electron main process (Security sandbox, Health polling)
+│   └── preload.cjs            # ContextBridge IPC APIs
+├── src/
+│   ├── components/
+│   │   ├── AICoPilot.jsx       # Reasoning Engine Chat & Screen Context UI
+│   │   ├── DBConnectionModal.jsx # Direct SQL Database Connector Modal
+│   │   ├── DataPreview.jsx     # High-Performance Data Grid
+│   │   ├── DataScienceStudio.jsx # AutoML & Model Benchmark Studio
+│   │   ├── ObjectExplorer.jsx  # Schema, Lineage & Business Glossary Explorer
+│   │   ├── OperationPanel.jsx  # Visual Data Cleaning & Transformation Panel
+│   │   ├── PropertiesPanel.jsx # Column Statistics & Profiling Sidebar
+│   │   ├── ReportView.jsx      # Executive Report Generator View
+│   │   ├── Ribbon.jsx          # Top Navigation Bar & Action Triggers
+│   │   ├── StatusBar.jsx       # System Status & Dataset Metrics Bar
+│   │   ├── TerminalHUD.jsx     # Live Python Execution Terminal
+│   │   └── TitleBar.jsx        # Custom Desktop Window Controls
+│   ├── App.jsx                 # Core Application Layout & Router
+│   ├── main.jsx                # React Entry Point
+│   └── index.css               # Design System Tokens & Styling
+├── modules/
+│   ├── validation_engine.py    # Schema Ambiguity Resolution & AST Guard
+│   ├── execution_engine.py     # Modular Execution Sub-Engine Dispatcher
+│   ├── governance.py           # Audit Logs, Lineage Tracking & Reproducibility Export
+│   ├── auto_eda.py             # Automatic Exploratory Data Analysis
+│   ├── auto_insights.py        # Automated Business Insights & RCA
+│   ├── data_engineering.py     # Data Cleaning & DuckDB Operations
+│   ├── domain_packs.py         # Financial, Healthcare & Retail Domain Packs
+│   ├── forecasting.py          # Time-Series ARIMA & Diagnostic Forecasting
+│   ├── intent_layer.py         # Hybrid Hinglish/English Intent Parser
+│   ├── ml_engine.py            # AutoML Multi-Model Leaderboards
+│   ├── planning_agent.py       # AI Multi-Step DAG Planning Agent
+│   ├── report_generator.py     # Executive Summary Report Generator
+│   ├── sql_engine.py           # DuckDB SQL Query Execution
+│   └── visualization.py        # Enterprise Matplotlib/Seaborn Rendering
+├── ds_knowledge_engine.py      # Master Knowledge Engine & Business Glossary
+├── ds_learning_memory.py       # Persistent Learning Memory Store
+├── server.py                   # FastAPI REST API Backend
+├── DataPilot-OS.bat            # Windows One-Click Launcher
+├── DataPilot-OS.sh             # Linux/macOS Launcher
+├── package.json                # Frontend & Electron Configuration
+├── requirements.txt            # Python Backend Dependencies
+└── README.md                   # System Documentation
+```
+
+---
+
+## 🚀 Installation & Setup Guide
 
 ### Prerequisites
 1. **Node.js**: v20.19.0 or higher
 2. **Python**: v3.10 or higher
-3. **Ollama (Optional for LLM features)**: [Download Ollama](https://ollama.com/)
+3. **Ollama (Optional for LLM features)**: [Download Ollama](https://ollama.com/) (`ollama pull qwen3:8b`)
 
 ---
 
-### Step 1: Clone the Repository
+### Step 1: Clone Repository
 ```bash
 git clone https://github.com/your-username/DataPilot-OS.git
 cd DataPilot-OS
@@ -119,99 +215,53 @@ cd DataPilot-OS
 # Create virtual environment
 python -m venv .venv
 
-# Activate virtual environment
-# On Windows:
+# Activate environment (Windows)
 .venv\Scripts\activate
-# On Linux / macOS:
+
+# Activate environment (Linux / macOS)
 source .venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
 ```
 
-### Step 3: Set Up Frontend Dependencies
+### Step 3: Install Frontend Dependencies
 ```bash
 npm install
 ```
 
-### Step 4: Set Up Local Ollama Model (`qwen3:8b`)
-```bash
-# Install and pull the qwen3:8b model locally
-ollama pull qwen3:8b
+### Step 4: Start Application
 
-# Ensure Ollama service is running (default port 11434)
-ollama serve
-```
-
----
-
-## 🚀 Running DataPilot OS
-
-### Option A: Quick Start Launchers (Recommended)
+#### Option A: Quick Launchers (Recommended)
 - **Windows**: Double-click [`DataPilot-OS.bat`](file:///c:/Users/Mr/Desktop/DataPilot%20OS/DataPilot-OS.bat)
 - **Linux / macOS**: Run `./DataPilot-OS.sh`
 
-### Option B: Developer Mode (Manual Execution)
-1. **Start Python FastAPI Backend**:
-   ```bash
-   python server.py
-   ```
-2. **Start Vite React Dev Server**:
-   ```bash
-   npm run dev
-   ```
-3. **Start Electron App**:
-   ```bash
-   npm run electron:dev
-   ```
+#### Option B: Developer Mode (Manual Execution)
+```bash
+# Terminal 1: Backend
+python server.py
 
-### Option C: Production Desktop Executable Build (.exe / AppImage)
+# Terminal 2: Frontend & Electron Shell
+npm run electron:dev
+```
+
+#### Option C: Production Executable Build (.exe)
 ```bash
 npm run dist
 ```
-The output installer will be generated in the `dist-electron/` folder.
+The output desktop installer will be generated in `dist-electron/`.
 
 ---
 
-## 📁 Project Structure
+## 🛡️ Enterprise Security & Compliance
 
-```text
-DataPilot-OS/
-├── electron/
-│   ├── main.cjs               # Electron main process (Security, Sandbox, Health Checks)
-│   └── preload.cjs            # ContextBridge IPC APIs
-├── src/
-│   ├── components/
-│   │   ├── AICoPilot.jsx       # Ollama LLM Chat & Screen Scanner UI
-│   │   ├── DBConnectionModal.jsx # Direct SQL Database Connector Modal
-│   │   ├── ObjectExplorer.jsx  # Schema & Lab Steps Explorer
-│   │   ├── OperationPanel.jsx  # Visual Data Cleaning & Transformation Panels
-│   │   ├── PropertiesPanel.jsx # Column Statistics & Profiling
-│   │   ├── Ribbon.jsx          # Top Navigation Bar & Action Triggers
-│   │   ├── StatusBar.jsx       # System Status & Dataset Metrics Bar
-│   │   ├── TerminalHUD.jsx     # Live Python Execution Terminal
-│   │   └── TitleBar.jsx        # Custom Desktop Title Bar
-│   ├── App.jsx                 # Core Application Layout & Tab Router
-│   ├── main.jsx                # React Entry Point & ErrorBoundary Wrapper
-│   └── index.css               # Design System Tokens & Global Styling
-├── models/                     # Serialized Trained Machine Learning Models (.pkl)
-├── ds_knowledge_engine.py      # RAG Rule-Based Knowledge Engine
-├── ds_learning_memory.py       # Thread-Safe Learning Memory Store
-├── server.py                   # FastAPI REST API Backend
-├── requirements.txt            # Python Dependencies
-├── package.json                # Node.js Dependencies & Electron Builder Config
-├── DataPilot-OS.bat            # Windows Launcher Script
-├── DataPilot-OS.sh             # Linux/macOS Launcher Script
-└── README.md                   # System Documentation
-```
+- **Zero Cloud API Dependencies**: 100% localhost execution (`127.0.0.1`).
+- **AST Security Guard**: Pre-execution code verification blocks unsafe system calls.
+- **Thread Safety**: Multithreaded state management protected via `threading.RLock()`.
+- **Complete Privacy Compliance**: GDPR, HIPAA, and PCI-DSS compliant out-of-the-box.
 
 ---
 
-## 🛡️ Data Security & Air-Gapped Compliance
+## 📄 License & Credits
 
-- **No Remote Telemetry**: Zero external tracking, analytics, or pingbacks.
-- **Local Network Isolation**: All REST endpoints bind to local host (`127.0.0.1` / `0.0.0.0`) and Ollama connects locally over loopback (`11434`).
-- **AST Code Verification**: Python terminal commands are checked before execution.
-- **Thread Safety**: State operations protected by `SessionState.lock` and `threading.RLock()`.
-
----
+Distributed under the **MIT License**. Built with ❤️ for Data Professionals worldwide.

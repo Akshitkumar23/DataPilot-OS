@@ -2,7 +2,6 @@ import os
 import json
 import time
 import threading
-import pandas as pd
 from typing import Dict, List, Any, Optional
 
 class AutonomousLearningMemory:

@@ -3,12 +3,35 @@
 const { app, BrowserWindow, ipcMain, shell, dialog, screen } = require('electron');
 const path = require('path');
 const http = require('http');
+const crypto = require('crypto');
+const fs = require('fs');
 const { spawn, execSync } = require('child_process');
 
 const isDev = process.env.NODE_ENV === 'development';
 const BACKEND_PORT = 8000;
 const DEV_UI_URL = `http://localhost:5173`;
 const MAX_RESTARTS = 5;
+
+function getOrCreateApiToken() {
+  const tokenPath = path.join(__dirname, '..', '.env_token');
+  if (process.env.DATAPILOT_API_TOKEN) {
+    return process.env.DATAPILOT_API_TOKEN;
+  }
+  if (fs.existsSync(tokenPath)) {
+    try {
+      const existing = fs.readFileSync(tokenPath, 'utf8').trim();
+      if (existing) return existing;
+    } catch (e) {}
+  }
+  const token = crypto.randomBytes(32).toString('hex');
+  try {
+    fs.writeFileSync(tokenPath, token, 'utf8');
+  } catch (e) {}
+  return token;
+}
+
+const API_TOKEN = getOrCreateApiToken();
+process.env.DATAPILOT_API_TOKEN = API_TOKEN;
 
 let mainWindow = null;
 let pythonProcess = null;
@@ -109,6 +132,7 @@ async function startPythonBackend() {
     pythonProcess = spawn(pythonExe, spawnArgs, {
       cwd: spawnCwd,
       stdio: ['ignore', 'pipe', 'pipe'],
+      env: { ...process.env, DATAPILOT_API_TOKEN: API_TOKEN },
     });
 
     setTimeout(() => {
@@ -164,7 +188,7 @@ function stopPythonBackend() {
   killPort8000Sync();
 }
 
-function waitForBackend(url, maxAttempts = 30, intervalMs = 500) {
+function waitForBackend(url, maxAttempts = 150, intervalMs = 100) {
   return new Promise((resolve) => {
     let attempts = 0;
     const check = () => {
@@ -283,6 +307,7 @@ app.on('before-quit', () => {
 // ──────────────────────────────────────────────
 // IPC handlers — window controls & Pin state
 // ──────────────────────────────────────────────
+ipcMain.handle('get-api-token', () => API_TOKEN);
 ipcMain.on('win:minimize', () => mainWindow?.minimize());
 ipcMain.on('win:maximize', () => {
   if (mainWindow?.isMaximized()) mainWindow.unmaximize();

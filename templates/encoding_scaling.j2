@@ -1,0 +1,13 @@
+{% if mode == 'one_hot' %}
+import pandas as pd
+{{ df_var }} = pd.get_dummies({{ df_var }}, columns=['{{ col }}'], drop_first=True, dtype=int)
+print(f'[SUCCESS] One-Hot Encoded "{{ col }}"! New shape: { {{ df_var }}.shape }')
+{% elif mode == 'standard_scale' %}
+from sklearn.preprocessing import StandardScaler
+{{ df_var }}['{{ col }}_scaled'] = StandardScaler().fit_transform({{ df_var }}[['{{ col }}']]).flatten()
+print('[SUCCESS] Standardized "{{ col }}" → mean=0, std=1!')
+{% elif mode == 'log_transform' %}
+import numpy as np
+{{ df_var }}['{{ col }}_log'] = np.log1p({{ df_var }}['{{ col }}'].clip(lower=0))
+print(f'[SUCCESS] Log1p transformed "{{ col }}"! Skewness before: { {{ df_var }}["{{ col }}"].skew():.2f}')
+{% endif %}

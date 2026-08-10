@@ -1,0 +1,45 @@
+import pandas as pd
+import numpy as np
+
+print('=' * 60)
+print('           FULL DATA PROFILING REPORT')
+print('=' * 60)
+
+print(f'\n📊 DATASET SHAPE: { {{ df_var }}.shape[0]:,} rows × { {{ df_var }}.shape[1] } columns')
+
+miss = {{ df_var }}.isna().sum()
+miss_pct = (miss / len({{ df_var }}) * 100).round(2)
+miss_df = pd.DataFrame({'Missing Count': miss, 'Missing %': miss_pct}).query('`Missing Count` > 0')
+print(f'\n🔍 MISSING VALUES ({len(miss_df)} columns affected):')
+if len(miss_df) > 0:
+    print(miss_df.to_string())
+else:
+    print('  No missing values found!')
+
+dup_count = {{ df_var }}.duplicated().sum()
+print(f'\n🔁 DUPLICATE ROWS: {dup_count:,} ({dup_count/len({{ df_var }})*100:.2f}%)')
+
+print('\n📋 DATA TYPES:')
+dtype_summary = {{ df_var }}.dtypes.value_counts()
+for dtype, count in dtype_summary.items():
+    print(f'  {str(dtype):15s}: {count} column(s)')
+
+num_cols = {{ df_var }}.select_dtypes(include='number').columns.tolist()
+if num_cols:
+    print(f'\n📈 NUMERIC COLUMNS SUMMARY ({len(num_cols)} columns):')
+    stats = {{ df_var }}[num_cols].describe().T
+    stats['skewness'] = {{ df_var }}[num_cols].skew().round(3)
+    stats['kurtosis'] = {{ df_var }}[num_cols].kurt().round(3)
+    print(stats[['mean', 'std', 'min', 'max', 'skewness', 'kurtosis']].round(3).to_string())
+
+cat_cols = [c for c in {{ df_var }}.select_dtypes(include=['object', 'category']).columns.tolist() if not (c.lower().endswith('_id') or 'id' in c.lower() or c.lower().endswith('_name') or {{ df_var }}[c].nunique() > 50)]
+if cat_cols:
+    print(f'\n🏷  CATEGORICAL COLUMNS SUMMARY ({len(cat_cols)} columns):')
+    for col in cat_cols[:8]:
+        nuniq = {{ df_var }}[col].nunique()
+        top_val = {{ df_var }}[col].value_counts().idxmax() if nuniq > 0 else 'N/A'
+        print(f'  {col:30s} | unique: {nuniq:5d} | top: {str(top_val)[:20]}')
+
+print('\n' + '=' * 60)
+print('[SUCCESS] Full Data Profiling Report complete!')
+print('=' * 60)

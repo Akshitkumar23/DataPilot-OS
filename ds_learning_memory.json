@@ -39,10 +39,84 @@
         "row_count": 1,
         "column_count": 2
       }
+    },
+    {
+      "timestamp": "2026-08-02 12:14:57",
+      "dataset_name": "test_dataset.csv",
+      "operation": "load_dataset",
+      "column": "sales",
+      "metrics": {
+        "rows": 5000
+      }
+    },
+    {
+      "timestamp": "2026-08-02 12:15:19",
+      "dataset_name": "test_dataset.csv",
+      "operation": "load_dataset",
+      "column": "sales",
+      "metrics": {
+        "rows": 5000
+      }
+    },
+    {
+      "timestamp": "2026-08-02 12:15:42",
+      "dataset_name": "test_dataset.csv",
+      "operation": "load_dataset",
+      "column": "sales",
+      "metrics": {
+        "rows": 5000
+      }
+    },
+    {
+      "timestamp": "2026-08-02 12:18:05",
+      "dataset_name": "crash_test_dataset.csv",
+      "operation": "HARD_KILL_TEST_1785653285",
+      "column": "sales",
+      "metrics": {
+        "test": true
+      }
+    },
+    {
+      "timestamp": "2026-08-02 12:18:36",
+      "dataset_name": "crash_test_dataset.csv",
+      "operation": "HARD_KILL_TEST_1785653316",
+      "column": "sales",
+      "metrics": {
+        "test": true
+      }
+    },
+    {
+      "timestamp": "2026-08-02 12:19:05",
+      "dataset_name": "crash_test_dataset.csv",
+      "operation": "HARD_KILL_TEST_1785653345",
+      "column": "sales",
+      "metrics": {
+        "test": true
+      }
+    },
+    {
+      "timestamp": "2026-08-06 16:48:24",
+      "dataset_name": "active_dataset",
+      "operation": "fill_mean",
+      "column": "Revenue",
+      "metrics": {
+        "row_count": 3,
+        "column_count": 2
+      }
+    },
+    {
+      "timestamp": "2026-08-06 16:48:33",
+      "dataset_name": "active_dataset",
+      "operation": "fill_mean",
+      "column": "Revenue",
+      "metrics": {
+        "row_count": 3,
+        "column_count": 2
+      }
     }
   ],
-  "total_operations_executed": 3,
-  "total_datasets_processed": 3,
+  "total_operations_executed": 11,
+  "total_datasets_processed": 6,
   "learned_rules": {
     "numeric_imputation": "mean_or_median_based_on_skewness",
     "categorical_imputation": "mode_or_unknown",

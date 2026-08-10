@@ -78,7 +78,7 @@ class ErrorBoundary extends Component {
               <button
                 onClick={this.handleReload}
                 style={{
-                  background: '#0284c7',
+                  background: '#10b981',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '6px',

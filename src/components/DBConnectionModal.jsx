@@ -4,7 +4,7 @@ import {
   Loader2, X, Play, ArrowRight, Table, Terminal, RefreshCw
 } from 'lucide-react';
 
-const API = import.meta.env.VITE_API_URL || window.ENV_API_URL || 'http://localhost:8000';
+import { API, getAuthHeaders } from '../apiConfig';
 
 const ENGINES = [
   { id: 'sqlite', name: 'SQLite', icon: HardDrive, desc: 'Local .db or .sqlite file' },
@@ -87,7 +87,7 @@ export default function DBConnectionModal({ isOpen, onClose, onImportSuccess }) 
     try {
       const resp = await fetch(`${API}/api/db/test`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(getPayload()),
       });
 
@@ -126,7 +126,7 @@ export default function DBConnectionModal({ isOpen, onClose, onImportSuccess }) 
 
       const resp = await fetch(`${API}/api/db/import`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(payload),
       });
 
@@ -181,11 +181,11 @@ export default function DBConnectionModal({ isOpen, onClose, onImportSuccess }) 
         }
         .db-modal-input:focus {
           outline: none;
-          border-color: #0284c7 !important;
+          border-color: #10b981 !important;
           box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.25) !important;
         }
         .db-engine-card:hover {
-          border-color: #0284c7 !important;
+          border-color: #10b981 !important;
           background: #1e293b !important;
         }
         .db-spin {
@@ -334,7 +334,7 @@ export default function DBConnectionModal({ isOpen, onClose, onImportSuccess }) 
                       justifyContent: 'center',
                       padding: '12px 8px',
                       borderRadius: '8px',
-                      border: `1px solid ${isSelected ? '#0284c7' : '#334155'}`,
+                      border: `1px solid ${isSelected ? '#10b981' : '#334155'}`,
                       backgroundColor: isSelected ? '#1e293b' : '#0f172a',
                       color: isSelected ? '#38bdf8' : '#94a3b8',
                       cursor: 'pointer',
@@ -352,7 +352,7 @@ export default function DBConnectionModal({ isOpen, onClose, onImportSuccess }) 
           {/* 2. Dynamic Connection Form Inputs */}
           <div style={{ backgroundColor: '#1e293b', padding: '16px', borderRadius: '10px', border: '1px solid #334155' }}>
             <h3 style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0', margin: '0 0 14px 0', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Server size={14} style={{ color: '#0284c7' }} />
+              <Server size={14} style={{ color: '#10b981' }} />
               Connection Parameters
             </h3>
 
@@ -521,7 +521,7 @@ export default function DBConnectionModal({ isOpen, onClose, onImportSuccess }) 
                   alignItems: 'center',
                   gap: '8px',
                   padding: '8px 16px',
-                  backgroundColor: '#0284c7',
+                  backgroundColor: '#10b981',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '6px',

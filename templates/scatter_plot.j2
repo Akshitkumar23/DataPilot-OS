@@ -1,0 +1,16 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 6), dpi=150)
+sns.set_theme(style='whitegrid')
+{% if hue_col %}
+sns.scatterplot(data={{ df_var }}, x='{{ x_col }}', y='{{ y_col }}', hue='{{ hue_col }}', alpha=0.65, s=55, palette='viridis')
+{% else %}
+sns.scatterplot(data={{ df_var }}, x='{{ x_col }}', y='{{ y_col }}', alpha=0.65, s=55, palette='viridis')
+{% endif %}
+plt.title('{{ y_col }} vs {{ x_col }}', fontsize=14, fontweight='bold', pad=14)
+plt.xlabel('{{ x_col }}', fontsize=11, fontweight='bold')
+plt.ylabel('{{ y_col }}', fontsize=11, fontweight='bold')
+plt.tight_layout()
+plt.show()
+print('[SUCCESS] Scatter plot: {{ y_col }} vs {{ x_col }}!')

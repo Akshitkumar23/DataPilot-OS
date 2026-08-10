@@ -1,0 +1,19 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 6), dpi=150)
+sns.set_theme(style='whitegrid')
+{% if x_col %}
+sns.boxplot(data={{ df_var }}, x='{{ x_col }}', y='{{ y_col }}', palette='Set2', linewidth=1.5)
+{% else %}
+sns.boxplot(data={{ df_var }}, y='{{ y_col }}', palette='Set2', linewidth=1.5)
+{% endif %}
+plt.title('Outlier Boxplot: {{ y_col }}', fontsize=14, fontweight='bold', pad=14)
+plt.xticks(rotation=25, ha='right')
+plt.tight_layout()
+plt.show()
+Q1 = {{ df_var }}['{{ y_col }}'].quantile(0.25)
+Q3 = {{ df_var }}['{{ y_col }}'].quantile(0.75)
+IQR = Q3 - Q1
+outliers = {{ df_var }}[({{ df_var }}['{{ y_col }}'] < Q1 - 1.5*IQR) | ({{ df_var }}['{{ y_col }}'] > Q3 + 1.5*IQR)]
+print(f'[SUCCESS] Detected {len(outliers)} IQR outliers in "{{ y_col }}"!')

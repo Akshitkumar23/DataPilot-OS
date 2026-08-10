@@ -3,7 +3,7 @@
    Clean White Background · High Contrast Text · SSMS / Power BI / Excel Theme
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 /* ── Enterprise Light Design Tokens ── */
 :root {
@@ -15,19 +15,19 @@
   --bg-hover: #e2e8f0;
   --bg-active: #e0f2fe;
   --bg-input: #ffffff;
-  --bg-tooltip: #0f172a;
+  --bg-tooltip: #0a0e0c;
 
   --border: #cbd5e1;
-  --border-accent: #0284c7;
+  --border-accent: #10b981;
   --border-hover: #94a3b8;
 
-  --accent: #0284c7;
-  --accent-dim: #e0f2fe;
-  --accent-glow: rgba(2, 132, 199, 0.15);
-  --accent2: #4f46e5;
-  --accent2-dim: #e0e7ff;
-  --success: #16a34a;
-  --success-dim: #dcfce7;
+  --accent: #10b981;
+  --accent-dim: #d1fae5;
+  --accent-glow: rgba(16, 185, 129, 0.2);
+  --accent2: #059669;
+  --accent2-dim: #ecfdf5;
+  --success: #22c55e;
+  --success-dim: rgba(34, 197, 94, 0.15);
   --warning: #d97706;
   --warning-dim: #fef3c7;
   --danger: #dc2626;
@@ -36,7 +36,7 @@
   --text-primary: #0f172a;
   --text-secondary: #334155;
   --text-muted: #64748b;
-  --text-accent: #0284c7;
+  --text-accent: #10b981;
 
   /* Ribbon & Bars */
   --ribbon-h: 50px;
@@ -45,9 +45,9 @@
   --explorer-w: 260px;
   --props-w: 240px;
 
-  /* Typography - Clean Minimalist ChatGPT Style Stack */
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+  /* Typography - State-of-the-Art Modern Fonts */
+  --font-ui: 'Plus Jakarta Sans', 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
 
   /* Radius */
@@ -204,29 +204,43 @@ body,
   align-items: stretch;
   flex-shrink: 0;
   overflow: hidden;
+  width: 100%;
 }
 
 .ribbon__tabs {
   display: flex;
   align-items: stretch;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ribbon__tabs::-webkit-scrollbar {
+  height: 0px;
+  display: none;
 }
 
 .ribbon__tab {
-  padding: 0 20px;
+  padding: 0 14px;
   background: none;
   border: none;
   border-bottom: 2.5px solid transparent;
   color: var(--text-secondary);
   font-family: var(--font-ui);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: color var(--fast) var(--ease), border-color var(--fast) var(--ease),
     background var(--fast) var(--ease);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .ribbon__tab:hover {
@@ -249,6 +263,7 @@ body,
   width: 1px;
   background: var(--border);
   margin: 6px 4px;
+  flex-shrink: 0;
 }
 
 .ribbon__actions {
@@ -257,6 +272,17 @@ body,
   align-items: center;
   gap: 4px;
   padding-right: 10px;
+  flex-shrink: 0;
+  overflow-x: auto;
+  max-width: 45%;
+}
+
+@media (max-width: 1024px) {
+  .ribbon__tab {
+    padding: 0 10px;
+    font-size: 13px;
+    gap: 4px;
+  }
 }
 
 /* ── Main Body ── */
@@ -864,7 +890,7 @@ body,
 }
 
 .data-grid td.num-val {
-  color: #0284c7;
+  color: #10b981;
 }
 
 .data-grid .row-index {
@@ -1432,4 +1458,113 @@ body,
   color: var(--text-secondary);
   margin-top: 2px;
   line-height: 1.5;
+}
+
+/* ── Unified Dark / Obsidian Glassmorphism Mode ── */
+.dark-theme {
+  --bg-app: #060907;
+  --bg-main: #060907;
+  --bg-sidebar: #0a0e0c;
+  --bg-panel: #0d1310;
+  --bg-card: #121c17;
+  --bg-hover: #16221c;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --border: #1a2921;
+  --border-accent: rgba(52, 211, 153, 0.4);
+  --accent: #34d399;
+  --accent-hover: #10b981;
+  --accent-dim: rgba(16, 185, 129, 0.2);
+  color: #f8fafc;
+  background-color: #060907;
+}
+
+.dark-theme .title-bar {
+  background: #0a0e0c !important;
+  border-bottom-color: #1a2921 !important;
+}
+
+.dark-theme .ribbon {
+  background: #0d1310 !important;
+  border-bottom-color: #1a2921 !important;
+}
+
+.dark-theme .ribbon__tab {
+  color: #94a3b8;
+}
+
+.dark-theme .ribbon__tab:hover {
+  color: #f8fafc;
+  background: #16221c !important;
+}
+
+.dark-theme .ribbon__tab.active {
+  color: #34d399 !important;
+  border-bottom-color: #34d399 !important;
+  background: #121c17 !important;
+}
+
+.dark-theme .workspace-body {
+  background: #060907 !important;
+}
+
+.dark-theme .object-explorer {
+  background: #0a0e0c !important;
+  border-right-color: #1a2921 !important;
+}
+
+.dark-theme .properties-panel {
+  background: #0a0e0c !important;
+  border-left-color: #1a2921 !important;
+}
+
+.dark-theme .data-preview-container {
+  background: #060907 !important;
+}
+
+.dark-theme table {
+  color: #f8fafc;
+}
+
+.dark-theme th {
+  background: #0d1310 !important;
+  color: #34d399 !important;
+  border-color: #1a2921 !important;
+}
+
+.dark-theme td {
+  border-color: #1a2921 !important;
+  color: #cbd5e1 !important;
+}
+
+.dark-theme tr:hover td {
+  background: #16221c !important;
+}
+
+.dark-theme .btn--ghost {
+  color: #cbd5e1;
+}
+
+.dark-theme .btn--ghost:hover {
+  background: #16221c;
+  color: #34d399;
+}
+
+.dark-theme .status-bar {
+  background: #0a0e0c !important;
+  border-top-color: #1a2921 !important;
+  color: #94a3b8;
+}
+
+.dark-theme .status-item {
+  color: #94a3b8;
+}
+
+.dark-theme .status-item--active {
+  color: #f8fafc;
+}
+
+.dark-theme .status-divider {
+  background: #1a2921;
 }

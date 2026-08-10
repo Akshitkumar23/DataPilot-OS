@@ -1,6 +1,6 @@
 import {
   Home, PlugZap, Eraser, Shuffle, BrainCircuit, BarChart3, LineChart,
-  FolderOpen, Save, Undo2, Redo2, Code2, Database, Table
+  FolderOpen, Save, Undo2, Redo2, Code2, Database, Table, ChevronUp, ChevronDown
 } from 'lucide-react';
 
 const TABS = [
@@ -27,9 +27,14 @@ export default function Ribbon({
   canRedo,
   isSaving,
   onOpenCodeInspector,
+  isCollapsed,
+  onToggleCollapse
 }) {
   return (
-    <div className="ribbon">
+    <div className={`ribbon ${isCollapsed ? 'ribbon--collapsed' : ''}`} style={{
+      height: isCollapsed ? 32 : 'var(--ribbon-h)',
+      transition: 'height 0.2s ease'
+    }}>
       {/* Module tabs */}
       <div className="ribbon__tabs">
         {TABS.map((tab) => {
@@ -41,11 +46,15 @@ export default function Ribbon({
               className={`ribbon__tab ${activeModule === tab.id ? 'active' : ''}`}
               onClick={() => !disabled && onModuleChange(tab.id)}
               disabled={disabled}
-              style={{ opacity: disabled ? 0.4 : 1, cursor: disabled ? 'not-allowed' : 'pointer' }}
+              style={{
+                opacity: disabled ? 0.4 : 1,
+                cursor: disabled ? 'not-allowed' : 'pointer',
+                padding: isCollapsed ? '0 10px' : undefined
+              }}
               title={disabled ? 'Load a dataset first' : tab.label}
             >
-              <Icon size={14} />
-              {tab.label}
+              <Icon size={isCollapsed ? 15 : 14} />
+              {!isCollapsed && <span>{tab.label}</span>}
             </button>
           );
         })}
@@ -55,16 +64,20 @@ export default function Ribbon({
 
       {/* Quick Actions */}
       <div className="ribbon__actions">
-        <button className="btn btn--ghost btn--sm" onClick={onOpenFile} title="Open file (Ctrl+O)">
-          <FolderOpen size={13} />
-          Open Local File
-        </button>
-        <button className="btn btn--ghost btn--sm" onClick={onOpenDbModal} title="Connect to Database">
-          <Database size={13} />
-          Database Connection
-        </button>
+        {!isCollapsed && (
+          <>
+            <button className="btn btn--ghost btn--sm" onClick={onOpenFile} title="Open CSV / Excel / Parquet File (Ctrl+O)" style={{ color: 'var(--accent)', fontWeight: 700 }}>
+              <FolderOpen size={13} color="var(--accent)" />
+              <span className="ribbon-action-label">Open File</span>
+            </button>
+            <button className="btn btn--ghost btn--sm" onClick={onOpenDbModal} title="Connect to Database (SQL/Cloud)">
+              <Database size={13} />
+              <span className="ribbon-action-label">Database</span>
+            </button>
+          </>
+        )}
 
-        {datasetLoaded && (
+        {datasetLoaded && !isCollapsed && (
           <>
             <div className="ribbon__divider" style={{ height: 20 }} />
             <button
@@ -97,6 +110,16 @@ export default function Ribbon({
             </button>
           </>
         )}
+
+        {/* Feature 2: Collapse / Expand Ribbon Toggle Button */}
+        <button
+          className="btn btn--ghost btn--sm"
+          onClick={onToggleCollapse}
+          title={isCollapsed ? 'Expand Ribbon' : 'Collapse Ribbon (Maximize Workspace)'}
+          style={{ padding: '3px 8px', marginLeft: 4 }}
+        >
+          {isCollapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+        </button>
       </div>
     </div>
   );

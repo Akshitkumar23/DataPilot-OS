@@ -151,7 +151,12 @@ export default function ObjectExplorer({
               <span className="explorer-item__badge">{pipelineSteps.length}</span>
             </div>
             {pipeOpen && pipelineSteps.map((step, i) => (
-              <div key={i} className="explorer-item" style={{ paddingLeft: 26, fontSize: 11 }}>
+              <div
+                key={i}
+                className="explorer-item"
+                style={{ paddingLeft: 26, fontSize: 11, cursor: 'pointer' }}
+                onClick={() => onSelectDataset && onSelectDataset(step)}
+              >
                 <span style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: 10 }}>
                   {i + 1}.
                 </span>

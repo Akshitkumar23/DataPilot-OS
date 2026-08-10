@@ -1,0 +1,24 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(11, 7), dpi=150)
+sns.set_theme(style='whitegrid')
+{% if num_cols %}
+num_cols = {{ num_cols | tojson }}
+# Note: Displaying numeric columns centered at zero correlation range [-1, 1]
+sns.heatmap({{ df_var }}[num_cols].corr(), annot=True, fmt='.2f', cmap='coolwarm', vmin=-1, vmax=1, center=0, linewidths=0.8, annot_kws={'size': 9, 'weight': 'bold'})
+{% else %}
+# Select top 12 numeric features by variance if columns > 12 for maximum informative correlation
+num_df = {{ df_var }}.select_dtypes(include='number')
+if len(num_df.columns) > 12:
+    top_vars = num_df.var().nlargest(12).index.tolist()
+    print(f"Note: Displaying top 12 numeric columns by variance out of {len(num_df.columns)} total numeric columns.")
+    num_df = num_df[top_vars]
+sns.heatmap(num_df.corr(), annot=True, fmt='.2f', cmap='coolwarm', vmin=-1, vmax=1, center=0, linewidths=0.8, annot_kws={'size': 9, 'weight': 'bold'})
+{% endif %}
+plt.title('{{ title }}', fontsize=14, fontweight='bold', pad=14)
+plt.xticks(rotation=35, ha='right', fontsize=9)
+plt.yticks(fontsize=9)
+plt.tight_layout()
+plt.show()
+print('[SUCCESS] Correlation heatmap rendered!')

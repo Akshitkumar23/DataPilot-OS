@@ -1,0 +1,60 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+fig, axes = plt.subplots(2, 2, figsize=(13, 9), dpi=150)
+sns.set_theme(style='whitegrid')
+fig.suptitle('📊 Full Automated Exploratory Data Analysis (EDA) Dashboard', fontsize=15, fontweight='bold', y=0.98)
+
+# 1. Categorical Distribution (Top Left)
+{% if best_cat %}
+if '{{ best_cat }}' in {{ df_var }}.columns:
+    top_cat = {{ df_var }}['{{ best_cat }}'].value_counts().head(10).reset_index()
+    top_cat.columns = ['{{ best_cat }}', 'Count']
+    sns.barplot(data=top_cat, x='Count', y='{{ best_cat }}', ax=axes[0, 0], palette='viridis')
+    axes[0, 0].set_title('Top Categorical Distribution ({{ best_cat }})', fontweight='bold', fontsize=11)
+else:
+    axes[0, 0].text(0.5, 0.5, 'No Categorical Column', ha='center', va='center')
+{% else %}
+axes[0, 0].text(0.5, 0.5, 'No Categorical Column', ha='center', va='center')
+{% endif %}
+
+# 2. Primary Numeric Feature Distribution (Top Right)
+{% if best_num1 %}
+if '{{ best_num1 }}' in {{ df_var }}.columns:
+    sns.histplot({{ df_var }}['{{ best_num1 }}'].dropna(), kde=True, ax=axes[0, 1], color='#10b981')
+    axes[0, 1].set_title('Numeric Feature Distribution ({{ best_num1 }})', fontweight='bold', fontsize=11)
+else:
+    axes[0, 1].text(0.5, 0.5, 'No Numeric Column', ha='center', va='center')
+{% else %}
+axes[0, 1].text(0.5, 0.5, 'No Numeric Column', ha='center', va='center')
+{% endif %}
+
+# 3. Feature Correlation Heatmap (Bottom Left)
+num_df = {{ df_var }}.select_dtypes(include='number')
+if len(num_df.columns) >= 2:
+    corr = num_df.corr().round(2)
+    sns.heatmap(corr, annot=True, fmt='.2f', cmap='coolwarm', ax=axes[1, 0], cbar=False, annot_kws={'size': 7})
+    axes[1, 0].set_title('Numeric Feature Correlation Heatmap', fontweight='bold', fontsize=11)
+else:
+    axes[1, 0].text(0.5, 0.5, 'Insufficient Numeric Columns', ha='center', va='center')
+
+# 4. Bivariate Relationship (Bottom Right)
+{% if best_cat and best_num1 %}
+if '{{ best_cat }}' in {{ df_var }}.columns and '{{ best_num1 }}' in {{ df_var }}.columns:
+    sns.boxplot(data={{ df_var }}.head(1000), x='{{ best_cat }}', y='{{ best_num1 }}', ax=axes[1, 1], palette='crest')
+    axes[1, 1].set_xticklabels(axes[1, 1].get_xticklabels(), rotation=35, ha='right', fontsize=8)
+    axes[1, 1].set_title('{{ best_num1 }} by {{ best_cat }}', fontweight='bold', fontsize=11)
+{% elif best_num1 and best_num2 %}
+elif len(num_df.columns) >= 2:
+    sns.scatterplot(data={{ df_var }}.sample(min(1000, len({{ df_var }}))), x='{{ best_num1 }}', y='{{ best_num2 }}', ax=axes[1, 1], color='#059669', alpha=0.6)
+    axes[1, 1].set_title('{{ best_num2 }} vs {{ best_num1 }}', fontweight='bold', fontsize=11)
+{% else %}
+axes[1, 1].text(0.5, 0.5, 'Bivariate Analysis N/A', ha='center', va='center')
+{% endif %}
+
+plt.tight_layout(rect=[0, 0, 1, 0.95])
+plt.show()
+
+print('[SUCCESS] Full Automated 4-Panel EDA Dashboard Generated Successfully!')

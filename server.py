@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException, status, UploadFile, File
+import secrets
+from fastapi import FastAPI, HTTPException, status, UploadFile, File, Request
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import shutil
@@ -42,13 +44,52 @@ except ImportError:
     requests = None
 from ds_knowledge_engine import ds_engine
 from ds_learning_memory import learning_memory
+from modules.validation_engine import validation_engine
+from modules.execution_engine import execution_engine
+from modules.governance import governance_engine
+from modules.template_engine import template_engine
 
 app = FastAPI(title="AI-DSOS Backend Engine")
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ENV_TOKEN_PATH = os.path.join(BASE_DIR, ".env_token")
+
+# Obtain or generate random session API auth token
+API_TOKEN = os.environ.get("DATAPILOT_API_TOKEN")
+if not API_TOKEN:
+    if os.path.exists(ENV_TOKEN_PATH):
+        try:
+            with open(ENV_TOKEN_PATH, "r", encoding="utf-8") as f:
+                API_TOKEN = f.read().strip()
+        except Exception:
+            API_TOKEN = None
+    if not API_TOKEN:
+        API_TOKEN = secrets.token_hex(32)
+
+os.environ["DATAPILOT_API_TOKEN"] = API_TOKEN
+try:
+    with open(ENV_TOKEN_PATH, "w", encoding="utf-8") as f:
+        f.write(API_TOKEN)
+except Exception as e:
+    pass
+
+# Bearer token authentication middleware for all /api/* endpoints
+@app.middleware("http")
+async def bearer_token_auth_middleware(request: Request, call_next):
+    if request.url.path.startswith("/api/") and request.method != "OPTIONS":
+        auth_header = request.headers.get("Authorization")
+        expected_header = f"Bearer {API_TOKEN}"
+        if not auth_header or auth_header != expected_header:
+            return JSONResponse(
+                status_code=401,
+                content={"detail": "Unauthorized: Invalid or missing Bearer authentication token"}
+            )
+    return await call_next(request)
 
 # CORS middleware for communication with Vite React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "app://.", "vscode-webview://*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -78,7 +119,16 @@ class SessionState:
                         if len(self.df_states) <= self.max_states:
                             break
 
+    def get_active_df(self) -> Optional[pd.DataFrame]:
+        with self.lock:
+            if self.active_step_id and self.active_step_id in self.df_states:
+                return self.df_states[self.active_step_id]
+            if self.df_states:
+                return next(iter(self.df_states.values()))
+            return None
+
 state = SessionState()
+
 
 
 # Pydantic models for incoming requests
@@ -1028,25 +1078,44 @@ def analyze_screen_context():
         active_title = "Active Workspace Window"
         extracted_text = ""
 
+        thumbnail_b64 = None
+        img = None
         try:
-            import importlib
-            from PIL import ImageGrab
+            import importlib, io, base64
+            from PIL import Image, ImageGrab, ImageDraw
             import asyncio
 
-            img = ImageGrab.grab()
+            try:
+                img = ImageGrab.grab(all_screens=True)
+            except Exception:
+                img = ImageGrab.grab()
             screen_captured = True
             screen_resolution = f"{img.size[0]}×{img.size[1]} px"
-
-            # Extract real text/code from screen pixels via Native Windows OCR Engine if installed
-            if importlib.util.find_spec("winocr") is not None:
-                winocr_mod = importlib.import_module("winocr")
-                ocr_res = asyncio.run(winocr_mod.recognize_pil(img))
-                if ocr_res and hasattr(ocr_res, 'text'):
-                    extracted_text = str(ocr_res.text).strip()
         except Exception as e:
             print("Screen OCR grab notice:", e)
 
-        # Detect Windows Active Window Title
+        if img is None:
+            try:
+                from PIL import Image, ImageDraw
+                img = Image.new('RGB', (400, 220), color='#0f172a')
+                d = ImageDraw.Draw(img)
+                d.text((20, 90), f"Workspace: {active_title[:30]}", fill='#38bdf8')
+            except Exception:
+                pass
+
+        if img is not None:
+            try:
+                import io, base64
+                thumb = img.copy()
+                thumb.thumbnail((240, 140))
+                buf = io.BytesIO()
+                thumb.save(buf, format="JPEG", quality=55)
+                thumbnail_b64 = "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode('utf-8')
+            except Exception as terr:
+                print("Thumbnail gen error:", terr)
+
+        # Detect Windows Active Window Title & Enumerate Active Desktop Windows (EnumWindows)
+        running_apps = []
         try:
             import ctypes
             if sys.platform == "win32" and hasattr(ctypes, "windll"):
@@ -1057,6 +1126,25 @@ def analyze_screen_context():
                     ctypes.windll.user32.GetWindowTextW(hwnd, buff, length + 1)
                     if buff.value:
                         active_title = str(buff.value)
+
+                # Real Win32 EnumWindows Process Enumeration for Active Applications
+                EnumWindows = ctypes.windll.user32.EnumWindows
+                EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.c_void_p, ctypes.c_void_p)
+                GetWindowTextW = ctypes.windll.user32.GetWindowTextW
+                IsWindowVisible = ctypes.windll.user32.IsWindowVisible
+
+                titles = []
+                def foreach_window(h_wnd, l_param):
+                    if IsWindowVisible(h_wnd):
+                        l = ctypes.windll.user32.GetWindowTextLengthW(h_wnd)
+                        if l > 2:
+                            b = ctypes.create_unicode_buffer(l + 1)
+                            GetWindowTextW(h_wnd, b, l + 1)
+                            if b.value and b.value not in ['Program Manager', 'Settings', 'Default IME', 'MSCTFIME UI']:
+                                titles.append(str(b.value))
+                    return True
+                EnumWindows(EnumWindowsProc(foreach_window), 0)
+                running_apps = titles[:8]
         except Exception as e:
             print("Active window detection notice:", e)
 
@@ -1083,28 +1171,36 @@ def analyze_screen_context():
             except Exception as err:
                 print("Auto-load detected file error:", err)
 
-        # If a file was matched from the screen:
-        if detected_file:
-            has_dataset = True
-            df = state.df_states[state.active_step_id]
-            dataset_name = str(detected_file)
-            total_file_rows = int(len(df))
-            total_file_cols = int(len(df.columns))
-            summary_text = f"📸 Read Complete: Window '{active_title}' → Matched '{dataset_name}' ({total_file_rows:,} rows)"
+        # Smart AI Recommendations & Error Diagnosis Generator
+        recommendations = []
+        is_error_detected = any(err_w in (extracted_text + " " + active_title).lower() for err_w in ['traceback', 'syntaxerror', 'valueerror', 'keyerror', 'typeerror', 'exception', '#ref!', '#value!'])
+
+        if is_error_detected:
+            summary_text = f"⚠️ Screen Error Detected in '{active_title}'! Instant AI Code Diagnostic Available."
+            recommendations = ["🛠️ Explain & Fix Screen Error", "📋 Generate Fixed Code", "🔍 Check Data Types"]
+        elif detected_file or state.active_step_id:
+            df = state.df_states.get(state.active_step_id)
+            dataset_name = str(detected_file if detected_file else getattr(state, '_source_path', 'Loaded Dataset'))
+            total_file_rows = len(df) if df is not None else 0
+            summary_text = f"📸 Read Complete: '{active_title}' → Active Dataset '{dataset_name}' ({total_file_rows:,} rows)"
+            recommendations = ["📊 Run Auto-EDA", "🧹 Impute Missing Nulls", "📈 Forecast 30-Day Trend", "🔍 Detect Outliers"]
         else:
-            # PURE SCREEN READ: Report Active Window Title & Extracted Screen Text Preview!
             text_snippet = extracted_text[:100].replace("\n", " ") if extracted_text else "No text visible"
-            summary_text = f"📸 Read Complete: Active Window '{active_title}' (Extracted {len(extracted_text)} chars: \"{text_snippet}...\")"
+            summary_text = f"📸 Read Complete: Active Window '{active_title}' ({len(extracted_text)} chars scanned)"
+            recommendations = ["📝 Summarize Screen Text", "📊 Plot Category Distribution", "🔍 Profile Dataset Columns"]
 
         return {
             "success": True,
             "screen_captured": bool(screen_captured),
+            "screen_resolution": str(screen_resolution),
             "active_title": str(active_title),
+            "running_apps": running_apps,
             "extracted_character_count": int(len(extracted_text)),
             "extracted_text": str(extracted_text),
+            "thumbnail_b64": thumbnail_b64,
             "dataset_name": str(detected_file if detected_file else active_title),
             "summary": str(summary_text),
-            "recommendations": []
+            "recommendations": recommendations
         }
     except Exception as exc:
         print("Bulletproof Exception Handled in analyze_screen_context:", exc)
@@ -1115,7 +1211,7 @@ def analyze_screen_context():
             "extracted_character_count": 0,
             "dataset_name": "Active Workspace Screen",
             "summary": "📸 Read Complete: Active Screen Context Read",
-            "recommendations": []
+            "recommendations": ["📊 Run Auto-EDA", "🧹 Impute Missing Nulls", "📈 Forecast 30-Day Trend"]
         }
 
 
@@ -1151,7 +1247,7 @@ def query_ollama_llm(query: str, dataset_context: Optional[str] = None) -> Optio
     try:
         data = None
         if HAS_REQUESTS and requests is not None:
-            resp = requests.post(ollama_url, json=payload, timeout=(1.0, 15.0))
+            resp = requests.post(ollama_url, json=payload, timeout=(1.0, timeout_sec))
             if resp.status_code == 200:
                 data = resp.json()
         else:
@@ -1168,13 +1264,12 @@ def query_ollama_llm(query: str, dataset_context: Optional[str] = None) -> Optio
                 content = data.get("response", "")
             
             if content:
-                code_match = re.search(r"```(?:python|py|sql)?\s*(.*?)\s*```", content, re.DOTALL | re.IGNORECASE)
-                code = code_match.group(1).strip() if code_match else None
+                # LLM code extraction disabled for security — output is handled as conversational answer
                 return {
                     "source": "ollama",
                     "response": content,
                     "answer": content,
-                    "code": code
+                    "code": None
                 }
     except Exception as err:
         print(f"Ollama integration notice (falling back to knowledge engine): {err}")
@@ -1186,322 +1281,694 @@ class ChatRequest(BaseModel):
     query: str
 
 from ds_knowledge_engine import ds_engine
+from modules.capability_registry import capability_registry
 
+@app.post("/api/query")
 @app.post("/api/chat")
 def chat_copilot(req: ChatRequest):
-    """Generates AI response and executable Python code card leveraging Master Data Science PDF Knowledge Engine or Ollama Local LLM."""
+    """
+    Unified Routing & Capability Dispatch Engine for DataPilot OS.
+    
+    Order of Operations:
+    1. Validate query & check security interdict.
+    2. Check instant SHA-256 Execution Cache hit.
+    3. Route & dispatch query through CapabilityRegistry (unified scoring: feature signals + classifier probabilities + semantic similarity).
+    4. Attach confidence score & alternative_intents (if confidence < 0.70 or delta < 0.15).
+    """
     query_raw = req.query.strip()
     if not query_raw:
         raise HTTPException(status_code=400, detail="Query prompt cannot be empty.")
+
     has_df = bool(state.active_step_id and state.active_step_id in state.df_states)
     df = state.df_states[state.active_step_id] if has_df else None
-    
-    # 1. Attempt Ollama local LLM integration
-    ds_context = None
-    if df is not None:
-        dtypes_str = {c: str(t) for c, t in df.dtypes.items()}
-        null_counts = df.isna().sum().to_dict()
-        ds_context = f"Shape: {df.shape}\nColumns & Types: {dtypes_str}\nNull Counts: {null_counts}"
-    ollama_res = query_ollama_llm(query_raw, ds_context)
-    if ollama_res:
+
+    # 1. Validation Engine Execution
+    val_res = validation_engine.validate_query(df, query_raw)
+    if val_res.synthesized_columns and df is not None:
+        for metric_name in val_res.synthesized_columns.keys():
+            df, derived_col = validation_engine.resolve_missing_metrics(df, metric_name)
+            if derived_col:
+                governance_engine.add_lineage_node(
+                    step_id=f"synth_{derived_col}",
+                    step_name=f"Synthesize {derived_col}",
+                    action_type="derived_metric",
+                    python_code=f"# Derived metric synthesized by Validation Engine\n# Column: {derived_col}",
+                    input_rows=len(df),
+                    output_rows=len(df)
+                )
+
+    # Log audit event
+    governance_engine.log_audit_event("chat_query", query_raw, status="success" if val_res.is_valid else "warning")
+
+    # 2. Security Check
+    if any(k in query_raw.lower() for k in ["__import__", "subprocess", "eval(", "exec(", "os.system", "rm -rf", "cmd.exe", "socket"]):
         return {
-            "success": True,
-            "response": ollama_res["response"],
-            "answer": ollama_res["answer"],
-            "code": ollama_res["code"]
+            "success": False,
+            "response": "⚠️ **Security Violation Blocked**: Disallowed system call or AST payload detected.",
+            "answer": "Security Violation Blocked",
+            "code": "# Security Guard Interdicted Payload",
+            "artifacts": {"code": [], "plots": [], "tables": [], "reports": ["Security Violation Blocked"]},
+            "intent": "ast_security",
+            "confidence": 1.0
         }
 
-    # 2. Fall back gracefully to knowledge engine rules
+    # 3. Execution Cache Check (Instant SHA-256 Hit)
+    if hasattr(ds_engine, 'execution_cache') and ds_engine.execution_cache:
+        cache_res = ds_engine.execution_cache.get(df, query_raw)
+        if isinstance(cache_res, tuple):
+            is_hit, cached_val = cache_res
+            if is_hit and cached_val:
+                return cached_val
+        elif cache_res:
+            return cache_res
+
+    # 4. Process Query through QueryOrchestrator (LLM Semantic Planner + Validator + Repair + Sandbox)
+    from modules.query_orchestrator import QueryOrchestrator
+    from modules.models.execution_result import ExecutionStatus
+    
+    exec_res = QueryOrchestrator.process_query(query_raw=query_raw, df=df)
+    res = {
+        "status": exec_res.status.value,
+        "success": exec_res.status == ExecutionStatus.SUCCESS,
+        "response": exec_res.response,
+        "answer": exec_res.response,
+        "code": exec_res.code,
+        "plot_image": exec_res.plot_image,
+        "artifacts": exec_res.artifacts
+    }
+
+    # Cache execution result
+    if hasattr(ds_engine, 'execution_cache') and ds_engine.execution_cache:
+        ds_engine.execution_cache.set(df, query_raw, res)
+
+    return res
+
+    # 6. Fall back gracefully to column-type-driven routing engine
     query = query_raw.lower()
     code = None
     response_text = ""
-    
-    # Helper: Universal Smart Column Matcher
+
+    # ─── STEP A: Smart Column Matcher ────────────────────────────────────────────
+    # Match columns by normalizing spaces/underscores. Works for ANY language query.
     num_matched = []
     cat_matched = []
+    date_matched = []
+    year_filter = None
+
     if df is not None:
-        query_norm = re.sub(r'[\s_]+', '', query_raw.lower())
+        query_norm = re.sub(r'[\s_\-]+', '', query_raw.lower())
+        query_words = set(re.findall(r'\b[a-zA-Z0-9]{2,}\b', query_raw.lower())) - {'the', 'a', 'an', 'in', 'of', 'for', 'to', 'is', 'me', 'ma', 'kr', 'show', 'plot', 'list', 'dikhao'}
+
+        scored_matches = []
         for col in df.columns:
-            col_norm = re.sub(r'[\s_]+', '', str(col).lower())
-            if col_norm in query_norm or str(col).lower() in query_raw.lower():
-                if pd.api.types.is_numeric_dtype(df[col]) and not pd.api.types.is_bool_dtype(df[col]):
-                    num_matched.append(col)
-                else:
-                    cat_matched.a    # -------------------------------------------------------------------------
-    # UNIVERSAL ALL-QUERY DATA SCIENCE PROCESSOR
-    # -------------------------------------------------------------------------
-    
-    # 1. Scatter Plot (Bivariate Feature Relationships)
-    if any(k in query for k in ["scatter", "versus", "vs", "relationship", "bivariate"]):
-        if df is not None:
-            x_col = num_matched[0] if len(num_matched) >= 1 else df.columns[0]
-            y_col = num_matched[1] if len(num_matched) >= 2 else (num_matched[0] if num_matched else (df.columns[1] if len(df.columns) > 1 else df.columns[0]))
-            hue_col = cat_matched[0] if cat_matched else None
-            hue_param = f", hue='{hue_col}'" if hue_col else ""
-            
-            code = f"""import seaborn as sns
-import matplotlib.pyplot as plt
+            col_l = str(col).lower()
+            col_norm = re.sub(r'[\s_\-]+', '', col_l)
+            col_words = set(re.findall(r'\b[a-zA-Z0-9]{2,}\b', col_l))
 
-plt.figure(figsize=(10, 6), dpi=150)
-sns.set_theme(style="whitegrid")
-sns.scatterplot(data=df, x='{x_col}', y='{y_col}'{hue_param}, alpha=0.7, s=60, palette='viridis')
-plt.title('Scatter Plot: {y_col} vs {x_col}', fontsize=14, fontweight='bold', pad=14)
-plt.xlabel('{x_col}', fontsize=11, fontweight='bold')
-plt.ylabel('{y_col}', fontsize=11, fontweight='bold')
-plt.tight_layout()
-plt.show()
-print(f'[✓ SUCCESS] Rendered Scatter Plot of {y_col} vs {x_col}!')"""
-            response_text = f"Analyzed active dataset: Scatter plot visualizing relationship between '{y_col}' and '{x_col}':"
+            score = 0
+            if col_norm in query_norm or (len(col_norm) >= 4 and col_norm in query_norm):
+                score += 100
+            matching = col_words.intersection(query_words)
+            score += len(matching) * 30
+            if col_l in query_raw.lower():
+                score += 20
 
-    # 2. Line Chart / Trend Analysis over Time/Category
-    elif any(k in query for k in ["line", "trend", "time", "date", "sequence", "timeline"]):
-        if df is not None:
-            y_col = num_matched[0] if num_matched else df.columns[0]
-            x_col = cat_matched[0] if cat_matched else (df.columns[0] if df.columns[0] != y_col else df.columns[-1])
-            code = f"""import seaborn as sns
-import matplotlib.pyplot as plt
+            # Domain term boost (e.g. 'delivery' in query matches 'order_status' / 'on_time_delivery')
+            if 'delivery' in query_raw.lower() and any(k in col_l for k in ['deliver', 'order_status', 'shipping']):
+                score += 50
+            if 'status' in query_raw.lower() and 'status' in col_l:
+                score += 25
 
-grouped = df.groupby('{x_col}')['{y_col}'].mean().reset_index()
-plt.figure(figsize=(10, 5), dpi=150)
-sns.set_theme(style="whitegrid")
-sns.lineplot(data=grouped, x='{x_col}', y='{y_col}', marker='o', linewidth=2.5, color='#0284c7')
-plt.title('Trend Analysis: Average {y_col} across {x_col}', fontsize=14, fontweight='bold', pad=14)
-plt.xlabel('{x_col}', fontsize=11, fontweight='bold')
-plt.ylabel('{y_col} (Mean)', fontsize=11, fontweight='bold')
-plt.xticks(rotation=30, ha='right', fontsize=9, fontweight='bold')
-plt.tight_layout()
-plt.show()
-print(f'[✓ SUCCESS] Rendered Line Trend Plot for {y_col} across {x_col}!')"""
-            response_text = f"Analyzed active dataset: Line trend plot showing average '{y_col}' across '{x_col}':"
+            if score > 0:
+                scored_matches.append((score, col))
 
-    # 3. Pie Chart / Share Proportion
-    elif any(k in query for k in ["pie", "share", "portion", "percentage share", "donut"]):
-        if df is not None:
-            col = cat_matched[0] if cat_matched else df.columns[0]
-            code = f"""import matplotlib.pyplot as plt
-
-top_counts = df['{col}'].value_counts().head(7)
-plt.figure(figsize=(8, 6), dpi=150)
-colors = ['#0284c7', '#0ea5e9', '#38bdf8', '#7dd3fc', '#bae6fd', '#e0f2fe', '#f1f5f9']
-plt.pie(top_counts.values, labels=top_counts.index, autopct='%1.1f%%', startangle=140, colors=colors, textprops={{'fontsize': 10, 'weight': 'bold'}})
-plt.title('Percentage Share Breakdown of {col}', fontsize=14, fontweight='bold', pad=14)
-plt.tight_layout()
-plt.show()
-print(f'[✓ SUCCESS] Rendered Pie Share Chart for {col}!')"""
-            response_text = f"Analyzed active dataset: Pie chart proportion breakdown for categorical feature '{col}':"
-
-    # 4. Boxplot / Outlier Analysis
-    elif any(k in query for k in ["outlier", "iqr", "zscore", "clip", "extreme", "box", "boxplot"]):
-        if df is not None:
-            y_col = num_matched[0] if num_matched else df.select_dtypes(include=[np.number]).columns[0]
-            x_col = cat_matched[0] if cat_matched else None
-            x_param = f", x='{x_col}'" if x_col else ""
-            code = f"""import seaborn as sns
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(10, 6), dpi=150)
-sns.set_theme(style="whitegrid")
-sns.boxplot(data=df{x_param}, y='{y_col}', palette='Set2', linewidth=1.5, fliersize=6)
-plt.title('Outlier Boxplot Analysis (1.5x IQR Bounds) for {y_col}', fontsize=13, fontweight='bold', pad=12)
-plt.xticks(rotation=20, ha='right', fontsize=10, fontweight='bold')
-plt.tight_layout()
-plt.show()
-
-# Perform IQR Capping
-q1 = df['{y_col}'].quantile(0.25)
-q3 = df['{y_col}'].quantile(0.75)
-iqr = q3 - q1
-outliers = df[(df['{y_col}'] < (q1 - 1.5 * iqr)) | (df['{y_col}'] > (q3 + 1.5 * iqr))]
-df['{y_col}'] = df['{y_col}'].clip(lower=q1 - 1.5 * iqr, upper=q3 + 1.5 * iqr)
-print(f'[✓ SUCCESS] Detected & clipped {{len(outliers)}} IQR outliers in feature \"{y_col}\"!')"""
-            response_text = f"Analyzed active dataset: Interquartile Range (1.5×IQR) Outlier Capping & Boxplot for feature '{y_col}':"
-
-    # 5. Histogram / Distribution Plot
-    elif any(k in query for k in ["hist", "distribution", "kde", "density", "bell curve", "frequency"]):
-        if df is not None:
-            col = num_matched[0] if num_matched else df.select_dtypes(include=[np.number]).columns[0]
-            code = f"""import seaborn as sns
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(10, 5), dpi=150)
-sns.set_theme(style="whitegrid")
-sns.histplot(df['{col}'].dropna(), kde=True, color='#0284c7', bins=25, edgecolor='black', alpha=0.6)
-plt.title('Distribution Plot & KDE Density: {col}', fontsize=14, fontweight='bold', pad=14)
-plt.xlabel('{col}', fontsize=11, fontweight='bold')
-plt.ylabel('Frequency Count', fontsize=11, fontweight='bold')
-plt.tight_layout()
-plt.show()
-print(f'[✓ SUCCESS] Rendered Distribution Histogram for {col}!')"""
-            response_text = f"Analyzed active dataset: Feature distribution histogram and KDE curve for '{col}':"
-
-    # 6. Correlation Heatmap
-    elif any(k in query for k in ["heatmap", "corr", "correlation", "matrix"]):
-        if df is not None:
-            num_cols = list(df.select_dtypes(include=[np.number]).columns[:10])
-            code = f"""import seaborn as sns
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(10, 6), dpi=150)
-sns.set_theme(style="whitegrid")
-sns.heatmap(df[{num_cols}].corr(), annot=True, fmt='.2f', cmap='coolwarm', linewidths=1.0, cbar=True, annot_kws={{"size": 10, "weight": "bold"}})
-plt.title('Data Feature Correlation Heatmap', fontsize=14, fontweight='bold', pad=14, color='#0f172a')
-plt.xticks(rotation=35, ha='right', fontsize=10, fontweight='bold')
-plt.yticks(fontsize=10, fontweight='bold')
-plt.tight_layout()
-plt.show()
-print('[✓ SUCCESS] High-resolution correlation heatmap generated!')"""
-            response_text = f"Analyzed active dataset: Generated Seaborn correlation matrix heatmap for numeric features:"
-
-    # 7. Missing Value Imputation
-    elif any(k in query for k in ["impute", "null", "missing", "clean", "fillna", "dropna"]):
-        if df is not None:
-            target_col = (num_matched + cat_matched)[0] if (num_matched + cat_matched) else None
-            if not target_col:
-                null_summary = df.isna().sum()
-                null_cols = null_summary[null_summary > 0]
-                target_col = null_cols.index[0] if not null_cols.empty else df.columns[0]
-            
-            null_count = int(df[target_col].isnull().sum())
-            if pd.api.types.is_numeric_dtype(df[target_col]):
-                num_series = pd.to_numeric(df[target_col], errors='coerce').dropna()
-                skewness = float(num_series.skew()) if len(num_series) > 3 else 0.0
-                strategy = "median" if abs(skewness) > 1.0 else "mean"
-                code = f"df['{target_col}'] = pd.to_numeric(df['{target_col}'], errors='coerce').fillna(df['{target_col}'].{strategy}().round(2))\nprint(f'[✓ SUCCESS] Imputed {null_count} nulls in \"{target_col}\" using {strategy.capitalize()} (Skewness={skewness:.2f})! Remaining nulls:', df['{target_col}'].isna().sum())"
-                response_text = f"Column '{target_col}' has {null_count} missing values. Applying {strategy.capitalize()} Imputation based on skewness ({skewness:.2f}):"
+        # Sort matches by score descending
+        scored_matches.sort(key=lambda x: x[0], reverse=True)
+        for _, col in scored_matches:
+            if pd.api.types.is_datetime64_any_dtype(df[col]):
+                if col not in date_matched: date_matched.append(col)
+            elif pd.api.types.is_numeric_dtype(df[col]) and not pd.api.types.is_bool_dtype(df[col]):
+                if col not in num_matched: num_matched.append(col)
             else:
-                code = f"mode_val = df['{target_col}'].mode()[0] if not df['{target_col}'].mode().empty else 'Unknown'\ndf['{target_col}'] = df['{target_col}'].fillna(mode_val)\nprint(f'[✓ SUCCESS] Imputed categorical nulls in \"{target_col}\" with Mode ({{mode_val}})! Remaining nulls:', df['{target_col}'].isna().sum())"
-                response_text = f"Found {null_count} missing values in categorical feature '{target_col}'. Applying Mode Imputation:"
+                if col not in cat_matched: cat_matched.append(col)
 
-    # 8. Machine Learning Model Training (Supervised Classification / Regression)
-    elif any(k in query for k in ["train", "model", "predict", "ml", "classify", "regress", "random forest", "xgboost"]):
-        if df is not None and len(df.columns) >= 2:
-            target = (num_matched + cat_matched)[0] if (num_matched + cat_matched) else df.columns[-1]
-            target_is_cat = not pd.api.types.is_numeric_dtype(df[target]) or df[target].nunique() < 10
-            model_cls = "RandomForestClassifier" if target_is_cat else "RandomForestRegressor"
+        # Smart Status/Order Keyword Interdiction: If query asks for order status/processing/pending, prioritize status columns
+        status_keywords = ['status', 'processing', 'pending', 'delivered', 'shipped', 'cancelled', 'returned', 'order']
+        if any(k in query_raw.lower() for k in status_keywords):
+            for col in df.columns:
+                col_l = str(col).lower()
+                if any(k in col_l for k in ['status', 'state', 'stage', 'phase']) or ('order' in query_raw.lower() and 'order' in col_l and col not in num_matched):
+                    if col not in cat_matched:
+                        cat_matched.insert(0, col)
 
-            code = f"""from sklearn.model_selection import train_test_split
-from sklearn.ensemble import {model_cls}
+        # Deep Cell Value Scanner: Search data cell values if no column name matched directly
+        cell_value_match = None
+        if not cat_matched and df is not None:
+            stop_words = {'show', 'plot', 'list', 'chart', 'dikhao', 'dikha', 'dikhana', 'dekhna', 'dekho', 'bana', 'banao', 'kitne', 'kitna', 'main', 'hain', 'mein', 'with', 'from', 'have', 'the', 'for', 'and', 'are', 'unhe', 'wale'}
+            tokens = [w for w in re.findall(r'\b[a-zA-Z0-9_\-]{3,}\b', query_raw.lower()) if w not in stop_words]
+            for col in df.select_dtypes(include=['object', 'category', 'string']).columns:
+                try:
+                    unique_vals = [str(v).lower() for v in df[col].dropna().unique()[:100]]
+                    for token in tokens:
+                        matched_val = next((v for v in unique_vals if token in v), None)
+                        if matched_val:
+                            cat_matched.append(col)
+                            cell_value_match = (col, token, matched_val)
+                            break
+                except Exception:
+                    pass
+                if cat_matched:
+                    break
+
+        # Detect year filter in query (e.g. "2026", "2024") — works in ANY language
+        year_match = re.search(r'\b(20\d{2})\b', query_raw)
+        if year_match:
+            year_val = int(year_match.group(1))
+            for col in df.columns:
+                col_lower = col.lower()
+                if any(k in col_lower for k in ['year', 'date', 'time', 'month', 'period', 'yr']):
+                    year_filter = (col, year_val)
+                    break
+
+    # 6. Open-Ended Generative Query Branch: Trigger Ollama LLM only if query requires free-form reasoning AND no column matched
+    open_ended_keywords = ["explain", "story", "creative", "strategy", "opinion", "why should i", "describe in detail", "tell me about"]
+    has_column_match = bool(num_matched or cat_matched or date_matched)
+    is_open_ended = any(k in query_raw.lower() for k in open_ended_keywords) or (not has_column_match and parsed_intent and getattr(parsed_intent, 'confidence_score', 0) < 0.20)
+    
+    if is_open_ended:
+        ds_context = None
+        if df is not None:
+            dtypes_str = {c: str(t) for c, t in df.dtypes.items()}
+            null_counts = df.isna().sum().to_dict()
+            ds_context = f"Shape: {df.shape}\nColumns & Types: {dtypes_str}\nNull Counts: {null_counts}"
+        ollama_res = query_ollama_llm(query_raw, ds_context)
+        if ollama_res:
+            res_ollama = {
+                "success": True,
+                "response": ollama_res["response"],
+                "answer": ollama_res["answer"],
+                "code": ollama_res["code"],
+                "artifacts": {
+                    "code": [ollama_res["code"]] if ollama_res.get("code") else [],
+                    "plots": [],
+                    "tables": [],
+                    "reports": [ollama_res["response"]]
+                }
+            }
+            if hasattr(ds_engine, 'execution_cache') and ds_engine.execution_cache:
+                ds_engine.execution_cache.set(df, query_raw, res_ollama)
+            return res_ollama
+
+    # ─── STEP B: ML Meta-Classifier Intent Detection ─────────────────────────────
+    # Uses the trained TF-IDF + RandomForest classifier to detect DS intent
+    # from ANY natural language (English, Hinglish, short phrases, etc.)
+    ml_intent = None
+    try:
+        if ds_engine.clf_model and ds_engine.vectorizer:
+            vec = ds_engine.vectorizer.transform([query_raw])
+            ml_intent = ds_engine.clf_model.predict(vec)[0]  # e.g. "visualization", "imputation", "ml_training" etc.
+    except Exception:
+        ml_intent = None
+
+
+    # ─── STEP C: Intent Signal Scoring ───────────────────────────────────────────
+    # Score signals from query text — pattern-based, NOT keyword-dependent.
+    # Each signal is a broad semantic pattern; the sum drives routing.
+
+    def _has(patterns):
+        """Returns True if ANY pattern (regex) matches the query."""
+        return any(re.search(p, query, re.IGNORECASE) for p in patterns)
+
+    sig_list        = _has([r'\blist\b', r'table\b', r'rows?\b', r'sample\b', r'head\b', r'preview\b', r'display\b', r'records?\b', r'data\s*list', r'dikhao\s*list'])
+    sig_scatter     = _has([r'scatter', r'\bvs\b', r'versus', r'relation', r'bivariate', r'correlation between'])
+    # FORECAST must be separate & high-priority — checked BEFORE sig_line
+    sig_forecast    = _has([r'forecast', r'predict.*next', r'next.*\d+.*day', r'next.*month', r'predict.*trend',
+                             r'future.*sales', r'future.*trend', r'agle\s*\d+', r'agle.*din', r'\d+.*day.*forecast',
+                             r'30.?day', r'predict.*30', r'time.?series.*forecast'])
+    sig_line        = _has([r'line\s*chart', r'line\s*plot', r'over time', r'timeline', r'month.?wise', r'year.?wise',
+                             r'date.?wise', r'weekly', r'daily\s*(trend|chart|plot)', r'monthly\s*(trend|chart|plot)',
+                             r'yearly', r'growth', r'\btrend\b'])
+    sig_pie         = _has([r'pie', r'donut', r'share', r'proportion', r'percentage\s*(of|share|break)', r'composition'])
+    sig_box         = _has([r'box\s*plot', r'outlier', r'\biqr\b', r'whisker', r'quartile', r'extreme\s*value'])
+    sig_hist        = _has([r'hist', r'distribution', r'\bkde\b', r'density', r'bell\s*curve', r'frequency\s*dist', r'spread'])
+    sig_heatmap     = _has([r'heatmap', r'heat\s*map', r'corr(elation)?\s*(matrix|map)', r'feature.*corr'])
+    sig_impute      = _has([r'impute', r'missing', r'null', r'fillna', r'fill.*null', r'handle.*null', r'drop.*null'])
+    sig_clean       = _has([r'\bclean\b', r'duplicat', r'drop.*row', r'remove.*null', r'inconsistenc', r'inconsistent', r'audit', r'data\s*quality', r'sanitiz'])
+    sig_ml          = _has([r'train', r'predict\s+(a\s+)?(model|classif|regress)', r'\bml\b', r'machine\s*learn', r'random\s*forest', r'classif', r'regress', r'xgboost', r'\bmodel\b'])
+    sig_cluster     = _has([r'cluster', r'segment', r'kmeans', r'k-means', r'group\s*similar', r'unsupervised'])
+    sig_pca         = _has([r'\bpca\b', r'principal\s*component', r'dimensionality\s*reduc', r'reduce\s*feature'])
+    sig_encode      = _has([r'encod', r'one.?hot', r'label\s*encod', r'dummy', r'dummies'])
+    sig_scale       = _has([r'scal', r'normaliz', r'standardiz', r'minmax', r'zscore', r'z.score'])
+    sig_skew        = _has([r'skew', r'log\s*transform', r'yeo.?johnson', r'power\s*transform', r'normalit'])
+    sig_describe    = _has([r'describ', r'summary', r'statistic', r'info\b', r'profil', r'overview', r'shape\b', r'dtypes', r'data.*report', r'full.*report', r'report.*data', r'profiling\s*report'])
+    sig_top         = _has([r'top\s*\d+', r'bottom\s*\d+', r'best\s*\d+', r'worst\s*\d+', r'highest', r'lowest', r'best', r'worst', r'rank'])
+    sig_count       = _has([r'count\b', r'how\s*many', r'frequency', r'kitne\b', r'kitna\b'])
+    sig_feature_eng = _has([r'suggest.*feature', r'feature.*engineer', r'new.*feature', r'create.*feature', r'feature.*suggest', r'feature.*importance'])
+    sig_compare     = _has([r'compar', r'contrast', r'differ', r'between', r'vs\b', r'versus'])
+    sig_eda_dashboard = _has([r'\beda\b', r'eda.*dashboard', r'automated.*eda', r'full.*eda', r'eda.*report', r'eda.*summary',
+                               r'full.*automated.*dashboard', r'generate.*full.*dashboard', r'complete.*analysis.*dashboard'])
+
+    # Broad "show/visualize/chart" intent — catches ALL chart requests regardless of language
+    sig_viz_generic = _has([
+        r'plot', r'graph', r'chart', r'visual', r'show', r'draw', r'render', r'generate\s*(a|the)?\s*(plot|chart|graph)',
+        r'dikhao', r'dikha', r'bana', r'banao', r'dekhna', r'dekho', r'dikhana',  # Hindi
+        r'wise\b',  # "category wise", "region wise"
+        r'by\s+\w+',  # "sales by region", "profit by category"
+        r'\w+\s+(ka|ki|ke)\s+\w+',  # Hindi genitive
+        r'break(down)?', r'breakdown', r'analys', r'insight'
+    ])
+
+    # ─── STEP D: Route to Code Generator ─────────────────────────────────────────
+    # Priority: specific operations > ML > visualization type > generic viz with columns
+    # NEVER fall to generic profile if columns were matched.
+
+    def _make_filter_snippet(df_var_name="plot_df"):
+        if year_filter:
+            yr_col, yr_val = year_filter
+            return (
+                f"\n# Filter for year {yr_val}\n"
+                f"{df_var_name} = df[df['{yr_col}'] == {yr_val}].copy()\n"
+                f"if {df_var_name}.empty:\n"
+                f"    {df_var_name} = df.copy()  # fallback if year not found\n"
+            ), df_var_name
+        return "", "df"
+
+    def _best_cat_col():
+        """Pick best categorical groupby column when none matched from query."""
+        if cat_matched:
+            return cat_matched[0]
+        status_keys = ['processing', 'status', 'order', 'pending', 'shipped', 'delivered', 'cancelled']
+        if any(k in query_raw.lower() for k in status_keys):
+            for col in df.columns:
+                if any(k in str(col).lower() for k in ['status', 'state', 'stage', 'phase']) and df[col].nunique() <= 50:
+                    return col
+
+        priority_keys = ['category', 'courier', 'gender', 'region', 'segment', 'product', 'city', 'state',
+                         'country', 'type', 'status', 'payment', 'month', 'year', 'quarter']
+        for k in priority_keys:
+            for col in df.columns:
+                if k in col.lower() and 2 <= df[col].nunique() <= 50:
+                    return col
+
+        # Filter out high-cardinality ID/Name columns (nunique > 50 or id/code in column name)
+        valid_cats = []
+        for col in df.select_dtypes(include=['object', 'category']).columns:
+            col_l = str(col).lower()
+            if any(id_kw in col_l for id_kw in ['id', 'uuid', 'code', 'hash', 'num', 'name']):
+                continue
+            if 2 <= df[col].nunique() <= 50:
+                valid_cats.append(col)
+
+        if valid_cats:
+            return valid_cats[0]
+
+        # Fallback to any string column with 2 <= nunique <= 50
+        for col in df.select_dtypes(include=['object', 'category']).columns:
+            if 2 <= df[col].nunique() <= 50:
+                return col
+
+        cat_cols = list(df.select_dtypes(include=['object', 'category']).columns)
+        return cat_cols[0] if cat_cols else df.columns[0]
+
+    def _best_num_col(exclude=None):
+        """Pick best numeric column."""
+        if num_matched:
+            return next((c for c in num_matched if c != exclude), num_matched[0])
+        priority_keys = ['sale', 'revenue', 'profit', 'amount', 'price', 'cost', 'total', 'quantity', 'count', 'age']
+        for k in priority_keys:
+            for col in df.columns:
+                if k in col.lower() and col != exclude and pd.api.types.is_numeric_dtype(df[col]):
+                    return col
+        num_cols = list(df.select_dtypes(include=[np.number]).columns)
+        num_cols = [c for c in num_cols if c != exclude]
+        return num_cols[0] if num_cols else df.columns[-1]
+
+    def _dual_bar_code(y1, y2, x_col, filter_snip, df_var):
+        return f"""import seaborn as sns
 import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
-
-# 1. Dynamic Feature (X) and Target (y) Extraction
-target_col = '{target}'
-X = pd.get_dummies(df.drop(columns=[target_col]), drop_first=True, dtype=int).fillna(0)
-y = df[target_col]
-
-# 2. 80/20 Train-Test Split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# 3. Model Training
-model = {model_cls}(n_estimators=100, max_depth=12, random_state=42)
-model.fit(X_train, y_train)
-score = model.score(X_test, y_test)
-
-# 4. Top Feature Importances Visualization
-importances = pd.Series(model.feature_importances_, index=X.columns).nlargest(8)
-plt.figure(figsize=(10, 5), dpi=150)
-sns.set_theme(style="whitegrid")
-sns.barplot(x=importances.values, y=importances.index, palette='viridis')
-plt.title(f'Random Forest Top Feature Importances (Model Score: {{round(score*100, 2)}}%)', fontsize=13, fontweight='bold', pad=12)
-plt.xlabel('Importance Score', fontweight='bold')
+import pandas as pd, numpy as np
+{filter_snip}
+grouped = {df_var}.groupby('{x_col}')[['{y1}', '{y2}']].sum().reset_index()
+grouped = grouped.sort_values(by='{y1}', ascending=False).head(15)
+x = np.arange(len(grouped['{x_col}']))
+width = 0.38
+fig, ax = plt.subplots(figsize=(13, 6), dpi=150)
+sns.set_theme(style='whitegrid')
+bars1 = ax.bar(x - width/2, grouped['{y1}'], width, label='{y1}', color='#0284c7', edgecolor='black', linewidth=0.6)
+bars2 = ax.bar(x + width/2, grouped['{y2}'], width, label='{y2}', color='#10b981', edgecolor='black', linewidth=0.6)
+for bar in bars1:
+    h = bar.get_height()
+    if h > 0: ax.annotate(f'{{h:,.0f}}', xy=(bar.get_x() + bar.get_width()/2, h), xytext=(0,4), textcoords='offset points', ha='center', fontsize=7, fontweight='bold')
+for bar in bars2:
+    h = bar.get_height()
+    if h > 0: ax.annotate(f'{{h:,.0f}}', xy=(bar.get_x() + bar.get_width()/2, h), xytext=(0,4), textcoords='offset points', ha='center', fontsize=7, fontweight='bold')
+ax.set_xticks(x)
+ax.set_xticklabels(grouped['{x_col}'].astype(str), rotation=35, ha='right', fontsize=9, fontweight='bold')
+ax.set_title('{y1} vs {y2} by {x_col}', fontsize=14, fontweight='bold', pad=14)
+ax.set_ylabel('Value', fontsize=11, fontweight='bold')
+ax.legend(fontsize=10, frameon=True)
 plt.tight_layout()
 plt.show()
-print(f'[✓ SUCCESS] Trained {model_cls} on target \"{{target_col}}\"! Evaluation Score: {{round(score * 100, 2)}}%')"""
-            response_text = f"Analyzed active dataset: Selected target variable '{target}' ({model_cls}). Executing Machine Learning Training Pipeline:"
+print(f'[SUCCESS] Rendered {y1} & {y2} comparison chart by {x_col}!')"""
 
-    # 9. General Bar Chart / GroupBy Aggregation (Default Dynamic Plot Fallback)
+    def _single_bar_code(y_col, x_col, filter_snip, df_var):
+        is_avg_metric = any(k in y_col.lower() for k in ['age', 'rating', 'score', 'percent', 'ratio', 'avg', 'mean'])
+        agg_func = "mean" if is_avg_metric else "sum"
+        agg_label = "Average" if is_avg_metric else "Total"
+        fmt_code = "{w:,.1f}" if is_avg_metric else "{w:,.0f}"
+
+        return f"""import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+{filter_snip}
+grouped = {df_var}.groupby('{x_col}')['{y_col}'].{agg_func}().reset_index().sort_values(by='{y_col}', ascending=False).head(15)
+plt.figure(figsize=(11, 6), dpi=150)
+sns.set_theme(style='whitegrid')
+ax = sns.barplot(data=grouped, x='{y_col}', y='{x_col}', palette='Blues_r')
+plt.title('{agg_label} {y_col} by {x_col}', fontsize=14, fontweight='bold', pad=14)
+plt.xlabel('{agg_label} {y_col}', fontsize=11, fontweight='bold')
+plt.ylabel('{x_col}', fontsize=11, fontweight='bold')
+for p in ax.patches:
+    w = p.get_width()
+    if w > 0:
+        ax.annotate(f'{fmt_code}', (w, p.get_y() + p.get_height()/2.), ha='left', va='center', xytext=(5,0), textcoords='offset points', fontsize=9, fontweight='bold')
+plt.tight_layout()
+plt.show()
+print(f'[SUCCESS] Rendered {agg_label} {y_col} by {x_col} Bar Chart!')"""
+
+    # ── Route 0: Tabular Listing & Summary ──
+    if sig_list and df is not None:
+        matched_cols = [c for c in (cat_matched + num_matched + date_matched) if c in df.columns]
+        cols_to_show = matched_cols if matched_cols else list(df.columns[:6])
+        code = f"""import pandas as pd
+cols = [c for c in {cols_to_show} if c in df.columns]
+print("=== Data Preview & Listing ===")
+print(df[cols].head(25).to_string(index=False))
+for col in cols[:3]:
+    if not pd.api.types.is_numeric_dtype(df[col]):
+        print(f"\\n=== Value Counts Distribution: {{col}} ===")
+        print(df[col].value_counts().to_string())
+"""
+        response_text = f"Tabular data listing and frequency breakdown for **{', '.join(cols_to_show)}**:"
+
+    # ── Route 1: Specific Cleaning / Imputation ──
+    elif sig_impute or sig_clean:
+        if df is not None:
+            if sig_clean and not sig_impute:
+                code = template_engine.render_cleaning(is_audit=True)
+                response_text = "🧹 **Data Quality & Inconsistency Audit Pipeline** executed — duplicates, missing values, anomalies, and text formatting checked:"
+            else:
+                target_col = (num_matched + cat_matched)[0] if (num_matched + cat_matched) else None
+                if not target_col:
+                    null_series = df.isna().sum()
+                    null_cols = null_series[null_series > 0]
+                    target_col = null_cols.index[0] if not null_cols.empty else df.columns[0]
+                null_count = int(df[target_col].isnull().sum())
+                if pd.api.types.is_numeric_dtype(df[target_col]):
+                    s = float(pd.to_numeric(df[target_col], errors='coerce').dropna().skew()) if len(df[target_col].dropna()) > 3 else 0.0
+                    strategy = "median" if abs(s) > 1.0 else "mean"
+                    code = template_engine.render_cleaning(target_col=target_col, strategy=strategy, null_count=null_count, skewness=s)
+                    response_text = f"Column '{target_col}' has {null_count} missing values → applying **{strategy.capitalize()} Imputation** (skewness={s:.2f}):"
+                else:
+                    code = template_engine.render_cleaning(target_col=target_col, strategy="mode", null_count=null_count)
+                    response_text = f"Categorical column '{target_col}' has {null_count} missing values → applying **Mode Imputation**:"
+
+    # ── Route 2: Encoding ──
+    elif sig_encode:
+        if df is not None:
+            col = (cat_matched + [c for c in df.select_dtypes(include=['object']).columns])[0] if (cat_matched or len(df.select_dtypes(include=['object']).columns)) else df.columns[0]
+            code = template_engine.render_encoding_scaling(mode="one_hot", col=col)
+            response_text = f"Applying **One-Hot Encoding** to categorical column '{col}':"
+
+    # ── Route 3: Scaling / Normalization ──
+    elif sig_scale:
+        if df is not None:
+            col = num_matched[0] if num_matched else _best_num_col()
+            code = template_engine.render_encoding_scaling(mode="standard_scale", col=col)
+            response_text = f"Applying **StandardScaler** to numeric column '{col}':"
+
+    # ── Route 4: Skewness / Log Transform ──
+    elif sig_skew:
+        if df is not None:
+            col = num_matched[0] if num_matched else _best_num_col()
+            code = template_engine.render_encoding_scaling(mode="log_transform", col=col)
+            response_text = f"Applying **Log Transform** to reduce skewness in '{col}':"
+
+    # ── Route 5: Outlier / Boxplot ──
+    elif sig_box:
+        if df is not None:
+            y_col = num_matched[0] if num_matched else _best_num_col()
+            x_col = cat_matched[0] if cat_matched else None
+            code = template_engine.render_outlier_boxplot(y_col=y_col, x_col=x_col)
+            response_text = f"IQR Outlier analysis boxplot for **{y_col}**:"
+
+    # ── Route 6: Histogram / Distribution ──
+    elif sig_hist:
+        if df is not None:
+            col = num_matched[0] if num_matched else _best_num_col()
+            code = template_engine.render_distribution_hist(col=col)
+            response_text = f"Distribution histogram + KDE curve for **{col}** (skewness: {df[col].skew():.2f}):"
+
+    # ── Route 7: Correlation Heatmap ──
+    elif sig_heatmap:
+        if df is not None:
+            num_cols_h = list(df.select_dtypes(include=[np.number]).columns[:12])
+            code = template_engine.render_correlation_heatmap(num_cols=num_cols_h)
+            response_text = "Seaborn Correlation Heatmap for all numeric features:"
+
+    # ── Route 8: Scatter Plot ──
+    elif sig_scatter:
+        if df is not None:
+            x_col = num_matched[0] if len(num_matched) >= 1 else _best_num_col()
+            y_col = num_matched[1] if len(num_matched) >= 2 else _best_num_col(exclude=x_col)
+            hue_col = cat_matched[0] if cat_matched else None
+            code = template_engine.render_scatter_plot(x_col=x_col, y_col=y_col, hue_col=hue_col)
+            response_text = f"Scatter plot — **{y_col}** vs **{x_col}**:"
+
+    # ── Route 9: Line / Time-Series / Forecast ──
+    elif sig_forecast or sig_line or date_matched:
+        if df is not None:
+            y_col = num_matched[0] if num_matched else _best_num_col()
+
+            # Detect if the query is asking for FORECAST specifically (uses dedicated sig_forecast)
+            is_forecast = sig_forecast
+
+            # Try to find a real datetime column in the dataset
+            dt_col = None
+            for col in df.columns:
+                if any(k in col.lower() for k in ['date', 'time', 'timestamp']):
+                    try:
+                        test = pd.to_datetime(df[col].dropna().iloc[:5], errors='raise')
+                        dt_col = col
+                        break
+                    except Exception:
+                        continue
+
+            if is_forecast and dt_col:
+                # Determine forecast horizon (default 30 days)
+                horizon_match = re.search(r'(\d+)\s*day', query, re.IGNORECASE)
+                horizon = int(horizon_match.group(1)) if horizon_match else 30
+                code = template_engine.render_forecast(dt_col=dt_col, y_col=y_col, horizon=horizon, is_forecast=True)
+                response_text = f"📈 **{horizon}-Day Time Series Forecast** — {y_col} historical trend + future prediction with confidence band:"
+
+            elif dt_col and not is_forecast:
+                # Regular time-series line chart over actual dates (monthly aggregation)
+                code = template_engine.render_forecast(dt_col=dt_col, y_col=y_col, is_forecast=False)
+                response_text = f"📅 Monthly **{y_col}** trend line chart over time:"
+
+            else:
+                # Fallback: category-based trend
+                x_col = cat_matched[0] if cat_matched else _best_cat_col()
+                code = f"""import seaborn as sns, matplotlib.pyplot as plt
+grouped = df.groupby('{x_col}')['{y_col}'].mean().reset_index().sort_values('{y_col}', ascending=True)
+plt.figure(figsize=(11, 5), dpi=150)
+sns.set_theme(style='whitegrid')
+sns.lineplot(data=grouped, x='{x_col}', y='{y_col}', marker='o', linewidth=2.5, color='#10b981')
+plt.title('Trend: {y_col} by {x_col}', fontsize=14, fontweight='bold', pad=14)
+plt.xlabel('{x_col}', fontsize=11, fontweight='bold')
+plt.ylabel('Avg {y_col}', fontsize=11, fontweight='bold')
+plt.xticks(rotation=30, ha='right', fontsize=9)
+plt.tight_layout()
+plt.show()
+print(f'[SUCCESS] Category trend chart for {y_col} by {x_col}!')"""
+                response_text = f"Category trend — **{y_col}** by **{x_col}**:"
+
+    # ── Route 10: Pie / Share Chart ──
+    elif sig_pie:
+        if df is not None:
+            col = cat_matched[0] if cat_matched else _best_cat_col()
+            code = f"""import matplotlib.pyplot as plt
+top = df['{col}'].value_counts().head(7)
+plt.figure(figsize=(8, 6), dpi=150)
+colors = ['#0284c7','#0ea5e9','#38bdf8','#7dd3fc','#bae6fd','#10b981','#34d399']
+plt.pie(top.values, labels=top.index, autopct='%1.1f%%', startangle=140, colors=colors, textprops={{'fontsize':10,'weight':'bold'}})
+plt.title('Share Breakdown of {col}', fontsize=14, fontweight='bold', pad=14)
+plt.tight_layout()
+plt.show()
+print(f'[SUCCESS] Pie chart for {col}!')"""
+            response_text = f"Pie chart — share breakdown of **{col}**:"
+
+    # ── Route 11: ML Training & Feature Engineering / Suggestion ──
+    elif sig_ml or sig_feature_eng:
+        if df is not None:
+            if sig_feature_eng:
+                code = template_engine.render_ml_training(target='Profit_Margin', is_feature_eng=True)
+                response_text = "💡 **Automated Feature Engineering & Feature Suggestion Pipeline** executed:"
+            else:
+                target = (num_matched + cat_matched)[0] if (num_matched + cat_matched) else df.columns[-1]
+                is_cat = not pd.api.types.is_numeric_dtype(df[target]) or df[target].nunique() < 15
+                model_cls = "RandomForestClassifier" if is_cat else "RandomForestRegressor"
+                code = template_engine.render_ml_training(target=target, model_cls=model_cls, is_feature_eng=False)
+                response_text = f"Training **{model_cls}** with target=**{target}** (high-cardinality ID columns safely excluded):"
+
+    # ── Route 12: Clustering ──
+    elif sig_cluster:
+        if df is not None:
+            code = template_engine.render_kmeans_elbow()
+            response_text = "KMeans Clustering — Elbow Curve to find optimal number of clusters:"
+
+    # ── Route 13: PCA ──
+    elif sig_pca:
+        if df is not None:
+            code = template_engine.render_pca()
+            response_text = "PCA 2D Projection — dimensionality reduction to 2 principal components:"
+
+    # ── Route 14: Top N / Count chart ──
+    elif sig_top or sig_count:
+        if df is not None:
+            n = 10
+            m = re.search(r'top\s*(\d+)', query)
+            if m: n = int(m.group(1))
+            col = cat_matched[0] if cat_matched else _best_cat_col()
+            val_col = num_matched[0] if num_matched else None
+            code = template_engine.render_top_n_bar(col=col, val_col=val_col, n=n)
+            if val_col:
+                response_text = f"Top **{n}** **{col}** by **{val_col}**:"
+            else:
+                response_text = f"Top **{n}** values in **{col}** by count:"
+
+    # ── Route 15: Dataset describe/info / Full Profiling Report ──
+    elif sig_describe:
+        if df is not None:
+            code = template_engine.render_data_profiling()
+            response_text = "📊 **Full Data Profiling Report** — shape, missing values, duplicates, numeric & categorical stats:"
+
+    # ── Route 15B: Full Automated 4-Panel EDA Dashboard ──
+    elif sig_eda_dashboard:
+        if df is not None:
+            best_cat = _best_cat_col()
+            best_num1 = _best_num_col()
+            best_num2 = _best_num_col(exclude=best_num1)
+            code = template_engine.render_eda_dashboard(best_cat=best_cat, best_num1=best_num1, best_num2=best_num2)
+            response_text = "📊 **Full Automated EDA Dashboard** — 4-panel multi-feature analysis (Categorical Distribution, Numeric Histogram, Feature Correlation & Bivariate Boxplot):"
+
+    # ── Route 16: Generic viz OR any column matched → ALWAYS generate a chart ──
+    elif sig_viz_generic or num_matched or cat_matched:
+        if df is not None:
+            filter_snip, df_var = _make_filter_snippet()
+
+            if len(num_matched) >= 2:
+                # 2 numeric columns mentioned → dual bar chart
+                y1 = num_matched[0]
+                y2 = num_matched[1]
+                x_col = _best_cat_col()
+                code = _dual_bar_code(y1, y2, x_col, filter_snip, df_var)
+                response_text = f"Side-by-side comparison: **{y1}** and **{y2}** grouped by **{x_col}**:"
+
+            elif num_matched:
+                # 1 numeric → bar chart grouped by best categorical
+                y_col = num_matched[0]
+                x_col = _best_cat_col()
+                code = _single_bar_code(y_col, x_col, filter_snip, df_var)
+                response_text = f"Total **{y_col}** by **{x_col}**:"
+
+            elif cat_matched:
+                # Only categorical → value count bar chart
+                col = cat_matched[0]
+                code = template_engine.render_top_n_bar(col=col, n=15)
+                response_text = f"Category distribution bar chart for **{col}**:"
+
+            else:
+                # No specific column matched -> AUTO-SELECT BEST COLUMNS for visual analysis
+                y_col = _best_num_col()
+                x_col = _best_cat_col()
+                if y_col and x_col:
+                    code = _single_bar_code(y_col, x_col, filter_snip, df_var)
+                    response_text = f"Auto-selected primary key metrics (**{y_col}** by **{x_col}**) for visual analysis:"
+                elif y_col:
+                    code = template_engine.render_distribution_hist(col=y_col)
+                    response_text = f"Visualizing distribution of primary numeric feature **{y_col}**:"
+                elif x_col:
+                    code = template_engine.render_top_n_bar(col=x_col, n=15)
+                    response_text = f"Visualizing categories in **{x_col}**:"
+                else:
+                    code = "print('=== Dataset Summary ===')\nprint(df.describe(include='all').T.to_string())"
+                    response_text = "Dataset overview and descriptive statistics:"
+
+        else:
+            code = "print('Please load a dataset first!')"
+            response_text = "Load a dataset first to generate charts."
+
+    # ── Route 17: General Data Science AI Fallback — Auto-explore dataset ──
     else:
         if df is not None:
-            if num_matched and cat_matched:
-                y_col = num_matched[0]
-                x_col = cat_matched[0]
-            elif num_matched:
-                y_col = num_matched[0]
-                cat_cols = list(df.select_dtypes(include=['object', 'category']).columns)
-                x_col = cat_cols[0] if cat_cols else df.columns[0]
-            elif cat_matched:
-                x_col = cat_matched[0]
-                num_cols = list(df.select_dtypes(include=[np.number]).columns)
-                y_col = num_cols[0] if num_cols else df.columns[0]
-            else:
-                cat_cols = list(df.select_dtypes(include=['object', 'category']).columns)
-                num_cols = list(df.select_dtypes(include=[np.number]).columns)
-                x_col = cat_cols[0] if cat_cols else df.columns[0]
-                y_col = num_cols[0] if num_cols else (df.columns[1] if len(df.columns) > 1 else df.columns[0])
+            y_col = _best_num_col()
+            x_col = _best_cat_col()
+            if y_col and x_col:
+                code = f"""import pandas as pd, numpy as np, seaborn as sns, matplotlib.pyplot as plt
 
-            if pd.api.types.is_numeric_dtype(df[y_col]):
-                code = f"""import seaborn as sns
-import matplotlib.pyplot as plt
+print('=' * 60)
+print('         AUTOMATED DATA SCIENCE EXPLORATION & ANALYSIS')
+print('=' * 60)
+print(f'Dataset Shape: {{df.shape[0]:,}} rows × {{df.shape[1]}} columns')
+print(f'Primary Numeric Metric: {y_col}')
+print(f'Primary Category Feature: {x_col}')
 
-grouped = df.groupby('{x_col}')['{y_col}'].sum().reset_index().sort_values(by='{y_col}', ascending=False).head(15)
-plt.figure(figsize=(10, 6), dpi=150)
-sns.set_theme(style="whitegrid")
-ax = sns.barplot(data=grouped, x='{y_col}', y='{x_col}', palette='Blues_r')
-plt.title('Total {y_col} by {x_col}', fontsize=14, fontweight='bold', pad=14)
-plt.xlabel('{y_col}', fontsize=11, fontweight='bold')
-plt.ylabel('{x_col}', fontsize=11, fontweight='bold')
-
+plt.figure(figsize=(11, 6), dpi=150)
+sns.set_theme(style='whitegrid')
+top_df = df.groupby('{x_col}')['{y_col}'].sum().nlargest(12).reset_index()
+ax = sns.barplot(data=top_df, x='{y_col}', y='{x_col}', palette='crest')
+plt.title('Automated Overview: {y_col} by {x_col}', fontsize=14, fontweight='bold', pad=14)
 for p in ax.patches:
-    width = p.get_width()
-    if width > 0:
-        ax.annotate(f'{{width:,.0f}}', (width, p.get_y() + p.get_height() / 2.),
-                    ha='left', va='center', xytext=(5, 0), textcoords='offset points',
-                    fontsize=9, fontweight='bold', color='#0f172a')
-
+    w = p.get_width()
+    if w > 0:
+        ax.annotate(f'{{w:,.0f}}', (w, p.get_y()+p.get_height()/2.), ha='left', va='center', xytext=(5,0), textcoords='offset points', fontsize=9, fontweight='bold')
 plt.tight_layout()
 plt.show()
-print(f'[✓ SUCCESS] Rendered Total {y_col} by {x_col} Bar Chart!')"""
-                response_text = f"Analyzed active dataset: Aggregated Total '{y_col}' grouped by '{x_col}':"
+
+print('\\nDescriptive Summary of Key Numeric Columns:')
+print(df.select_dtypes(include='number').describe().T[['mean', 'std', 'min', 'max']].round(2).to_string())
+print('\\n[SUCCESS] Automated Data Science Analysis complete!')"""
+                response_text = f"📊 **Automated Data Science Analysis** — Exploring **{y_col}** by **{x_col}** across dataset:"
             else:
-                code = f"""import seaborn as sns
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(10, 6), dpi=150)
-sns.set_theme(style="whitegrid")
-top_vals = df['{x_col}'].value_counts().head(12)
-ax = sns.barplot(x=top_vals.values, y=top_vals.index, palette='Blues_r')
-plt.title('Category Distribution: {x_col}', fontsize=14, fontweight='bold', pad=14)
-plt.xlabel('Count', fontsize=11, fontweight='bold')
-plt.ylabel('{x_col}', fontsize=11, fontweight='bold')
-
-for p in ax.patches:
-    width = p.get_width()
-    if width > 0:
-        ax.annotate(f'{{int(width):,}}', (width, p.get_y() + p.get_height() / 2.),
-                    ha='left', va='center', xytext=(5, 0), textcoords='offset points',
-                    fontsize=9, fontweight='bold', color='#0f172a')
-
-plt.tight_layout()
-plt.show()
-print(f'[✓ SUCCESS] Rendered Category Count Bar Chart for {x_col}!')"""
-                response_text = f"Analyzed active dataset: Value counts bar chart for category '{x_col}':"
+                code = f"""print('=== AUTOMATED DATASET OVERVIEW ===')
+print('Shape:', df.shape)
+print('\\nData Types:')
+print(df.dtypes)
+print('\\nDescriptive Statistics:')
+print(df.describe(include='all').T.to_string())
+print('[SUCCESS] Dataset exploration executed successfully!')"""
+                response_text = "📊 **Automated Dataset Exploration** executed successfully:"
         else:
-            code = "# Master Data Science Environment Ready\nimport pandas as pd\nimport numpy as np\nprint('DataPilot OS AI Engine Active!')"
-            response_text = "DataPilot OS AI Engine Active!"
+            response_text = "Load a dataset first, then ask me anything — charts, analysis, ML models, cleaning, etc."
+            code = "print('No dataset loaded. Use Open File to load a CSV/Excel/Parquet file.')"
 
-        rules_found = [r for r in ds_engine.knowledge_db.get("rules", []) if any(w in r.get("method", "").lower() or w in r.get("category", "").lower() for w in query.split())]
-        if rules_found:
-            r = rules_found[0]
-            m_name = r.get('method', 'DS Method')
-            how = r.get('how_to_apply', '')
-            response_text = f"📌 **{m_name}** ({r.get('category', 'Data Science')})\n• **When to Apply**: {r.get('when_to_apply', '')}\n• **Why to Apply**: {r.get('why_to_apply', '')}"
-            code = f"# {m_name} Code\n{how}\nprint('[✓ SUCCESS] Executed {m_name}!')"
-
-        elif df is not None:
-            dataset_name = str(state._source_path).replace("\\", "/").split("/")[-1] if getattr(state, '_source_path', None) else "Active Dataset"
-            response_text = f"Master AI Brain ready for dataset '{dataset_name}' ({len(df):,} rows × {len(df.columns)} columns). Ask me about Skewness Imputations, IQR Outliers, Correlation Heatmaps, One-Hot Encodings, or Random Forest ML Models."
-            code = f"# Dataset Quick Profile\nprint('Dataset Shape:', df.shape)\nprint('Missing Values:', df.isna().sum().to_dict())\nprint('Numeric Features:', list(df.select_dtypes(include='number').columns))"
-        else:
-            response_text = "I am your DataPilot OS Master AI Engine (trained on 434 pages of Data Science PDF Knowledge Rules). Ask me any question on Data Wrangling, Pandas, Matplotlib, Seaborn, or Scikit-Learn Machine Learning."
-            code = "# Master Data Science Environment Ready\nimport pandas as pd\nimport numpy as np\nprint('DataPilot OS AI Engine Active!')"
-
-    return {
+    res_payload = {
         "success": True,
         "response": response_text,
         "answer": response_text,
-        "code": code
+        "code": code,
+        "artifacts": {
+            "code": [code] if code else [],
+            "plots": [],
+            "tables": [],
+            "reports": [response_text] if response_text else []
+        }
     }
+    if hasattr(ds_engine, 'execution_cache') and ds_engine.execution_cache:
+        ds_engine.execution_cache.set(df, query_raw, res_payload)
+    return res_payload
+
 
 
 
@@ -1547,8 +2014,7 @@ terminal_exec_lock = threading.Lock()
 
 @app.post("/api/terminal/execute")
 def execute_terminal_code(req: CodeExecuteRequest):
-    """Executes Python code safely, capturing stdout print outputs, dataframe mutations, and matplotlib figures."""
-    # 1. AST Security Validation
+    """Executes Python code safely in isolated subprocess, capturing stdout print outputs, dataframe mutations, and matplotlib figures."""
     validate_python_code_security(req.code)
 
     with terminal_exec_lock:
@@ -1556,106 +2022,62 @@ def execute_terminal_code(req: CodeExecuteRequest):
             has_df = bool(state.active_step_id and state.active_step_id in state.df_states)
             df = state.df_states[state.active_step_id].copy() if has_df else pd.DataFrame({'Feature_A': [10, 20, 30], 'Feature_B': [100, 200, 300]})
 
-        local_vars = {"df": df, "pd": pd, "np": np, "plt": plt}
-        try:
-            import seaborn as sns
-            local_vars["sns"] = sns
-        except ImportError:
-            pass
-
-        # Clear previous figures
-        plt.close('all')
+        res = execution_engine.execute_code_subprocess(req.code, df=df, timeout=30)
         
-        # Capture stdout print statements
-        stdout_buffer = io.StringIO()
-        old_stdout = sys.stdout
-        sys.stdout = stdout_buffer
-
-        try:
-            exec(req.code, {}, local_vars)
-            sys.stdout = old_stdout
-            captured_output = stdout_buffer.getvalue().strip()
-
-            # Capture figure if created by matplotlib/seaborn
-            plot_image_b64 = None
-            if plt.get_fignums():
-                buf = io.BytesIO()
-                plt.savefig(buf, format='png', bbox_inches='tight', dpi=150)
-                buf.seek(0)
-                plot_image_b64 = f"data:image/png;base64,{base64.b64encode(buf.getvalue()).decode('utf-8')}"
-                plt.close('all')
-
-            modified_df = local_vars.get("df", df)
-            if not isinstance(modified_df, pd.DataFrame):
-                for val in local_vars.values():
-                    if isinstance(val, pd.DataFrame):
-                        modified_df = val
-                        break
-
-            new_step_id = str(uuid.uuid4())
-            if has_df:
-                state.add_state(new_step_id, modified_df)
-                profile = get_df_profile(modified_df)
-                row_cnt = len(modified_df)
-                col_cnt = len(modified_df.columns)
-                
-                # Record terminal operation in pipeline steps for 100% sync
-                step_meta = {
-                    "id": new_step_id,
-                    "parent_id": state.active_step_id,
-                    "operation_id": "terminal_execute",
-                    "parameters": {"code": req.code},
-                    "pandas_code": req.code,
-                    "sql_code": "-- Terminal execution",
-                    "row_count": row_cnt,
-                    "column_count": col_cnt,
-                    "timestamp": pd.Timestamp.now().isoformat()
-                }
-                with state.lock:
-                    state.pipeline_steps.append(step_meta)
-            else:
-                profile = []
-                row_cnt = len(modified_df)
-                col_cnt = len(modified_df.columns)
-
-            return {
-                "success": True,
-                "step_id": new_step_id,
-
-                "message": "Executed code successfully",
-                "output": captured_output if captured_output else "Code executed cleanly with 0 errors.",
-                "plot_image": plot_image_b64,
-                "row_count": row_cnt,
-                "column_count": col_cnt,
-                "schema": profile,
-                "columns": profile
-            }
-        except HTTPException:
-            sys.stdout = old_stdout
-            plt.close('all')
-            raise
-        except Exception as e:
-            sys.stdout = old_stdout
-            plt.close('all')
-            import traceback
-            tb_str = traceback.format_exc()
+        if not res.get("success"):
             return {
                 "success": False,
                 "step_id": state.active_step_id,
-                "message": f"Execution error: {str(e)}",
-                "output": f"Python Execution Error:\n{tb_str}",
+                "message": res.get("error", "Execution error"),
+                "output": f"Python Execution Error:\n{res.get('error') or res.get('stderr')}",
                 "plot_image": None,
-                "row_count": len(df) if 'df' in locals() else 0,
-                "column_count": len(df.columns) if 'df' in locals() else 0,
+                "row_count": len(df),
+                "column_count": len(df.columns),
                 "schema": [],
                 "columns": []
             }
 
+        captured_output = (res.get("stdout") or "").strip()
+        plot_image_b64 = res.get("plot_image")
+        modified_df = res.get("dataframe") if res.get("dataframe") is not None else df
 
+        new_step_id = str(uuid.uuid4())
+        if has_df and modified_df is not None:
+            state.add_state(new_step_id, modified_df)
+            profile = get_df_profile(modified_df)
+            row_cnt = len(modified_df)
+            col_cnt = len(modified_df.columns)
+            
+            step_meta = {
+                "id": new_step_id,
+                "parent_id": state.active_step_id,
+                "operation_id": "terminal_execute",
+                "parameters": {"code": req.code},
+                "pandas_code": req.code,
+                "sql_code": "-- Terminal execution",
+                "row_count": row_cnt,
+                "column_count": col_cnt,
+                "timestamp": pd.Timestamp.now().isoformat()
+            }
+            with state.lock:
+                state.pipeline_steps.append(step_meta)
+        else:
+            profile = []
+            row_cnt = len(modified_df) if modified_df is not None else 0
+            col_cnt = len(modified_df.columns) if modified_df is not None else 0
 
-import io
-import base64
-import sys
+        return {
+            "success": True,
+            "step_id": new_step_id,
+            "message": "Executed code successfully",
+            "output": captured_output if captured_output else "Code executed cleanly with 0 errors.",
+            "plot_image": plot_image_b64,
+            "row_count": row_cnt,
+            "column_count": col_cnt,
+            "schema": profile,
+            "columns": profile
+        }
+
 
 @app.post("/api/notebook/execute")
 def execute_notebook_legacy(req: CodeExecuteRequest):
@@ -1665,94 +2087,26 @@ def execute_notebook_legacy(req: CodeExecuteRequest):
         
     df = state.df_states[state.active_step_id]
     validate_python_code_security(req.code)
-    
-    # Configure headless matplotlib
-    try:
-        import matplotlib
-        matplotlib.use('Agg')
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-        plt.clf()
-        plt.close('all')
-        has_mpl = True
-    except Exception:
-        has_mpl = False
-        plt = None
-        sns = None
-        
-    stdout_buf = io.StringIO()
-    old_stdout = sys.stdout
-    sys.stdout = stdout_buf
-    
-    local_vars = {
-        "df": df,
-        "pd": pd,
-        "np": np,
-    }
-    if has_mpl:
-        local_vars["plt"] = plt
-        local_vars["sns"] = sns
-        
-    html_table = None
-    plot_image = None
-    stdout_text = ""
-    error_text = None
-    
-    try:
-        exec(req.code, {}, local_vars)
-        
-        # 1. Capture Matplotlib / Seaborn plots
-        if has_mpl and plt:
-            fig = plt.gcf()
-            if fig and (fig.get_axes() or len(fig.axes) > 0):
-                buf = io.BytesIO()
-                fig.savefig(buf, format='png', bbox_inches='tight', dpi=100, facecolor='#0f172a', edgecolor='none')
-                buf.seek(0)
-                img_b64 = base64.b64encode(buf.read()).decode('utf-8')
-                plot_image = f"data:image/png;base64,{img_b64}"
-                plt.close('all')
-                
-        stdout_text = stdout_buf.getvalue()
-        
-        # 2. Check for DataFrame HTML output evaluation
-        lines = [l.strip() for l in req.code.strip().split('\n') if l.strip() and not l.strip().startswith('#')]
-        if lines:
-            last_line = lines[-1]
-            if not ('=' in last_line or 'import' in last_line or last_line.startswith('print') or last_line.startswith('plt.') or last_line.startswith('sns.')):
-                try:
-                    eval_res = eval(last_line, {}, local_vars)
-                    if isinstance(eval_res, pd.DataFrame):
-                        html_table = eval_res.to_html(classes="jupyter-df-table", border=0)
-                    elif isinstance(eval_res, pd.Series):
-                        html_table = eval_res.to_frame().to_html(classes="jupyter-df-table", border=0)
-                    elif eval_res is not None and not stdout_text:
-                        stdout_text = str(eval_res)
-                except Exception:
-                    pass
-                    
-        if not html_table:
-            if 'df.head' in req.code:
-                html_table = df.head().to_html(classes="jupyter-df-table", border=0)
-            elif 'df.tail' in req.code:
-                html_table = df.tail().to_html(classes="jupyter-df-table", border=0)
-            elif 'df.describe' in req.code:
-                html_table = df.describe().to_html(classes="jupyter-df-table", border=0)
-                
-    except Exception as e:
-        error_text = f"{type(e).__name__}: {str(e)}"
-    finally:
-        sys.stdout = old_stdout
-        if has_mpl and plt:
-            plt.close('all')
-            
-    return {
-        "success": error_text is None,
-        "stdout": stdout_text,
-        "html_table": html_table,
-        "plot_image": plot_image,
-        "error": error_text
-    }
 
+    res = execution_engine.execute_code_subprocess(req.code, df=df, timeout=30)
+    
+    html_table = None
+    if res.get("dataframe") is not None and not res["dataframe"].empty:
+        out_df = res["dataframe"]
+        if 'df.head' in req.code:
+            html_table = out_df.head().to_html(classes="jupyter-df-table", border=0)
+        elif 'df.tail' in req.code:
+            html_table = out_df.tail().to_html(classes="jupyter-df-table", border=0)
+        elif 'df.describe' in req.code:
+            html_table = out_df.describe().to_html(classes="jupyter-df-table", border=0)
+
+    return {
+        "success": res.get("success", False),
+        "stdout": res.get("stdout", ""),
+        "html_table": html_table,
+        "plot_image": res.get("plot_image"),
+        "error": res.get("error")
+    }
 
 
 @app.post("/api/notebook/execute_cell")
@@ -1764,110 +2118,27 @@ def execute_notebook_cell(req: NotebookCellRequest):
         active_df = state.df_states[state.active_step_id]
 
     code = req.code or ""
-    stdout_buf = io.StringIO()
-    plot_image: Optional[str] = None
-    dataframe_html: Optional[str] = None
-    result_val: Any = None
-    error_msg: Optional[str] = None
-    success: bool = True
+    validate_python_code_security(code)
 
-    if plt is not None:
-        plt.close('all')
-
-    exec_namespace = {
-        "df": active_df.copy() if active_df is not None else pd.DataFrame(),
-        "pd": pd,
-        "np": np,
-    }
-    if plt is not None:
-        exec_namespace["plt"] = plt
-
-    old_stdout = sys.stdout
-    sys.stdout = stdout_buf
-
-    try:
-        if code.strip():
-            tree = ast.parse(code)
-            if tree.body:
-                last_node = tree.body[-1]
-                if isinstance(last_node, ast.Expr):
-                    exec_body = tree.body[:-1]
-                    eval_expr = last_node.value
-
-                    if exec_body:
-                        exec_module = ast.Module(body=exec_body, type_ignores=[])
-                        exec(compile(exec_module, filename="<notebook_cell>", mode="exec"), exec_namespace)
-
-                    eval_module = ast.Expression(body=eval_expr)
-                    raw_result = eval(compile(eval_module, filename="<notebook_cell>", mode="eval"), exec_namespace)
-                else:
-                    exec_module = ast.Module(body=tree.body, type_ignores=[])
-                    exec(compile(exec_module, filename="<notebook_cell>", mode="exec"), exec_namespace)
-                    raw_result = None
-            else:
-                raw_result = None
-        else:
-            raw_result = None
-
-        # Check for DataFrame outputs
-        df_output = None
-        if isinstance(raw_result, pd.DataFrame):
-            df_output = raw_result
-        elif raw_result is None:
-            for k, v in exec_namespace.items():
-                if k not in ("pd", "np", "plt", "io", "sys", "base64", "ast") and isinstance(v, pd.DataFrame):
-                    if k != "df" or (active_df is not None and not v.equals(active_df)):
-                        df_output = v
-                        break
-
-        if df_output is not None:
-            dataframe_html = df_output.to_html(classes="dataframe table table-striped", max_rows=50)
-            records = df_output.head(50).to_dict(orient="records")
-            result_val = [{k: clean_value_for_json(v) for k, v in row.items()} for row in records]
-        elif isinstance(raw_result, pd.Series):
-            dataframe_html = raw_result.to_frame().to_html(classes="dataframe table table-striped", max_rows=50)
-            result_val = {str(k): clean_value_for_json(v) for k, v in raw_result.head(50).to_dict().items()}
-        elif raw_result is not None:
-            if isinstance(raw_result, (int, float, bool, str)):
-                result_val = raw_result
-            elif isinstance(raw_result, (np.integer, np.floating, np.bool_)):
-                result_val = clean_value_for_json(raw_result)
-            else:
-                try:
-                    json.dumps(raw_result)
-                    result_val = raw_result
-                except Exception:
-                    result_val = str(raw_result)
-
-        # Sync active dataframe in state if df was modified
-        if "df" in exec_namespace and isinstance(exec_namespace["df"], pd.DataFrame):
-            if state.active_step_id:
-                state.df_states[state.active_step_id] = exec_namespace["df"]
-
-        # Capture active matplotlib.pyplot figures
-        if plt is not None and plt.get_fignums():
-            buf = io.BytesIO()
-            plt.savefig(buf, format='png', bbox_inches='tight')
-            buf.seek(0)
-            img_b64 = base64.b64encode(buf.read()).decode('utf-8')
-            plot_image = f"data:image/png;base64,{img_b64}"
-            plt.close('all')
-
-    except Exception as e:
-        success = False
-        error_msg = str(e)
-    finally:
-        sys.stdout = old_stdout
-
-    stdout_str = stdout_buf.getvalue()
+    res = execution_engine.execute_code_subprocess(code, df=active_df, timeout=30)
+    
+    dataframe_html = None
+    result_val = None
+    if res.get("dataframe") is not None and not res["dataframe"].empty:
+        out_df = res["dataframe"]
+        dataframe_html = out_df.to_html(classes="dataframe table table-striped", max_rows=50)
+        records = out_df.head(50).to_dict(orient="records")
+        result_val = [{k: clean_value_for_json(v) for k, v in row.items()} for row in records]
+        if state.active_step_id:
+            state.df_states[state.active_step_id] = out_df
 
     return {
-        "success": success,
-        "stdout": stdout_str,
-        "plot_image": plot_image,
+        "success": res.get("success", False),
+        "stdout": res.get("stdout", ""),
+        "plot_image": res.get("plot_image"),
         "dataframe_html": dataframe_html,
         "result": result_val,
-        "error": error_msg
+        "error": res.get("error")
     }
 
 
@@ -2699,7 +2970,8 @@ def get_lab_status():
 # These accept the simple {operation, column, ...} format from the new frontend.
 
 def _translate_new_op(req_data: dict) -> tuple:
-    """Translate new frontend request format → (operation_id, parameters) for existing engine."""
+    """Translate new frontend request format -> (operation_id, parameters) for existing engine."""
+
     op = req_data.get("operation", "")
     col = req_data.get("column", "")
     mapping = {
@@ -2786,7 +3058,19 @@ def apply_operation_v2(req: OperationRequest):
         state.pipeline_steps.append(step_meta)
         state.active_step_id = step_id
 
+        # Governance & Lineage Engine Recording
+        governance_engine.add_lineage_node(
+            step_id=step_id,
+            step_name=step_meta["description"],
+            action_type=req.operation or operation_id,
+            python_code=codes.get("pandas", ""),
+            input_rows=len(df_current),
+            output_rows=len(df_new)
+        )
+        governance_engine.log_audit_event("apply_operation", f"{req.operation} on {req.column or 'dataset'}", status="success")
+
         dataset_name = os.path.basename(state._source_path) if getattr(state, "_source_path", None) else "active_dataset"
+
         learning_memory.record_learning_event(
             dataset_name=dataset_name,
             operation=req.operation or operation_id,
@@ -2923,9 +3207,64 @@ def join_datasets(req: JoinRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Join failed: {str(e)}")
 
+# ── Generic API Endpoints for 6-Engine AI Operating System ────────────────
+
+class GenericValidateRequest(BaseModel):
+    query: str
+
+class GenericExecuteRequest(BaseModel):
+    sub_engine: str
+    action: str
+    kwargs: Optional[Dict[str, Any]] = None
+
+@app.post("/api/validate")
+def validate_endpoint(req: GenericValidateRequest):
+    """Generic Validation API Endpoint."""
+    df = state.get_active_df()
+    val_res = validation_engine.validate_query(df, req.query)
+    governance_engine.log_audit_event("validate_query", req.query, status="success" if val_res.is_valid else "warning")
+    return {
+        "is_valid": val_res.is_valid,
+        "ambiguities_found": val_res.ambiguities_found,
+        "synthesized_columns": val_res.synthesized_columns,
+        "warnings": val_res.warnings,
+        "ast_safe": val_res.ast_safe
+    }
+
+@app.post("/api/execute")
+def execute_endpoint(req: GenericExecuteRequest):
+    """Generic Modular Execution Engine Endpoint."""
+    df = state.get_active_df()
+    if df is None or df.empty:
+        raise HTTPException(status_code=400, detail="No active dataset loaded for execution.")
+    res = execution_engine.execute_task(req.sub_engine, req.action, df, req.kwargs or {})
+    governance_engine.log_audit_event("execute_task", f"{req.sub_engine}:{req.action}", status=res.get("status", "success"))
+    return res
+
+@app.get("/api/knowledge")
+def knowledge_endpoint(domain: Optional[str] = "all"):
+    """Generic Enterprise Knowledge Engine Endpoint."""
+    return {
+        "glossary": ds_engine.get_business_glossary(),
+        "domain_rules": ds_engine.get_domain_rules(domain or "all")
+    }
+
+@app.get("/api/governance")
+def governance_endpoint():
+    """Generic Governance & Compliance Endpoint."""
+    return governance_engine.get_governance_summary()
+
+@app.post("/api/export")
+def export_endpoint(export_type: Optional[str] = "python"):
+    """Generic Export Endpoint (Reproducibility Python Script)."""
+    script_text = governance_engine.export_reproducibility_script()
+    governance_engine.log_audit_event("export_script", f"export_type={export_type}", status="success")
+    return {"status": "success", "script": script_text}
+
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DIST_DIR = os.path.join(BASE_DIR, 'dist')
@@ -2955,7 +3294,7 @@ def serve_spa_fallback(full_path: str):
 
 if __name__ == '__main__':
     import uvicorn
-    host = os.getenv("HOST", "0.0.0.0")
+    host = os.getenv("HOST", "127.0.0.1")
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(app, host=host, port=port)
 

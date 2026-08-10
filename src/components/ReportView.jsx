@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Code2, Copy, Download, CheckCircle2, FileCode, Database, Sparkles, Terminal } from 'lucide-react';
 
-const API = import.meta.env.VITE_API_URL || window.ENV_API_URL || 'http://localhost:8000';
+import { API, getAuthHeaders } from '../apiConfig';
 
 export default function ReportView({ activeDataset, pipelineSteps = [] }) {
   const [activeTab, setActiveTab] = useState('python');
@@ -17,7 +17,7 @@ export default function ReportView({ activeDataset, pipelineSteps = [] }) {
   const fetchExportCode = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API}/api/export`);
+      const res = await fetch(`${API}/api/export`, { headers: getAuthHeaders() });
       const data = await res.json();
       
       let pyCode = data.pandas || '';
@@ -80,7 +80,7 @@ export default function ReportView({ activeDataset, pipelineSteps = [] }) {
         flexShrink: 0
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ background: '#0284c7', padding: 8, borderRadius: 8, display: 'flex' }}>
+          <div style={{ background: '#10b981', padding: 8, borderRadius: 8, display: 'flex' }}>
             <Code2 size={20} color="#ffffff" />
           </div>
           <div>
@@ -181,7 +181,7 @@ export default function ReportView({ activeDataset, pipelineSteps = [] }) {
             <button
               onClick={() => handleDownload(activeCode, activeFileName)}
               style={{
-                background: '#0284c7',
+                background: '#10b981',
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: 6,

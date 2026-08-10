@@ -19,10 +19,18 @@ build/
 # Cache & Temp Files
 __pycache__/
 *.pyc
+*.pyo
 scratch/
 __MACOSX/
 .DS_Store
 *.local
+*.tmp
+*.bak
+*.old
+*.orig
+.pytest_cache/
+coverage/
+htmlcov/
 
 # Editor settings
 .vscode/*
@@ -34,8 +42,14 @@ __MACOSX/
 *.sln
 *.sw?
 
+# Environment & Secrets (NEVER commit these)
+.env
+.env.*
+.env_token
+!.env.example
+*.secret
+
 # Temporary Customer Datasets & Outputs (Exclude raw uploaded files)
-*.csv
 *.xlsx
 *.xls
 *.parquet
@@ -43,3 +57,7 @@ __MACOSX/
 *_processed.*
 *_output.*
 output/
+
+# OS & Editor
+Thumbs.db
+desktop.ini

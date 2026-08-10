@@ -4,6 +4,9 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 // Expose a safe, minimal API to the renderer (React)
 contextBridge.exposeInMainWorld('electron', {
+  // Auth token for API calls
+  getApiToken: () => ipcRenderer.invoke('get-api-token'),
+
   // Window controls
   minimize:          () => ipcRenderer.send('win:minimize'),
   maximize:          () => ipcRenderer.send('win:maximize'),
@@ -11,7 +14,6 @@ contextBridge.exposeInMainWorld('electron', {
   isMaximized:       () => ipcRenderer.invoke('win:isMaximized'),
   toggleAlwaysOnTop: () => ipcRenderer.invoke('win:toggleAlwaysOnTop'),
   isAlwaysOnTop:     () => ipcRenderer.invoke('win:isAlwaysOnTop'),
-
 
   // Window state updates from main → renderer
   onWindowStateChange: (cb) => {

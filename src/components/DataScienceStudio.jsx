@@ -13,7 +13,7 @@ import {
   Sliders
 } from 'lucide-react';
 
-const API = import.meta.env.VITE_API_URL || window.ENV_API_URL || 'http://localhost:8000';
+import { API, getAuthHeaders } from '../apiConfig';
 
 export default function DataScienceStudio({ schema, rowCount, pipelineSteps, onRunCode, onRefresh }) {
   const [activeTab, setActiveTab] = useState('eda');
@@ -35,7 +35,7 @@ export default function DataScienceStudio({ schema, rowCount, pipelineSteps, onR
     try {
       const resp = await fetch(`${API}/api/ml/train`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           target_column: selectedTarget,
           algorithm: selectedModel,
@@ -78,7 +78,7 @@ export default function DataScienceStudio({ schema, rowCount, pipelineSteps, onR
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
-            background: 'linear-gradient(135deg, #0284c7, #0ea5e9)',
+            background: 'linear-gradient(135deg, #10b981, #0ea5e9)',
             padding: 8,
             borderRadius: 8,
             display: 'flex'
@@ -177,7 +177,7 @@ export default function DataScienceStudio({ schema, rowCount, pipelineSteps, onR
                 onClick={() => onRunCode && onRunCode(`import seaborn as sns\nimport matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6), dpi=150)\nsns.heatmap(df.select_dtypes(include=['number']).corr(), annot=True, cmap='coolwarm', fmt='.2f')\nplt.title('Feature Correlation Matrix', fontsize=14, pad=12)\nplt.tight_layout()\nplt.show()`)}
                 style={{
                   width: '100%',
-                  background: '#0284c7',
+                  background: '#10b981',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 6,
@@ -237,7 +237,7 @@ export default function DataScienceStudio({ schema, rowCount, pipelineSteps, onR
                 onClick={() => onRunCode && onRunCode(`import pandas as pd\nskew_df = pd.DataFrame({'Skewness': df.select_dtypes(include=['number']).skew()})\nskew_df['Status'] = skew_df['Skewness'].apply(lambda s: 'Highly Skewed (>1.0)' if abs(s) > 1.0 else 'Gaussian / Low Skew')\nprint(skew_df)`)}
                 style={{
                   width: '100%',
-                  background: '#0284c7',
+                  background: '#10b981',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 6,
@@ -296,7 +296,7 @@ export default function DataScienceStudio({ schema, rowCount, pipelineSteps, onR
                 onClick={() => onRunCode && onRunCode(`for col in df.columns:\n    if df[col].isnull().sum() > 0:\n        if pd.api.types.is_numeric_dtype(df[col]):\n            val = df[col].median() if abs(df[col].skew()) > 1.0 else df[col].mean()\n            df[col] = df[col].fillna(val)\n        else:\n            df[col] = df[col].fillna(df[col].mode()[0])\nprint('[✓ SUCCESS] Imputed all missing null values')`)}
                 style={{
                   width: '100%',
-                  background: '#0284c7',
+                  background: '#10b981',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 6,
@@ -351,7 +351,7 @@ export default function DataScienceStudio({ schema, rowCount, pipelineSteps, onR
                 onClick={() => onRunCode && onRunCode(`cat_cols = df.select_dtypes(include=['object', 'category']).columns\nif len(cat_cols) > 0:\n    df = pd.get_dummies(df, columns=cat_cols, drop_first=True, dtype=int)\nprint('[✓ SUCCESS] One-hot encoded categorical features')`)}
                 style={{
                   width: '100%',
-                  background: '#0284c7',
+                  background: '#10b981',
                   color: '#fff',
                   border: 'none',
                   borderRadius: 6,
@@ -434,7 +434,7 @@ export default function DataScienceStudio({ schema, rowCount, pipelineSteps, onR
                 disabled={isTraining || !selectedTarget}
                 style={{
                   width: '100%',
-                  background: isTraining ? '#334155' : 'linear-gradient(135deg, #0284c7, #0ea5e9)',
+                  background: isTraining ? '#334155' : 'linear-gradient(135deg, #10b981, #0ea5e9)',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: 8,

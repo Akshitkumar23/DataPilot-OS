@@ -1,0 +1,25 @@
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+num_df = {{ df_var }}.select_dtypes(include='number').dropna()
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(num_df)
+
+inertias = []
+k_range = range({{ k_min | default(2) }}, {{ (k_max | default(8)) + 1 }})
+for k in k_range:
+    km = KMeans(n_clusters=k, random_state=42, n_init=10)
+    km.fit(X_scaled)
+    inertias.append(km.inertia_)
+
+plt.figure(figsize=(8, 4), dpi=150)
+plt.plot(list(k_range), inertias, marker='o', linewidth=2, color='#0284c7')
+plt.title('KMeans Elbow Curve', fontsize=13, fontweight='bold')
+plt.xlabel('Number of Clusters (k)')
+plt.ylabel('Inertia')
+plt.tight_layout()
+plt.show()
+print('[SUCCESS] Elbow curve plotted! Best k appears around the bend.')

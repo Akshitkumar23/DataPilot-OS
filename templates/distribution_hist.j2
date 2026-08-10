@@ -1,0 +1,12 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 5), dpi=150)
+sns.set_theme(style='whitegrid')
+sns.histplot({{ df_var }}['{{ col }}'].dropna(), kde=True, color='{{ color | default('#0284c7') }}', bins={{ bins | default(30) }}, edgecolor='black', alpha=0.65)
+plt.title('Distribution of {{ col }}', fontsize=14, fontweight='bold', pad=14)
+plt.xlabel('{{ col }}', fontsize=11, fontweight='bold')
+plt.ylabel('Frequency', fontsize=11, fontweight='bold')
+plt.tight_layout()
+plt.show()
+print(f'[SUCCESS] Distribution histogram for {{ col }} rendered! Skewness: { {{ df_var }}["{{ col }}"].skew():.2f}')

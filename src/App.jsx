@@ -15,8 +15,9 @@ import PropertiesPanel from './components/PropertiesPanel';
 import DBConnectionModal from './components/DBConnectionModal';
 import DataPreview from './components/DataPreview';
 import ReportView from './components/ReportView';
+import PlotZoomModal from './components/PlotZoomModal';
 
-const API = import.meta.env.VITE_API_URL || window.ENV_API_URL || 'http://localhost:8000';
+import { API, getAuthHeaders, fetchApiToken } from './apiConfig';
 const isElectron = typeof window !== 'undefined' && window.electron;
 
 export default function App() {
@@ -34,6 +35,16 @@ export default function App() {
   const [activePlotImage, setActivePlotImage] = useState(null);
   const [activeModule, setActiveModule] = useState('home');
   const [isDbModalOpen, setIsDbModalOpen] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('datapilot_theme') || 'dark');
+  const [isRibbonCollapsed, setIsRibbonCollapsed] = useState(false);
+  const [zoomedImage, setZoomedImage] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem('datapilot_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  const toggleRibbonCollapse = () => setIsRibbonCollapsed(prev => !prev);
 
   const plotCanvasRef = useRef(null);
 
@@ -46,16 +57,18 @@ export default function App() {
 
   // Fetch initial data
   useEffect(() => {
-    refreshData();
+    fetchApiToken().then(() => {
+      refreshData();
+    });
   }, []);
 
   // ── Fetch data ─────────────────────────────
   const refreshData = useCallback(async () => {
     try {
       const [schemaRes, dataRes, pipeRes] = await Promise.all([
-        fetch(`${API}/api/dataset/schema`),
-        fetch(`${API}/api/dataset/data?limit=-1`),
-        fetch(`${API}/api/pipeline`),
+        fetch(`${API}/api/dataset/schema`, { headers: getAuthHeaders() }),
+        fetch(`${API}/api/dataset/data?limit=-1`, { headers: getAuthHeaders() }),
+        fetch(`${API}/api/pipeline`, { headers: getAuthHeaders() }),
       ]);
 
       if (schemaRes.ok) {
@@ -126,7 +139,7 @@ export default function App() {
         // Desktop / Electron mode: path string is available
         const resp = await fetch(`${API}/api/connect`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify({ source_type: 'csv', file_path: file.path }),
         });
         const data = await resp.json();
@@ -138,6 +151,7 @@ export default function App() {
         formData.append('file', file);
         const resp = await fetch(`${API}/api/upload`, {
           method: 'POST',
+          headers: getAuthHeaders(),
           body: formData,
         });
         const data = await resp.json();
@@ -160,7 +174,7 @@ export default function App() {
         if (selected) {
           const resp = await fetch(`${API}/api/connect`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({ source_type: 'csv', file_path: selected }),
           });
           const data = await resp.json();
@@ -185,7 +199,7 @@ export default function App() {
     try {
       const res = await fetch(`${API}/api/dataset/save`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ format: 'csv' }),
       });
       const data = await res.json();
@@ -200,7 +214,7 @@ export default function App() {
 
   const handleUndo = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/api/operations/undo`, { method: 'POST' });
+      const res = await fetch(`${API}/api/operations/undo`, { method: 'POST', headers: getAuthHeaders() });
       if (res.ok) refreshData();
     } catch (err) {
       console.error('Undo error:', err);
@@ -209,7 +223,7 @@ export default function App() {
 
   const handleRedo = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/api/operations/redo`, { method: 'POST' });
+      const res = await fetch(`${API}/api/operations/redo`, { method: 'POST', headers: getAuthHeaders() });
       if (res.ok) refreshData();
     } catch (err) {
       console.error('Redo error:', err);
@@ -217,13 +231,17 @@ export default function App() {
   }, [refreshData]);
 
   return (
-    <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: 'var(--bg-main)' }}>
+    <div className={`app-shell ${theme === 'dark' ? 'dark-theme' : ''}`} style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: 'var(--bg-main)' }}>
       {/* Title Bar with Open/Save Controls */}
       <TitleBar
         datasetName={activeDataset?.name}
+        rowCount={rowCount}
+        colCount={schema?.length ?? 0}
         onOpenFile={handleOpenFile}
         onSaveFile={handleSave}
         isSaving={isSaving}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       {/* Ribbon Navigation Header */}
@@ -248,6 +266,8 @@ export default function App() {
         canRedo={false}
         isSaving={isSaving}
         onOpenCodeInspector={() => setIsTerminalOpen(prev => !prev)}
+        isCollapsed={isRibbonCollapsed}
+        onToggleCollapse={toggleRibbonCollapse}
       />
 
       {/* Dynamic View Component Container according to activeModule */}
@@ -300,17 +320,27 @@ export default function App() {
               else setActiveModule(mod);
             }}
             pipelineSteps={pipelineSteps}
+            activeLabStep={activeModule}
+            labStatus={{
+              profile: !!activeDataset,
+              nulls: pipelineSteps.some(s => (s.description || s.operation || '').toLowerCase().includes('null') || (s.description || s.operation || '').toLowerCase().includes('impute')),
+              outliers: pipelineSteps.some(s => (s.description || s.operation || '').toLowerCase().includes('clip') || (s.description || s.operation || '').toLowerCase().includes('outlier')),
+              encode: pipelineSteps.some(s => (s.description || s.operation || '').toLowerCase().includes('encode') || (s.description || s.operation || '').toLowerCase().includes('dummy')),
+              normalize: pipelineSteps.some(s => (s.description || s.operation || '').toLowerCase().includes('scale') || (s.description || s.operation || '').toLowerCase().includes('log')),
+              train: pipelineSteps.some(s => (s.description || s.operation || '').toLowerCase().includes('train') || (s.description || s.operation || '').toLowerCase().includes('model')),
+              evaluate: pipelineSteps.some(s => (s.description || s.operation || '').toLowerCase().includes('evaluate') || (s.description || s.operation || '').toLowerCase().includes('score')),
+            }}
           />
         )}
 
         {(activeModule === 'eda' || activeModule === 'stats') && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'auto', padding: 16, background: '#090d16' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'auto', padding: 16, background: '#060907' }}>
             <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <label style={{ fontSize: 12, fontWeight: 700, color: '#38bdf8' }}>Select Column to Inspect:</label>
+              <label style={{ fontSize: 12, fontWeight: 700, color: '#34d399' }}>Select Column to Inspect:</label>
               <select
                 value={selectedColumn || ''}
                 onChange={(e) => setSelectedColumn(e.target.value || null)}
-                style={{ background: '#1e293b', color: '#f8fafc', border: '1px solid #334155', padding: '5px 10px', borderRadius: 6, fontSize: 12 }}
+                style={{ background: '#121c17', color: '#f8fafc', border: '1px solid #1a2921', padding: '5px 10px', borderRadius: 6, fontSize: 12 }}
               >
                 <option value="">-- Choose Column --</option>
                 {schema?.map(c => <option key={c.name} value={c.name}>{c.name} ({c.dtype || c.type || 'unknown'})</option>)}
@@ -321,9 +351,9 @@ export default function App() {
         )}
 
         {activeModule === 'ml' && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', background: '#090d16', padding: 16 }}>
-            <div style={{ marginBottom: 12, padding: '10px 14px', background: '#0f172a', border: '1px solid #1e293b', borderRadius: 8 }}>
-              <h3 style={{ margin: 0, fontSize: 14, fontWeight: 800, color: '#38bdf8' }}>🧠 ML Studio & Intelligent AI Assistant</h3>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', background: '#060907', padding: 16 }}>
+            <div style={{ marginBottom: 12, padding: '10px 14px', background: '#0a0e0c', border: '1px solid #1a2921', borderRadius: 8 }}>
+              <h3 style={{ margin: 0, fontSize: 14, fontWeight: 800, color: '#34d399' }}>🧠 ML Studio & Intelligent AI Assistant</h3>
               <p style={{ margin: '4px 0 0 0', fontSize: 11, color: '#94a3b8' }}>
                 Ask AI Co-Pilot to train ML models (Classification, Regression, AutoML), calculate feature importance, run VIF multicollinearity, or perform clustering.
               </p>
@@ -337,6 +367,7 @@ export default function App() {
                   setExternalCodeToRun({ code, timestamp: Date.now() });
                 }}
                 onRefresh={refreshData}
+                onZoomImage={(src) => setZoomedImage(src)}
               />
             </div>
           </div>
@@ -350,8 +381,8 @@ export default function App() {
       {/* Collapsible Bottom Terminal HUD Drawer */}
       <div style={{
         flexShrink: 0,
-        background: '#090d16',
-        borderTop: '1px solid #1e293b',
+        background: '#060907',
+        borderTop: '1px solid #1a2921',
         display: 'flex',
         flexDirection: 'column',
         height: !isTerminalOpen ? '34px' : (activePlotImage ? '520px' : '320px'),
@@ -367,13 +398,13 @@ export default function App() {
             alignItems: 'center',
             justifyContent: 'space-between',
             cursor: 'pointer',
-            background: '#0f172a',
-            borderBottom: isTerminalOpen ? '1px solid #1e293b' : 'none',
+            background: '#0a0e0c',
+            borderBottom: isTerminalOpen ? '1px solid #1a2921' : 'none',
             userSelect: 'none'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 700, color: '#38bdf8' }}>
-            <Terminal size={14} color="#38bdf8" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 700, color: '#34d399' }}>
+            <Terminal size={14} color="#34d399" />
             <span>AI Terminal & Execution Engine</span>
             <span style={{ fontSize: 10, color: '#64748b', fontWeight: 500 }}>
               (Click to {isTerminalOpen ? 'collapse' : 'expand'})
@@ -399,96 +430,9 @@ export default function App() {
                 onPlotGenerated={(b64Plot) => {
                   setActivePlotImage(b64Plot);
                 }}
+                onZoomImage={(src) => setZoomedImage(src)}
               />
             </div>
-
-            {/* Generated Pro Visualization Canvas (Inside Drawer - Collapses with Terminal!) */}
-            {activePlotImage && (
-              <div
-                ref={plotCanvasRef}
-                style={{
-                  flexShrink: 0,
-                  background: '#ffffff',
-                  borderTop: '3px solid #0ea5e9',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 -4px 15px rgba(0,0,0,0.08)'
-                }}
-              >
-                <div style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: 10,
-                  borderBottom: '1px solid #e2e8f0',
-                  paddingBottom: 8
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }} />
-                    <span style={{ fontSize: 13, fontWeight: 800, color: '#0f172a', letterSpacing: '0.01em' }}>
-                      📊 Data Science Analytics & Visual Insight Canvas
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <a
-                      href={activePlotImage}
-                      download="datapilot_visualization.png"
-                      style={{
-                        background: '#0284c7',
-                        color: '#ffffff',
-                        textDecoration: 'none',
-                        borderRadius: 5,
-                        padding: '4px 12px',
-                        fontSize: 11,
-                        fontWeight: 700,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 4
-                      }}
-                    >
-                      📥 Download PNG
-                    </a>
-                    <button
-                      onClick={() => setActivePlotImage(null)}
-                      style={{
-                        background: '#f1f5f9',
-                        border: '1px solid #cbd5e1',
-                        borderRadius: 5,
-                        padding: '4px 12px',
-                        cursor: 'pointer',
-                        color: '#475569',
-                        fontSize: 11,
-                        fontWeight: 700
-                      }}
-                    >
-                      ✕ Close Chart
-                    </button>
-                  </div>
-                </div>
-
-                <div style={{
-                  background: '#ffffff',
-                  borderRadius: 8,
-                  padding: 12,
-                  border: '1px solid #cbd5e1',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  width: '100%',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.06)'
-                }}>
-                  <img
-                    src={activePlotImage}
-                    alt="Generated Visualization Chart"
-                    style={{ width: '100%', maxHeight: 400, objectFit: 'contain', borderRadius: 4 }}
-                  />
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>
@@ -501,6 +445,12 @@ export default function App() {
         colCount={schema?.length ?? 0}
         dirtyCount={schema ? schema.filter(c => (c.null_count ?? 0) > 0).length : 0}
         activeModule={activeModule}
+      />
+
+      {/* Interactive Plot Zoom & Lightbox Modal */}
+      <PlotZoomModal
+        imageSrc={zoomedImage}
+        onClose={() => setZoomedImage(null)}
       />
 
       {/* DB Connection Modal */}

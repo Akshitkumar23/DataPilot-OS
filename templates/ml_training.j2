@@ -1,0 +1,102 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import {{ model_cls }}
+
+{% if is_feature_eng %}
+print('=' * 60)
+print('       AUTOMATED FEATURE ENGINEERING & SUGGESTION PIPELINE')
+print('=' * 60)
+
+engineered_df = {{ df_var }}.copy()
+
+# 1. Generate Domain-Specific Engineered Features
+if 'Gross_Sales' in engineered_df.columns and 'Quantity' in engineered_df.columns:
+    engineered_df['Avg_Price_Per_Unit'] = (engineered_df['Gross_Sales'] / (engineered_df['Quantity'] + 1e-5)).round(2)
+    print('  💡 Engineered: "Avg_Price_Per_Unit" = Gross_Sales / Quantity')
+
+if 'Profit_Margin' in engineered_df.columns and 'Net_Sales' in engineered_df.columns:
+    engineered_df['Profit_Ratio'] = (engineered_df['Profit_Margin'] / (engineered_df['Net_Sales'] + 1e-5)).round(4)
+    print('  💡 Engineered: "Profit_Ratio" = Profit_Margin / Net_Sales')
+
+if 'Discount_Amount' in engineered_df.columns and 'Gross_Sales' in engineered_df.columns:
+    engineered_df['Discount_Rate'] = (engineered_df['Discount_Amount'] / (engineered_df['Gross_Sales'] + 1e-5)).round(4)
+    print('  💡 Engineered: "Discount_Rate" = Discount_Amount / Gross_Sales')
+
+if 'Total_Cost' in engineered_df.columns and 'Gross_Sales' in engineered_df.columns:
+    engineered_df['Cost_To_Revenue_Ratio'] = (engineered_df['Total_Cost'] / (engineered_df['Gross_Sales'] + 1e-5)).round(4)
+    print('  💡 Engineered: "Cost_To_Revenue_Ratio" = Total_Cost / Gross_Sales')
+
+date_cols = engineered_df.select_dtypes(include=['datetime', 'datetime64']).columns
+for dcol in date_cols:
+    engineered_df[f'{dcol}_Month'] = engineered_df[dcol].dt.month
+    engineered_df[f'{dcol}_DayOfWeek'] = engineered_df[dcol].dt.dayofweek
+    print(f'  💡 Engineered Temporal Features from "{dcol}": Month, DayOfWeek')
+
+# 2. Filter out High-Cardinality ID columns
+low_card_cols = []
+for col in engineered_df.columns:
+    if col.lower().endswith('_id') or 'id' in col.lower() or col.lower().endswith('_name'):
+        continue
+    if engineered_df[col].nunique() > 50 and engineered_df[col].dtype == 'object':
+        continue
+    low_card_cols.append(col)
+
+model_data = engineered_df[low_card_cols].dropna()
+
+num_cols = model_data.select_dtypes(include='number').columns
+target_col = '{{ target }}' if '{{ target }}' in num_cols else ('Profit_Margin' if 'Profit_Margin' in num_cols else (num_cols[-1] if len(num_cols) > 0 else model_data.columns[-1]))
+
+X = pd.get_dummies(model_data.drop(columns=[target_col]), drop_first=True, dtype=int)
+y = model_data[target_col]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={{ test_size }}, random_state={{ random_state }})
+rf = RandomForestRegressor(n_estimators=100, max_depth=10, random_state={{ random_state }}, n_jobs=-1)
+rf.fit(X_train, y_train)
+
+importances = pd.Series(rf.feature_importances_, index=X.columns).nlargest(10)
+
+plt.figure(figsize=(11, 6), dpi=150)
+sns.set_theme(style='whitegrid')
+ax = sns.barplot(x=importances.values, y=importances.index, palette='crest')
+plt.title(f'Top Predictive Features (Target: {target_col}, R² Score: {rf.score(X_test, y_test):.2f})', fontsize=13, fontweight='bold', pad=14)
+plt.xlabel('Importance Score', fontweight='bold')
+plt.tight_layout()
+plt.show()
+
+print(f'\n[SUCCESS] Feature Engineering Pipeline complete! Evaluated top {len(importances)} features for target "{target_col}".')
+print('=' * 60)
+{% else %}
+target_col = '{{ target }}'
+
+# Filter out high-cardinality ID and text columns to prevent MemoryError
+valid_cols = []
+for col in {{ df_var }}.columns:
+    if col == target_col:
+        continue
+    if col.lower().endswith('_id') or 'id' in col.lower() or col.lower().endswith('_name'):
+        continue
+    if {{ df_var }}[col].nunique() > 50 and {{ df_var }}[col].dtype == 'object':
+        continue
+    valid_cols.append(col)
+
+X = pd.get_dummies({{ df_var }}[valid_cols], drop_first=True, dtype=int).fillna(0)
+y = {{ df_var }}[target_col]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size={{ test_size }}, random_state={{ random_state }})
+model = {{ model_cls }}(n_estimators=100, max_depth=12, random_state={{ random_state }}, n_jobs=-1)
+model.fit(X_train, y_train)
+score = model.score(X_test, y_test)
+importances = pd.Series(model.feature_importances_, index=X.columns).nlargest(10)
+
+plt.figure(figsize=(10, 5), dpi=150)
+sns.set_theme(style='whitegrid')
+sns.barplot(x=importances.values, y=importances.index, palette='viridis')
+plt.title(f'Feature Importances (Target: {target_col}, Score: {round(score*100,2)}%)', fontsize=13, fontweight='bold', pad=12)
+plt.xlabel('Importance', fontweight='bold')
+plt.tight_layout()
+plt.show()
+print(f'[SUCCESS] Trained {{ model_cls }} on "{target_col}"! Score: {round(score*100,2)}%')
+{% endif %}

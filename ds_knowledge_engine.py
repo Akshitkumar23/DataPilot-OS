@@ -1,5 +1,8 @@
 import os
 import json
+import warnings
+warnings.simplefilter("ignore", DeprecationWarning)
+warnings.simplefilter("ignore", UserWarning)
 import joblib
 import re
 import numpy as np
@@ -9,7 +12,17 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score
 
-def build_and_train_ai_brain():
+def compute_knowledge_hash(db_path: str) -> Optional[str]:
+    import hashlib
+    if os.path.exists(db_path):
+        try:
+            with open(db_path, "rb") as f:
+                return hashlib.md5(f.read()).hexdigest()
+        except Exception:
+            return None
+    return None
+
+def build_and_train_ai_brain(force: bool = False):
     """
     Builds the Master Data Science Knowledge Database (ds_pdf_knowledge_db.json)
     and trains the Machine Learning Meta-Classifier Model artifacts (models/datapilot_model.pkl).
@@ -17,12 +30,28 @@ def build_and_train_ai_brain():
     This brain is self-contained and pre-trained on Data Science & Analytics domain rules.
     It does not depend on any external PDF or local file path at runtime.
     """
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    kb_path = os.path.join(base_dir, 'ds_pdf_knowledge_db.json')
+    models_dir = os.path.join(base_dir, "models")
+    model_file = os.path.join(models_dir, "datapilot_model.pkl")
+    vec_file = os.path.join(models_dir, "vectorizer.pkl")
+    vec_file_alt = os.path.join(models_dir, "datapilot_vectorizer.pkl")
+    hash_file = os.path.join(models_dir, "knowledge_db.hash")
+
+    if not force and os.path.exists(kb_path) and os.path.exists(model_file) and (os.path.exists(vec_file) or os.path.exists(vec_file_alt)) and os.path.exists(hash_file):
+        current_hash = compute_knowledge_hash(kb_path)
+        try:
+            with open(hash_file, "r", encoding="utf-8") as f:
+                stored_hash = f.read().strip()
+            if current_hash and current_hash == stored_hash:
+                print("[CACHE HIT] Knowledge DB hash unchanged. Pre-trained classifier artifacts loaded from cache.")
+                return
+        except Exception:
+            pass
+
     print("=========================================================================")
     print("DATAPILOT OS: INITIALIZING MASTER AI BRAIN & TRAINING META-CLASSIFIER")
     print("=========================================================================")
-
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    kb_path = os.path.join(base_dir, 'ds_pdf_knowledge_db.json')
     
     # Master Domain Rules (Learned & Self-Contained Knowledge Base)
     ds_knowledge_rules = [
@@ -389,7 +418,13 @@ def build_and_train_ai_brain():
     models_dir = os.path.join(base_dir, "models")
     os.makedirs(models_dir, exist_ok=True)
     joblib.dump(clf, os.path.join(models_dir, "datapilot_model.pkl"))
+    joblib.dump(vectorizer, os.path.join(models_dir, "vectorizer.pkl"))
     joblib.dump(vectorizer, os.path.join(models_dir, "datapilot_vectorizer.pkl"))
+
+    current_hash = compute_knowledge_hash(kb_path)
+    if current_hash:
+        with open(os.path.join(models_dir, "knowledge_db.hash"), "w", encoding="utf-8") as f:
+            f.write(current_hash)
 
     print("=========================================================================")
     print("SUCCESS: SELF-CONTAINED AI BRAIN TRAINING COMPLETE (STANDALONE & READY)")
@@ -407,13 +442,28 @@ class DataScienceKnowledgeEngine:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         self.db_path = os.path.join(base_dir, "ds_pdf_knowledge_db.json")
         self.model_path = os.path.join(base_dir, "models", "datapilot_model.pkl")
-        self.vec_path = os.path.join(base_dir, "models", "datapilot_vectorizer.pkl")
+        self.vec_path = os.path.join(base_dir, "models", "vectorizer.pkl")
+        self.vec_path_alt = os.path.join(base_dir, "models", "datapilot_vectorizer.pkl")
+        self.hash_path = os.path.join(base_dir, "models", "knowledge_db.hash")
 
-        if not os.path.exists(self.db_path) or not os.path.exists(self.model_path) or not os.path.exists(self.vec_path):
+        cache_valid = False
+        if os.path.exists(self.db_path) and os.path.exists(self.model_path) and (os.path.exists(self.vec_path) or os.path.exists(self.vec_path_alt)) and os.path.exists(self.hash_path):
+            current_hash = compute_knowledge_hash(self.db_path)
             try:
-                build_and_train_ai_brain()
+                with open(self.hash_path, "r", encoding="utf-8") as f:
+                    stored_hash = f.read().strip()
+                if current_hash and current_hash == stored_hash:
+                    cache_valid = True
+            except Exception:
+                cache_valid = False
+
+        if not cache_valid:
+            try:
+                build_and_train_ai_brain(force=True)
             except Exception as e:
                 print("Self-training warning:", e)
+        else:
+            print("[CACHE HIT] Loading pre-trained classifier and vectorizer directly from disk.")
 
         self.knowledge_db = {}
         self.clf_model = None
@@ -426,7 +476,7 @@ class DataScienceKnowledgeEngine:
             except Exception as e:
                 print(f"Error loading knowledge DB from '{self.db_path}', attempting fallback rebuild: {e}")
                 try:
-                    build_and_train_ai_brain()
+                    build_and_train_ai_brain(force=True)
                     if os.path.exists(self.db_path):
                         with open(self.db_path, "r", encoding="utf-8") as f:
                             self.knowledge_db = json.load(f)
@@ -434,12 +484,47 @@ class DataScienceKnowledgeEngine:
                     print("Error rebuilding knowledge DB:", rebuild_err)
                     self.knowledge_db = {}
 
-        if os.path.exists(self.model_path) and os.path.exists(self.vec_path):
+        if os.path.exists(self.model_path):
             try:
                 self.clf_model = joblib.load(self.model_path)
-                self.vectorizer = joblib.load(self.vec_path)
             except Exception as e:
-                print("Error loading ML artifacts:", e)
+                print("Error loading ML model:", e)
+
+        v_path = self.vec_path if os.path.exists(self.vec_path) else self.vec_path_alt
+        if os.path.exists(v_path):
+            try:
+                self.vectorizer = joblib.load(v_path)
+            except Exception as e:
+                print("Error loading vectorizer:", e)
+
+        # Initialize Enterprise Modular Architecture Components
+        try:
+            from modules.capability_registry import capability_registry
+            from modules.intent_layer import intent_parser, conversation_memory
+            from modules.dataset_intelligence import dataset_intelligence
+            from modules.security_cache import security_guard, execution_cache
+            from modules.planning_agent import planning_agent
+            from modules.auto_insights import auto_insights
+
+            self.registry = capability_registry
+            self.intent_parser = intent_parser
+            self.memory = conversation_memory
+            self.dataset_intelligence = dataset_intelligence
+            self.security_guard = security_guard
+            self.execution_cache = execution_cache
+            self.planning_agent = planning_agent
+            self.auto_insights = auto_insights
+        except Exception as mod_err:
+            print("Warning initializing enterprise modules:", mod_err)
+            self.registry = None
+            self.intent_parser = None
+            self.memory = None
+            self.dataset_intelligence = None
+            self.security_guard = None
+            self.execution_cache = None
+            self.planning_agent = None
+            self.auto_insights = None
+
 
     def analyze_dataset_and_recommend(self, df: pd.DataFrame) -> Dict[str, Any]:
         """
@@ -567,9 +652,52 @@ class DataScienceKnowledgeEngine:
             "code_solutions": code_solutions
         }
 
+    def get_business_glossary(self) -> Dict[str, Dict[str, str]]:
+        """Returns the Enterprise Business Glossary & Metric Dictionary."""
+        return {
+            "Revenue": {
+                "category": "Finance",
+                "definition": "Total gross income generated from goods or services sold.",
+                "formula": "Sum of Sales Amount"
+            },
+            "Gross Margin": {
+                "category": "Finance",
+                "definition": "Percentage of total sales revenue retained after incurring direct costs.",
+                "formula": "(Revenue - Cost of Goods Sold) / Revenue"
+            },
+            "Customer Churn Rate": {
+                "category": "SaaS & Retail",
+                "definition": "Percentage of customers who discontinue subscriptions or purchases within a given timeframe.",
+                "formula": "(Lost Customers at End of Period / Total Customers at Start of Period) * 100"
+            },
+            "Customer Lifetime Value (CLV)": {
+                "category": "Marketing & SaaS",
+                "definition": "Total net profit attributed to the entire future relationship with a customer.",
+                "formula": "Average Order Value * Purchase Frequency * Customer Value Lifetime"
+            },
+            "Hospital Readmission Rate": {
+                "category": "Healthcare",
+                "definition": "Percentage of patients unexpectedly readmitted to hospital within 30 days of discharge.",
+                "formula": "(Readmitted Patients within 30 days / Total Discharged Patients) * 100"
+            }
+        }
+
+    def get_domain_rules(self, domain: str = "all") -> List[Dict[str, Any]]:
+        """Returns domain-specific analytical rules."""
+        rules = [
+            {"domain": "Finance", "rule": "Flag transactions > 3 standard deviations above user rolling mean as potential anomaly/fraud."},
+            {"domain": "Retail", "rule": "Calculate safety stock levels using 95% service level normal z-score (1.65)."},
+            {"domain": "Healthcare", "rule": "Enforce strict HIPAA de-identification guard on PII columns (SSN, Phone, Address)."},
+            {"domain": "SaaS", "rule": "Compute Monthly Recurrent Revenue (MRR) expansion vs contraction cohorts."}
+        ]
+        if domain != "all":
+            return [r for r in rules if r["domain"].lower() == domain.lower()]
+        return rules
+
     analyze_dataset_with_knowledge = analyze_dataset_and_recommend
 
 ds_engine = DataScienceKnowledgeEngine()
 
 if __name__ == "__main__":
     build_and_train_ai_brain()
+

@@ -21,13 +21,13 @@ export default function StatusBar({
       {datasetName && (
         <>
           <div className="status-divider" />
-          <div className="status-item status-item--active">
-            <Database size={11} />
-            {datasetName}
+          <div className="status-item status-item--active" style={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flexShrink: 1 }}>
+            <Database size={11} style={{ flexShrink: 0 }} />
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{datasetName}</span>
           </div>
 
           <div className="status-divider" />
-          <div className="status-item">
+          <div className="status-item" style={{ flexShrink: 0 }}>
             <Rows3 size={11} />
             {rowCount?.toLocaleString() ?? 0} rows × {colCount ?? 0} cols
           </div>
@@ -35,9 +35,9 @@ export default function StatusBar({
           {dirtyCount > 0 && (
             <>
               <div className="status-divider" />
-              <div className="status-item" style={{ color: 'var(--warning)' }}>
+              <div className="status-item" style={{ color: 'var(--warning)', flexShrink: 0 }}>
                 <AlertTriangle size={11} />
-                {dirtyCount} column{dirtyCount !== 1 ? 's' : ''} with null values
+                {dirtyCount} null col{dirtyCount !== 1 ? 's' : ''}
               </div>
             </>
           )}

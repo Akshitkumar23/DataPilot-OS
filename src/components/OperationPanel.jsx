@@ -4,7 +4,7 @@ import {
   ArrowRight, RefreshCw, Eye
 } from 'lucide-react';
 
-const API = import.meta.env.VITE_API_URL || window.ENV_API_URL || 'http://localhost:8000';
+import { API, getAuthHeaders } from '../apiConfig';
 
 function formatApiError(detail, fallback = 'Operation failed') {
   if (Array.isArray(detail)) {
@@ -166,7 +166,7 @@ export default function OperationPanel({ mode = 'clean', schema, onApplied }) {
     try {
       const res = await fetch(`${API}/api/operations/preview`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(buildPayload()),
       });
       const data = await res.json();
@@ -186,7 +186,7 @@ export default function OperationPanel({ mode = 'clean', schema, onApplied }) {
     try {
       const res = await fetch(`${API}/api/operations/apply`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(buildPayload()),
       });
       const data = await res.json();
