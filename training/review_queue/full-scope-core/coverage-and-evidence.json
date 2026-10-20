@@ -1,0 +1,694 @@
+{
+  "analytical_tools_covered": 20,
+  "independent_reference_plans": 20,
+  "language_variants": 40,
+  "execution_checked": 20,
+  "execution_passed": 20,
+  "results": [
+    {
+      "case_id": "core-filter_data-en",
+      "task_family_id": "b7877d3d3c2e2089c1ff9a0b7dfe3f154b1c6b2b7455fac0467609cff1b2ee27",
+      "passed": true,
+      "manifest": {
+        "operator": "filter_slice",
+        "columns_used": [
+          "age",
+          "age"
+        ],
+        "filters_applied": [
+          {
+            "column": "age",
+            "operator": "gt",
+            "value": 30
+          },
+          {
+            "column": "age",
+            "operator": "sort",
+            "value": "asc"
+          },
+          {
+            "column": "age",
+            "operator": "gt",
+            "value": 30
+          },
+          {
+            "column": "age",
+            "operator": "sort",
+            "value": "asc"
+          }
+        ],
+        "statistics_computed": [
+          "row_count"
+        ],
+        "chart_type": "none",
+        "row_count_in": 38181,
+        "row_count_out": 38181,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": "[FilterSpec(column='age', operator=<FilterOperator.GT: 'gt'>, value=30)]",
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-sort_data-en",
+      "task_family_id": "fff4d83acac04fc86a37fa6bbc7800d5e9f60fd858f8d3ba42f93455c40a6bd8",
+      "passed": true,
+      "manifest": {
+        "operator": "filter_slice",
+        "columns_used": [
+          "balance"
+        ],
+        "filters_applied": [
+          {
+            "column": "balance",
+            "operator": "sort",
+            "value": "desc"
+          }
+        ],
+        "statistics_computed": [
+          "row_count"
+        ],
+        "chart_type": "none",
+        "row_count_in": 45211,
+        "row_count_out": 20,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-conditional_rate-en",
+      "task_family_id": "93cf83aeab1c7ca3bdf25f175d839e55e7063fcbaf61c2535616e53b10ccc36c",
+      "passed": true,
+      "manifest": {
+        "operator": "conditional_rate",
+        "columns_used": [
+          "job",
+          "y"
+        ],
+        "filters_applied": [
+          {
+            "column": "y",
+            "operator": "eq",
+            "value": "yes"
+          }
+        ],
+        "statistics_computed": [
+          "matching_count",
+          "total_count",
+          "rate",
+          "rate_percent"
+        ],
+        "chart_type": "bar",
+        "row_count_in": 45211,
+        "row_count_out": 12,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-group_data-en",
+      "task_family_id": "7cbc673054ff70c937a82c2f7b04e5860c0797c0c3af60a96f15f6a03f7ece49",
+      "passed": true,
+      "manifest": {
+        "operator": "group_aggregation",
+        "columns_used": [
+          "marital",
+          "balance"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "mean"
+        ],
+        "chart_type": "bar",
+        "row_count_in": 45211,
+        "row_count_out": 3,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-aggregate_data-en",
+      "task_family_id": "ef99fcda8988ce403449d27e94210fee9444e0c719554f262c8fb5b86a4ccc8e",
+      "passed": true,
+      "manifest": {
+        "operator": "group_aggregation",
+        "columns_used": [
+          "housing"
+        ],
+        "filters_applied": [
+          {
+            "column": "housing",
+            "operator": "eq",
+            "value": "yes"
+          }
+        ],
+        "statistics_computed": [
+          "count"
+        ],
+        "chart_type": "none",
+        "row_count_in": 25130,
+        "row_count_out": 1,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": "[FilterSpec(column='housing', operator=<FilterOperator.EQ: 'eq'>, value='yes')]",
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-audit_metric_distribution-en",
+      "task_family_id": "cb125218ee5bb069e038ef9572441d4f476dafca001947d70a6fa9ef1579db48",
+      "passed": true,
+      "manifest": {
+        "operator": "distribution_comparison",
+        "columns_used": [
+          "balance",
+          "housing"
+        ],
+        "filters_applied": [
+          {
+            "column": "housing",
+            "operator": "eq",
+            "value": "yes"
+          }
+        ],
+        "statistics_computed": [
+          "mean",
+          "std",
+          "min",
+          "25%",
+          "50%",
+          "75%",
+          "max",
+          "IQR",
+          "variance",
+          "outlier_count",
+          "zero_count",
+          "zero_rate_percent"
+        ],
+        "chart_type": "box",
+        "row_count_in": 25130,
+        "row_count_out": 1,
+        "assumptions": [
+          "IQR 1.5x standard Tukey outlier boundaries applied."
+        ],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": "[FilterSpec(column='housing', operator=<FilterOperator.EQ: 'eq'>, value='yes')]",
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-correlate_data-en",
+      "task_family_id": "c6199d0923fa8bb790079869ffd15937d63f153898df2df6821e970233cf253a",
+      "passed": true,
+      "manifest": {
+        "operator": "correlation_analysis",
+        "columns_used": [
+          "alcohol",
+          "density"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "pearson_correlation"
+        ],
+        "chart_type": "scatter",
+        "row_count_in": 4898,
+        "row_count_out": 1,
+        "assumptions": [
+          "Correlation measures association, not causation."
+        ],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-forecast_data-en",
+      "task_family_id": "7f07c748179f9396847c68eb1cd68c22dac7f8280fbe282b441145b0ed209f7e",
+      "passed": true,
+      "manifest": {
+        "operator": "time_series_forecast",
+        "columns_used": [
+          "date",
+          "Appliances"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "holt_linear"
+        ],
+        "chart_type": "line",
+        "row_count_in": 19735,
+        "row_count_out": 24,
+        "assumptions": [
+          "Declared frequency=10min",
+          "Declared method=holt_linear",
+          "No calibrated prediction interval was computed."
+        ],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": "date",
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-clean_data-en",
+      "task_family_id": "d0a47faee7797679b531d0aa9bd28840532c20a79f9ccfd939069a102061da9c",
+      "passed": true,
+      "manifest": {
+        "operator": "data_cleaning",
+        "columns_used": [
+          "age",
+          "workclass",
+          "fnlwgt",
+          "education",
+          "education_num",
+          "marital_status",
+          "occupation",
+          "relationship",
+          "race",
+          "sex",
+          "capital_gain",
+          "capital_loss",
+          "hours_per_week",
+          "native_country",
+          "income"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "duplicates_removed",
+          "nulls_imputed"
+        ],
+        "chart_type": "none",
+        "row_count_in": 32561,
+        "row_count_out": 32537,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-detect_anomalies-en",
+      "task_family_id": "9320662e3c14fe32b1c570abdd948e535d591b04a5a71c94ebf88171042a79b9",
+      "passed": true,
+      "manifest": {
+        "operator": "anomaly_detection",
+        "columns_used": [
+          "residual sugar",
+          "alcohol"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "isolation_forest_scores",
+          "contamination_ratio"
+        ],
+        "chart_type": "histogram",
+        "row_count_in": 4898,
+        "row_count_out": 4898,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-eda_data-en",
+      "task_family_id": "306708e921411340ee8757e60280074d508b1b9c108adb1a2c65eeab35bdc0c3",
+      "passed": true,
+      "manifest": {
+        "operator": "general_eda",
+        "columns_used": [
+          "date",
+          "Appliances",
+          "lights",
+          "T1",
+          "RH_1",
+          "T2",
+          "RH_2",
+          "T3",
+          "RH_3",
+          "T4",
+          "RH_4",
+          "T5",
+          "RH_5",
+          "T6",
+          "RH_6",
+          "T7",
+          "RH_7",
+          "T8",
+          "RH_8",
+          "T9",
+          "RH_9",
+          "T_out",
+          "Press_mm_hg",
+          "RH_out",
+          "Windspeed",
+          "Visibility",
+          "Tdewpoint",
+          "rv1",
+          "rv2"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "null_counts",
+          "cardinality",
+          "descriptive_stats"
+        ],
+        "chart_type": "none",
+        "row_count_in": 19735,
+        "row_count_out": 29,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-train_model-en",
+      "task_family_id": "0d1c35b2ec8304386d296c48974fd5b78ccfb73801ac2ef8c2700ab2ccc77fb7",
+      "passed": true,
+      "manifest": {
+        "operator": "supervised_ml",
+        "columns_used": [
+          "income",
+          "age",
+          "education_num",
+          "hours_per_week"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "Accuracy",
+          "confusion_matrix",
+          "feature_importances"
+        ],
+        "chart_type": "confusion_matrix",
+        "row_count_in": 32561,
+        "row_count_out": 2,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-cluster_data-en",
+      "task_family_id": "6f607528c7ffb6e912aad2d02c74d2ca2a743af9d5526219e97f77706a897195",
+      "passed": true,
+      "manifest": {
+        "operator": "clustering",
+        "columns_used": [
+          "alcohol",
+          "residual sugar",
+          "density"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "inertia",
+          "silhouette_score",
+          "cluster_centroids"
+        ],
+        "chart_type": "scatter",
+        "row_count_in": 4898,
+        "row_count_out": 3,
+        "assumptions": [
+          "Declared scaling=standard",
+          "KMeans n_init=10, random_state=42"
+        ],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-statistical_test-en",
+      "task_family_id": "a0a8a9a72ffd5c0d0647d4b4fd982ccc51b925944bf0089c5829a801f8c2ca82",
+      "passed": true,
+      "manifest": {
+        "operator": "statistical_test",
+        "columns_used": [
+          "alcohol",
+          "quality"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "test_statistic",
+          "degrees_of_freedom",
+          "p_value",
+          "effect_size",
+          "significance"
+        ],
+        "chart_type": "none",
+        "row_count_in": 4898,
+        "row_count_out": 1,
+        "assumptions": [
+          "Test selected explicitly: one_way_anova",
+          "Significance threshold alpha=0.05"
+        ],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-categorical_outcome_association-en",
+      "task_family_id": "c4e03579f6e0572a43ab9541c7176e0c0fad50d37fe90b6f1ec6db9a50c133f7",
+      "passed": true,
+      "manifest": {
+        "operator": "categorical_outcome_association",
+        "columns_used": [
+          "duration",
+          "y"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "record_count",
+          "mean",
+          "median",
+          "std",
+          "min",
+          "max",
+          "eta_squared"
+        ],
+        "chart_type": "box",
+        "row_count_in": 45211,
+        "row_count_out": 2,
+        "assumptions": [
+          "Declared analysis_context=retrospective_association",
+          "Descriptive group comparison only; no causal or prospective-prediction claim."
+        ],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-pca_analysis-en",
+      "task_family_id": "56217601e8572480f6672fcb0c54661bdf01e86e883dfa5d8020c320942addd4",
+      "passed": true,
+      "manifest": {
+        "operator": "pca_dimensionality_reduction",
+        "columns_used": [
+          "alcohol",
+          "density",
+          "pH"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "explained_variance_ratio",
+          "cumulative_variance"
+        ],
+        "chart_type": "bar",
+        "row_count_in": 4898,
+        "row_count_out": 2,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-explain_features-en",
+      "task_family_id": "c79c752977fdfaede2b38ac501a02e6e6b6d4503cb703f6038f04ce91bc04941",
+      "passed": true,
+      "manifest": {
+        "operator": "feature_explainability",
+        "columns_used": [
+          "age",
+          "fnlwgt",
+          "education_num",
+          "capital_gain",
+          "capital_loss",
+          "hours_per_week"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "gini_importance",
+          "feature_rankings"
+        ],
+        "chart_type": "bar",
+        "row_count_in": 32561,
+        "row_count_out": 5,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-autocorrelation-en",
+      "task_family_id": "c9d635618a42ba6f5fc792b6650d975a51da166a913f43741d38bdcd4ff54f97",
+      "passed": true,
+      "manifest": {
+        "operator": "autocorrelation",
+        "columns_used": [
+          "Appliances"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "acf",
+          "pacf",
+          "significant_lags"
+        ],
+        "chart_type": "acf",
+        "row_count_in": 19735,
+        "row_count_out": 25,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": null,
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-decompose_time_series-en",
+      "task_family_id": "ed60abc79d7a3ad90d92479d00e8e1c7dbb8e0fe2f448d837ccf38ecebc9b178",
+      "passed": true,
+      "manifest": {
+        "operator": "time_series_decomposition",
+        "columns_used": [
+          "date",
+          "Appliances"
+        ],
+        "filters_applied": [],
+        "statistics_computed": [
+          "trend_strength",
+          "seasonality_strength",
+          "residual_variance"
+        ],
+        "chart_type": "line",
+        "row_count_in": 19735,
+        "row_count_out": 19735,
+        "assumptions": [],
+        "warnings": [],
+        "event_row_count": null,
+        "pre_event_row_count": null,
+        "predicate_applied": null,
+        "sorted_by": "date",
+        "partitioned_by": null
+      }
+    },
+    {
+      "case_id": "core-event_window_analysis-en",
+      "task_family_id": "dd260fdd70dea94ce1d06ad15c0e8488a3c8de90f4142285b21346f76373148d",
+      "passed": true,
+      "manifest": {
+        "operator": "event_window_analysis",
+        "columns_used": [
+          "lights",
+          "date",
+          "Appliances"
+        ],
+        "filters_applied": [
+          {
+            "column": "lights",
+            "operator": ">",
+            "value": 0
+          }
+        ],
+        "statistics_computed": [
+          "pre_event_variance",
+          "normal_variance",
+          "variance_spike_ratio",
+          "quantiles",
+          "iqr"
+        ],
+        "chart_type": "box",
+        "row_count_in": 19735,
+        "row_count_out": 3,
+        "assumptions": [
+          "Event predicate 'lights > 0.0'; pre-event lookback window set to 24 sequence units."
+        ],
+        "warnings": [],
+        "event_row_count": 4483,
+        "pre_event_row_count": 9759,
+        "predicate_applied": "lights > 0.0",
+        "sorted_by": "date",
+        "partitioned_by": null
+      }
+    }
+  ],
+  "training_ready": false,
+  "human_reviewed": 0,
+  "limits": [
+    "Execution/manifest check is not independent numerical verification.",
+    "Hinglish variants need semantic review; only English variants were executed.",
+    "No train/validation/test split assigned. No clarification or multi-turn coverage claimed."
+  ]
+}

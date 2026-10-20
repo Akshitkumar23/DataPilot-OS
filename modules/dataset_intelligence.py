@@ -170,6 +170,78 @@ class DatasetIntelligence:
             logger.error(f"Error in audit_data_quality: {str(e)}")
             return {"quality_score": 0.0, "error": str(e), "recommendations": ["Error analyzing dataset."]}
 
+    def detect_schema_drift(self, baseline_schema: Dict[str, Any], current_df: pd.DataFrame) -> Dict[str, Any]:
+        """
+        Detects schema drift between a baseline schema and current DataFrame.
+        """
+        logger.info("Starting schema drift detection.")
+        if not isinstance(current_df, pd.DataFrame):
+            raise ValueError("current_df must be a pandas DataFrame.")
+            
+        if isinstance(baseline_schema, dict) and "columns" in baseline_schema and isinstance(baseline_schema["columns"], dict):
+            base_cols_dict = baseline_schema["columns"]
+            base_rows = baseline_schema.get("rows", 0)
+        elif isinstance(baseline_schema, dict):
+            base_cols_dict = {k: v for k, v in baseline_schema.items() if k not in ("rows", "col_count")}
+            base_rows = baseline_schema.get("rows", 0)
+        else:
+            base_cols_dict = {}
+            base_rows = 0
+
+        curr_cols = [str(c) for c in current_df.columns]
+        base_cols = [str(c) for c in base_cols_dict.keys()]
+
+        added_columns = [c for c in curr_cols if c not in base_cols_dict]
+        removed_columns = [c for c in base_cols if c not in curr_cols]
+
+        dtype_changes = {}
+        null_rate_variance = {}
+        curr_rows = len(current_df)
+
+        for col in curr_cols:
+            if col in base_cols_dict:
+                meta = base_cols_dict[col]
+                if isinstance(meta, dict):
+                    base_dtype = str(meta.get("dtype", "")).lower()
+                    if "null_rate" in meta:
+                        base_null_rate = float(meta["null_rate"])
+                    elif "null_count" in meta and base_rows > 0:
+                        base_null_rate = float(meta["null_count"]) / float(base_rows)
+                    else:
+                        base_null_rate = 0.0
+                else:
+                    base_dtype = str(meta).lower()
+                    base_null_rate = 0.0
+
+                curr_dtype = str(current_df[col].dtype).lower()
+                curr_null_rate = float(current_df[col].isna().sum()) / float(curr_rows) if curr_rows > 0 else 0.0
+
+                if base_dtype and curr_dtype != base_dtype:
+                    dtype_changes[col] = {
+                        "baseline": base_dtype,
+                        "current": curr_dtype
+                    }
+
+                variance = round(curr_null_rate - base_null_rate, 4)
+                null_rate_variance[col] = variance
+
+        max_null_var = max([abs(v) for v in null_rate_variance.values()], default=0.0)
+
+        if len(removed_columns) > 0 or len(dtype_changes) >= 2 or max_null_var >= 0.3:
+            severity = "high"
+        elif len(added_columns) > 0 or len(dtype_changes) > 0 or max_null_var >= 0.1:
+            severity = "medium"
+        else:
+            severity = "low"
+
+        return {
+            "added_columns": added_columns,
+            "removed_columns": removed_columns,
+            "dtype_changes": dtype_changes,
+            "null_rate_variance": null_rate_variance,
+            "severity": severity
+        }
+
 
 # Global Singleton Instance
 dataset_intelligence = DatasetIntelligence()

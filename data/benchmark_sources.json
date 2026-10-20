@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "purpose": "Offline, real-world evaluation data only. These sources never participate in runtime tool routing or customer-query execution.",
+  "datasets": [
+    {
+      "id": "uci_bank_marketing",
+      "domain": "banking_marketing",
+      "source_url": "https://archive.ics.uci.edu/static/public/222/bank+marketing.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/222/bank+marketing",
+      "license": "CC BY 4.0",
+      "data_kind": "observed_public",
+      "archive_member": "bank.zip::bank-full.csv",
+      "read_csv": { "sep": ";" },
+      "output_file": "bank_marketing.csv",
+      "citation": "Moro, S., Rita, P., & Cortez, P. (2014). Bank Marketing [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5K306"
+    },
+    {
+      "id": "uci_bike_sharing_hourly",
+      "domain": "operations_time_series",
+      "source_url": "https://archive.ics.uci.edu/static/public/275/bike+sharing+dataset.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset",
+      "license": "CC BY 4.0",
+      "data_kind": "observed_public",
+      "archive_member": "hour.csv",
+      "read_csv": {},
+      "output_file": "bike_sharing_hourly.csv",
+      "citation": "Fanaee-T, H. (2013). Bike Sharing [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5W894"
+    },
+    {
+      "id": "uci_ai4i_predictive_maintenance",
+      "domain": "manufacturing_predictive_maintenance",
+      "source_url": "https://archive.ics.uci.edu/static/public/601/ai4i+2020+predictive+maintenance+dataset.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/601/ai4i",
+      "license": "CC BY 4.0",
+      "data_kind": "synthetic_reference_only",
+      "archive_member": "ai4i2020.csv",
+      "read_csv": {},
+      "output_file": "ai4i_predictive_maintenance.csv",
+      "citation": "Matzka, S. (2020). AI4I 2020 Predictive Maintenance Dataset [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5HS5C"
+    },
+    {
+      "id": "uci_appliances_energy",
+      "domain": "building_energy_operations",
+      "source_url": "https://archive.ics.uci.edu/static/public/374/appliances+energy+prediction.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/374/appliances+energy+prediction",
+      "license": "CC BY 4.0",
+      "data_kind": "observed_public",
+      "archive_member": "energydata_complete.csv",
+      "reader": "csv",
+      "read_options": {},
+      "output_file": "appliances_energy.csv",
+      "citation": "Candanedo, L. (2017). Appliances Energy Prediction [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5VC8G"
+    },
+    {
+      "id": "uci_wine_quality_white",
+      "domain": "quality_control",
+      "source_url": "https://archive.ics.uci.edu/static/public/186/wine+quality.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/186/wine%2Bquality",
+      "license": "CC BY 4.0",
+      "data_kind": "observed_public",
+      "archive_member": "winequality-white.csv",
+      "reader": "csv",
+      "read_options": {"sep": ";"},
+      "output_file": "wine_quality_white.csv",
+      "citation": "Cortez, P., Cerdeira, A., Almeida, F., Matos, T., & Reis, J. (2009). Wine Quality [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C56S3T"
+    },
+    {
+      "id": "uci_online_retail",
+      "domain": "retail_transactions",
+      "source_url": "https://archive.ics.uci.edu/static/public/352/online+retail.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/352/online-retail",
+      "license": "CC BY 4.0",
+      "data_kind": "observed_public",
+      "archive_member": "Online Retail.xlsx",
+      "reader": "excel",
+      "read_options": {},
+      "output_file": "online_retail.csv",
+      "citation": "Chen, D. (2015). Online Retail [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5BW33"
+    },
+    {
+      "id": "uci_adult_income",
+      "domain": "workforce_income",
+      "source_url": "https://archive.ics.uci.edu/static/public/2/adult.zip",
+      "source_page": "https://archive.ics.uci.edu/dataset/2/adult",
+      "license": "CC BY 4.0",
+      "data_kind": "observed_public",
+      "archive_member": "adult.data",
+      "reader": "csv",
+      "read_options": {
+        "header": null,
+        "names": ["age", "workclass", "fnlwgt", "education", "education_num", "marital_status", "occupation", "relationship", "race", "sex", "capital_gain", "capital_loss", "hours_per_week", "native_country", "income"],
+        "skipinitialspace": true
+      },
+      "output_file": "adult_income.csv",
+      "citation": "Kohavi, R. (1996). Adult [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5XW20"
+    }
+  ]
+}

@@ -33,10 +33,13 @@ def plot_feature_importance(model: Any, feature_names: List[str]) -> None:
     Plot feature importance for a given model.
     \"\"\"
     try:
-        if not hasattr(model, 'feature_importances_'):
-            raise ValueError("Model does not have 'feature_importances_' attribute.")
+        if hasattr(model, 'feature_importances_'):
+            importances = model.feature_importances_
+        elif hasattr(model, 'coef_'):
+            importances = np.abs(model.coef_).ravel()
+        else:
+            raise ValueError("Model does not have 'feature_importances_' or 'coef_' attribute.")
             
-        importances = model.feature_importances_
         df_imp = pd.DataFrame({'Feature': feature_names, 'Importance': importances})
         df_imp = df_imp.sort_values(by='Importance', ascending=False)
         
@@ -82,7 +85,10 @@ def plot_shap_summary(model: Any, X_train: pd.DataFrame) -> None:
         shap.initjs()
         
         # Create object that can calculate shap values
-        explainer = shap.TreeExplainer(model)
+        try:
+            explainer = shap.Explainer(model, X_train)
+        except Exception:
+            explainer = shap.TreeExplainer(model)
         
         # Calculate Shap values
         shap_values = explainer.shap_values(X_train)

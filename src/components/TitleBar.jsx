@@ -3,7 +3,7 @@ import { Minus, Square, X, Database, Pin, PinOff, Sparkles, FolderOpen, Sun, Moo
 
 const isElectron = typeof window !== 'undefined' && window.electron;
 
-export default function TitleBar({ datasetName, rowCount, colCount, onOpenFile, onSaveFile, isSaving, theme, onToggleTheme }) {
+export default function TitleBar({ datasetName, rowCount, colCount, onOpenFile, onSaveFile, isSaving, theme, onToggleTheme, onNavigateHome }) {
   const [maximized, setMaximized] = useState(false);
   const [isPinned, setIsPinned]   = useState(true);
 
@@ -44,7 +44,18 @@ export default function TitleBar({ datasetName, rowCount, colCount, onOpenFile, 
       WebkitAppRegion: 'drag',
     }}>
       {/* Left side: Premium AI Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+      <div
+        onClick={onNavigateHome}
+        title="Go to Home Workspace"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          flexShrink: 0,
+          cursor: onNavigateHome ? 'pointer' : 'default',
+          WebkitAppRegion: 'no-drag'
+        }}
+      >
         <div style={{
           width: 28,
           height: 28,

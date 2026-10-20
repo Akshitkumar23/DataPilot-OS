@@ -1,0 +1,9 @@
+{
+  "total": 40,
+  "prepared": 40,
+  "rejected": [],
+  "training_ready": false,
+  "reason": "Migration diagnostic; split/review/scientific gates remain required.",
+  "corpus_sha256": "a14373ebcce098d9e0e64a1586247412da16102e5269834d24d48c977288d719",
+  "renderer_sha256": "25ec75d53382faadf8b56219982176b645a8060f96214972a004d9f59ccda65f"
+}

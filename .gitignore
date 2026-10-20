@@ -29,6 +29,7 @@ __MACOSX/
 *.old
 *.orig
 .pytest_cache/
+.training-preflight-env/
 coverage/
 htmlcov/
 
@@ -57,7 +58,67 @@ htmlcov/
 *_processed.*
 *_output.*
 output/
+uploads/
+
 
 # OS & Editor
 Thumbs.db
 desktop.ini
+
+# Training Checkpoints & Model Artifacts
+training/artifacts/
+
+# Internal Agent & IDE Logs
+.system_generated/
+
+# Runtime Persistence Databases & History
+backend/data/*.json
+
+# Internal Audit Reports, Test Dumps & Temporary Artifacts
+*.patch
+*_results.json
+cisco_*.json
+FINAL_DATAPILOT_AUDIT.md
+PROJECT_CLEANUP_REPORT.md
+project_storage_audit.md
+scientific_rules_audit.md
+report-source.md
+REAL_DATASET_PACK_GUIDE.md
+DataPilot-OS-Local-Test.bat
+scripts/*cisco*
+scripts/*cleanup*
+scripts/repair_app.py
+scripts/restore_app_jsx.py
+scripts/inspect_sample_nb.py
+scripts/test_first_day_query.py
+scripts/evaluate_*.py
+scripts/record_baseline_test_suite.py
+scripts/run_master_real_world_evaluation.py
+
+# Internal Architecture Audits, Logs & Phase Artifacts
+docs/*AUDIT*.md
+docs/*REPORT*.md
+docs/*_REPORT*.md
+docs/*EVALUATION*.md
+docs/*LEDGER*.md
+docs/*WORKFLOW*.md
+docs/*COMPETENCY*.md
+docs/architecture/
+docs/cisco_*.md
+docs/external_data_science_*.md
+docs/fw02_benchmark_artifacts/
+docs/METHODOLOGICAL_*.md
+docs/RESULTS_OUTPUT_*.md
+docs/SOURCE_NATIVE_*.md
+docs/FUTURE_WORK.md
+docs/FUTURE_WORK_EVIDENCE_AUDIT.md
+docs/FW02_*.md
+docs/FW03_*.md
+docs/FW04_IMPLEMENTATION_*.md
+docs/FW04_REAL_WORLD_*.md
+docs/FW04_BOUNDARY_*.md
+docs/FW04_OLLAMA_BOUNDARY_*.md
+docs/operations/packaged_acceptance_report.md
+
+
+

@@ -36,18 +36,20 @@ class DataEngineeringEngine:
                 return pd.read_csv(filepath, **kwargs)
             elif format_type == 'sql':
                 conn = sqlite3.connect(filepath)
-                query = kwargs.get('query', "SELECT * FROM data")
-                df = pd.read_sql(query, conn)
-                conn.close()
-                return df
+                try:
+                    query = kwargs.get('query', "SELECT * FROM data")
+                    return pd.read_sql(query, conn)
+                finally:
+                    conn.close()
             elif format_type == 'duckdb':
                 query = kwargs.get('query')
                 if not query:
                     raise ValueError("A 'query' must be provided for duckdb format.")
                 conn = duckdb.connect(database=filepath)
-                df = conn.execute(query).df()
-                conn.close()
-                return df
+                try:
+                    return conn.execute(query).df()
+                finally:
+                    conn.close()
             else:
                 raise ValueError(f"Unsupported format_type: {format_type}")
         except Exception as e:

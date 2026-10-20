@@ -1,0 +1,28 @@
+{
+  "schema_version": "datapilot-multilingual-multistep-candidates-v1",
+  "source_corpus": "C:\\Users\\Mr\\Desktop\\DataPilot OS\\training\\artifacts\\verified-numeric-pilot-v2\\pilot.jsonl",
+  "source_record_count": 1440,
+  "candidate_count": 240,
+  "language_counts": {
+    "hi": 120,
+    "hinglish": 120
+  },
+  "genuine_dependent_multistep_count": 240,
+  "distinct_source_workflows": 120,
+  "dataset_counts": {
+    "uci_adult_income": 40,
+    "uci_appliances_energy": 40,
+    "uci_bank_marketing": 40,
+    "uci_bike_sharing_hourly": 40,
+    "uci_online_retail": 40,
+    "uci_wine_quality_white": 40
+  },
+  "corpus_sha256": "5286cb3df3c4a6dcee5590b85039457d358c369623f2ec12236741209ad56451",
+  "human_reviewed": 0,
+  "training_ready": false,
+  "limitations": [
+    "Numeric evidence is inherited from the identical source plan; it does not validate language meaning.",
+    "Every Hindi/Hinglish query requires record-level human naturalness and semantic review.",
+    "Coverage is limited to dependent filter_data -> aggregate_data workflows."
+  ]
+}

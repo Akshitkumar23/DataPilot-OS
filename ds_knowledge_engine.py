@@ -500,15 +500,14 @@ class DataScienceKnowledgeEngine:
         # Initialize Enterprise Modular Architecture Components
         try:
             from modules.capability_registry import capability_registry
-            from modules.intent_layer import intent_parser, conversation_memory
+            from backend.intelligence.intent_engine import intent_engine
             from modules.dataset_intelligence import dataset_intelligence
             from modules.security_cache import security_guard, execution_cache
             from modules.planning_agent import planning_agent
             from modules.auto_insights import auto_insights
 
             self.registry = capability_registry
-            self.intent_parser = intent_parser
-            self.memory = conversation_memory
+            self.intent_parser = intent_engine
             self.dataset_intelligence = dataset_intelligence
             self.security_guard = security_guard
             self.execution_cache = execution_cache

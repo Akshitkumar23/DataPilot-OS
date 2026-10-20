@@ -1,0 +1,1682 @@
+[
+  {
+    "case_id": "pilot-e04470e6c3ef74a9611cc563-hi",
+    "passed": true,
+    "result_sha256": "83bc2b6814918782bda923e121b1e94e9967b969598fde47b6bdb8c37c9fbd42",
+    "source_case_id": "pilot-e04470e6c3ef74a9611cc563",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e04470e6c3ef74a9611cc563-hinglish",
+    "passed": true,
+    "result_sha256": "83bc2b6814918782bda923e121b1e94e9967b969598fde47b6bdb8c37c9fbd42",
+    "source_case_id": "pilot-e04470e6c3ef74a9611cc563",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-febba06afb79ea8253a5fdf3-hi",
+    "passed": true,
+    "result_sha256": "fb6014aca6e1b0e28b02db8783b8f1bf88e0bbbba5ff446cde5e76393ed91cce",
+    "source_case_id": "pilot-febba06afb79ea8253a5fdf3",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-febba06afb79ea8253a5fdf3-hinglish",
+    "passed": true,
+    "result_sha256": "fb6014aca6e1b0e28b02db8783b8f1bf88e0bbbba5ff446cde5e76393ed91cce",
+    "source_case_id": "pilot-febba06afb79ea8253a5fdf3",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eb019baaed511eb5f9a91f31-hi",
+    "passed": true,
+    "result_sha256": "5942bbd110db8ffe6e4398ceeae687f167961e1a640b62dc07eab4a979301a46",
+    "source_case_id": "pilot-eb019baaed511eb5f9a91f31",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eb019baaed511eb5f9a91f31-hinglish",
+    "passed": true,
+    "result_sha256": "5942bbd110db8ffe6e4398ceeae687f167961e1a640b62dc07eab4a979301a46",
+    "source_case_id": "pilot-eb019baaed511eb5f9a91f31",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd5bd81d78362c23b83abca2-hi",
+    "passed": true,
+    "result_sha256": "5b25d0f88f31250a2ee460a69c9747a7a2a9adf60f5da49cdf3685d01271d81a",
+    "source_case_id": "pilot-fd5bd81d78362c23b83abca2",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd5bd81d78362c23b83abca2-hinglish",
+    "passed": true,
+    "result_sha256": "5b25d0f88f31250a2ee460a69c9747a7a2a9adf60f5da49cdf3685d01271d81a",
+    "source_case_id": "pilot-fd5bd81d78362c23b83abca2",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-da0cedb9503a90e5562b04c3-hi",
+    "passed": true,
+    "result_sha256": "0481d09af8485295c4af093571817d78eb9050661ceb33eba43706b3bdd9a990",
+    "source_case_id": "pilot-da0cedb9503a90e5562b04c3",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-da0cedb9503a90e5562b04c3-hinglish",
+    "passed": true,
+    "result_sha256": "0481d09af8485295c4af093571817d78eb9050661ceb33eba43706b3bdd9a990",
+    "source_case_id": "pilot-da0cedb9503a90e5562b04c3",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fa30d8bee6b6661972905804-hi",
+    "passed": true,
+    "result_sha256": "6bb6474c8d7afb0088744332b929463b6dd6bc9f1ac88a02bc69aec2e8eb2ddb",
+    "source_case_id": "pilot-fa30d8bee6b6661972905804",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fa30d8bee6b6661972905804-hinglish",
+    "passed": true,
+    "result_sha256": "6bb6474c8d7afb0088744332b929463b6dd6bc9f1ac88a02bc69aec2e8eb2ddb",
+    "source_case_id": "pilot-fa30d8bee6b6661972905804",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e09561f492abbe21a29e076c-hi",
+    "passed": true,
+    "result_sha256": "b48c480e4e172891e5ea93ac29f192a8d0cf9d4a68d41fb766694b4d1aa355f5",
+    "source_case_id": "pilot-e09561f492abbe21a29e076c",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e09561f492abbe21a29e076c-hinglish",
+    "passed": true,
+    "result_sha256": "b48c480e4e172891e5ea93ac29f192a8d0cf9d4a68d41fb766694b4d1aa355f5",
+    "source_case_id": "pilot-e09561f492abbe21a29e076c",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-febe5c424b95d3f172b9620d-hi",
+    "passed": true,
+    "result_sha256": "69f4ded5896a45f9ab7849e4811700e4d90452edce682db3e9198a2b0696514e",
+    "source_case_id": "pilot-febe5c424b95d3f172b9620d",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-febe5c424b95d3f172b9620d-hinglish",
+    "passed": true,
+    "result_sha256": "69f4ded5896a45f9ab7849e4811700e4d90452edce682db3e9198a2b0696514e",
+    "source_case_id": "pilot-febe5c424b95d3f172b9620d",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eb1ab18ef7cec95a35e4e627-hi",
+    "passed": true,
+    "result_sha256": "3b5bac209d52efadffde78cb4436f4c075ebe0c3582fa42e02056f322532d900",
+    "source_case_id": "pilot-eb1ab18ef7cec95a35e4e627",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eb1ab18ef7cec95a35e4e627-hinglish",
+    "passed": true,
+    "result_sha256": "3b5bac209d52efadffde78cb4436f4c075ebe0c3582fa42e02056f322532d900",
+    "source_case_id": "pilot-eb1ab18ef7cec95a35e4e627",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd5d3c6297e9f781e75ed323-hi",
+    "passed": true,
+    "result_sha256": "5c453ab0eb07771103910eefec720d59bef3f9aa4dc8ed6abbe9c4315f8c7fe4",
+    "source_case_id": "pilot-fd5d3c6297e9f781e75ed323",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd5d3c6297e9f781e75ed323-hinglish",
+    "passed": true,
+    "result_sha256": "5c453ab0eb07771103910eefec720d59bef3f9aa4dc8ed6abbe9c4315f8c7fe4",
+    "source_case_id": "pilot-fd5d3c6297e9f781e75ed323",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-da9564ee7e13e4c8aaf050ae-hi",
+    "passed": true,
+    "result_sha256": "d47df3e9485c795eb140c4fb121e9a6c0db519ef59945816708f01484e0575dd",
+    "source_case_id": "pilot-da9564ee7e13e4c8aaf050ae",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-da9564ee7e13e4c8aaf050ae-hinglish",
+    "passed": true,
+    "result_sha256": "d47df3e9485c795eb140c4fb121e9a6c0db519ef59945816708f01484e0575dd",
+    "source_case_id": "pilot-da9564ee7e13e4c8aaf050ae",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fa872e0e002946402b9eee42-hi",
+    "passed": true,
+    "result_sha256": "9cb7a6ede71c68094d56fbab873a8cd6ad695ddac8218a481d8bbb375953365e",
+    "source_case_id": "pilot-fa872e0e002946402b9eee42",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fa872e0e002946402b9eee42-hinglish",
+    "passed": true,
+    "result_sha256": "9cb7a6ede71c68094d56fbab873a8cd6ad695ddac8218a481d8bbb375953365e",
+    "source_case_id": "pilot-fa872e0e002946402b9eee42",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e179ca7afaad826be8cc45d4-hi",
+    "passed": true,
+    "result_sha256": "a2fd7d8d79a0d9676f75295e5e4a97001382f3c3ef53386e1715aeff6c35ce54",
+    "source_case_id": "pilot-e179ca7afaad826be8cc45d4",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e179ca7afaad826be8cc45d4-hinglish",
+    "passed": true,
+    "result_sha256": "a2fd7d8d79a0d9676f75295e5e4a97001382f3c3ef53386e1715aeff6c35ce54",
+    "source_case_id": "pilot-e179ca7afaad826be8cc45d4",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fec314545ecd2456ae25b587-hi",
+    "passed": true,
+    "result_sha256": "294153a114ba0aa03c6aa853eebd9129ea61896adb66e696f26452bb2d8fefb0",
+    "source_case_id": "pilot-fec314545ecd2456ae25b587",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fec314545ecd2456ae25b587-hinglish",
+    "passed": true,
+    "result_sha256": "294153a114ba0aa03c6aa853eebd9129ea61896adb66e696f26452bb2d8fefb0",
+    "source_case_id": "pilot-fec314545ecd2456ae25b587",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eb438cb7bec70a6ed31bca6e-hi",
+    "passed": true,
+    "result_sha256": "3835d7523760ffefdb3400b71baffa30ae244f21b251567b0464c74a36b1be8d",
+    "source_case_id": "pilot-eb438cb7bec70a6ed31bca6e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eb438cb7bec70a6ed31bca6e-hinglish",
+    "passed": true,
+    "result_sha256": "3835d7523760ffefdb3400b71baffa30ae244f21b251567b0464c74a36b1be8d",
+    "source_case_id": "pilot-eb438cb7bec70a6ed31bca6e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd5f639337ca725a3b45e47a-hi",
+    "passed": true,
+    "result_sha256": "d6117a480741b1cac74aa715bf136aea0d4fb02ce44e186aaeb44436ec08b6ba",
+    "source_case_id": "pilot-fd5f639337ca725a3b45e47a",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd5f639337ca725a3b45e47a-hinglish",
+    "passed": true,
+    "result_sha256": "d6117a480741b1cac74aa715bf136aea0d4fb02ce44e186aaeb44436ec08b6ba",
+    "source_case_id": "pilot-fd5f639337ca725a3b45e47a",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-db0ca90f7be0953ba6515624-hi",
+    "passed": true,
+    "result_sha256": "ed14216ccf20d05f34fcea31000ca9ac3beb86fc293ab1a0d21568d5a547dc58",
+    "source_case_id": "pilot-db0ca90f7be0953ba6515624",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-db0ca90f7be0953ba6515624-hinglish",
+    "passed": true,
+    "result_sha256": "ed14216ccf20d05f34fcea31000ca9ac3beb86fc293ab1a0d21568d5a547dc58",
+    "source_case_id": "pilot-db0ca90f7be0953ba6515624",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-faa96a30b21a46069aaa8b77-hi",
+    "passed": true,
+    "result_sha256": "0cfa4d97c4bcbd9fb51eb8acdec69e96ca456929a127be4a176c3bfebb8ce67a",
+    "source_case_id": "pilot-faa96a30b21a46069aaa8b77",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-faa96a30b21a46069aaa8b77-hinglish",
+    "passed": true,
+    "result_sha256": "0cfa4d97c4bcbd9fb51eb8acdec69e96ca456929a127be4a176c3bfebb8ce67a",
+    "source_case_id": "pilot-faa96a30b21a46069aaa8b77",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e1e58b651f9c4fab8e853944-hi",
+    "passed": true,
+    "result_sha256": "9666c9eb7592b5c0c655f6af28d1286857980ebff9679ca0912f0e330f683dc6",
+    "source_case_id": "pilot-e1e58b651f9c4fab8e853944",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e1e58b651f9c4fab8e853944-hinglish",
+    "passed": true,
+    "result_sha256": "9666c9eb7592b5c0c655f6af28d1286857980ebff9679ca0912f0e330f683dc6",
+    "source_case_id": "pilot-e1e58b651f9c4fab8e853944",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fec66bbebee791291d14bf67-hi",
+    "passed": true,
+    "result_sha256": "2f8e331edf98acc51fce1e846c7bb696a9fa5546fcf814ca150979b8c0ea778c",
+    "source_case_id": "pilot-fec66bbebee791291d14bf67",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fec66bbebee791291d14bf67-hinglish",
+    "passed": true,
+    "result_sha256": "2f8e331edf98acc51fce1e846c7bb696a9fa5546fcf814ca150979b8c0ea778c",
+    "source_case_id": "pilot-fec66bbebee791291d14bf67",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ebdc94bb8566391ba4ca18ef-hi",
+    "passed": true,
+    "result_sha256": "695ca92299f89080b118b17af53803fbe44ee0804de04b45a424343898d4d07b",
+    "source_case_id": "pilot-ebdc94bb8566391ba4ca18ef",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ebdc94bb8566391ba4ca18ef-hinglish",
+    "passed": true,
+    "result_sha256": "695ca92299f89080b118b17af53803fbe44ee0804de04b45a424343898d4d07b",
+    "source_case_id": "pilot-ebdc94bb8566391ba4ca18ef",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd6c04bb82a22cf206bdcb3a-hi",
+    "passed": true,
+    "result_sha256": "2564874adf0b60137feb64c00691eca7fcfb2cb8d1e23ece3e2e006243fa86fe",
+    "source_case_id": "pilot-fd6c04bb82a22cf206bdcb3a",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd6c04bb82a22cf206bdcb3a-hinglish",
+    "passed": true,
+    "result_sha256": "2564874adf0b60137feb64c00691eca7fcfb2cb8d1e23ece3e2e006243fa86fe",
+    "source_case_id": "pilot-fd6c04bb82a22cf206bdcb3a",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-dc21cbf1e825beffbf6a5a58-hi",
+    "passed": true,
+    "result_sha256": "b6d0bb2d8a82b72d6cb9bdaa5cf8398e130d579adeb64ca4b8aa45c00a796deb",
+    "source_case_id": "pilot-dc21cbf1e825beffbf6a5a58",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-dc21cbf1e825beffbf6a5a58-hinglish",
+    "passed": true,
+    "result_sha256": "b6d0bb2d8a82b72d6cb9bdaa5cf8398e130d579adeb64ca4b8aa45c00a796deb",
+    "source_case_id": "pilot-dc21cbf1e825beffbf6a5a58",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-faae4929bdd7bc20a6ffbc9e-hi",
+    "passed": true,
+    "result_sha256": "0ec8f8e603219ffdbeb804932a24ed11a45a227c0d9cc3e934d516a91c73a572",
+    "source_case_id": "pilot-faae4929bdd7bc20a6ffbc9e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-faae4929bdd7bc20a6ffbc9e-hinglish",
+    "passed": true,
+    "result_sha256": "0ec8f8e603219ffdbeb804932a24ed11a45a227c0d9cc3e934d516a91c73a572",
+    "source_case_id": "pilot-faae4929bdd7bc20a6ffbc9e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e28b2221ea57f3996f207694-hi",
+    "passed": true,
+    "result_sha256": "b0d94398167ee972b8cfb63a32ae43c1511d5628b213addc90132d41931fe1a7",
+    "source_case_id": "pilot-e28b2221ea57f3996f207694",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e28b2221ea57f3996f207694-hinglish",
+    "passed": true,
+    "result_sha256": "b0d94398167ee972b8cfb63a32ae43c1511d5628b213addc90132d41931fe1a7",
+    "source_case_id": "pilot-e28b2221ea57f3996f207694",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fec9b6a214f8f9d6107500e1-hi",
+    "passed": true,
+    "result_sha256": "4dad93934882411020c53a9b29a978f394bc3ec1517aabc51e2904c8a7c317ef",
+    "source_case_id": "pilot-fec9b6a214f8f9d6107500e1",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fec9b6a214f8f9d6107500e1-hinglish",
+    "passed": true,
+    "result_sha256": "4dad93934882411020c53a9b29a978f394bc3ec1517aabc51e2904c8a7c317ef",
+    "source_case_id": "pilot-fec9b6a214f8f9d6107500e1",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ec17ee17c5b03c1d1a9ef056-hi",
+    "passed": true,
+    "result_sha256": "7c8ba06dd3ce73fccc3981514dbeaab1315d4e3aa8f91f6a5d7dc1cc73305e69",
+    "source_case_id": "pilot-ec17ee17c5b03c1d1a9ef056",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ec17ee17c5b03c1d1a9ef056-hinglish",
+    "passed": true,
+    "result_sha256": "7c8ba06dd3ce73fccc3981514dbeaab1315d4e3aa8f91f6a5d7dc1cc73305e69",
+    "source_case_id": "pilot-ec17ee17c5b03c1d1a9ef056",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd822872fe6b7f6cc340c82e-hi",
+    "passed": true,
+    "result_sha256": "7645af8d4b963e4225a98a2a5ace13b4b1128d6649f22de8f25cc9b17bf9c6a5",
+    "source_case_id": "pilot-fd822872fe6b7f6cc340c82e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd822872fe6b7f6cc340c82e-hinglish",
+    "passed": true,
+    "result_sha256": "7645af8d4b963e4225a98a2a5ace13b4b1128d6649f22de8f25cc9b17bf9c6a5",
+    "source_case_id": "pilot-fd822872fe6b7f6cc340c82e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-de08d5c5cea693551ed13927-hi",
+    "passed": true,
+    "result_sha256": "33f9a69b3b8d54582735e744be2495d601582a9d668ea1aa3bd26ea4f9e098e2",
+    "source_case_id": "pilot-de08d5c5cea693551ed13927",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-de08d5c5cea693551ed13927-hinglish",
+    "passed": true,
+    "result_sha256": "33f9a69b3b8d54582735e744be2495d601582a9d668ea1aa3bd26ea4f9e098e2",
+    "source_case_id": "pilot-de08d5c5cea693551ed13927",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fabacdb1a59acd39cebbe9f2-hi",
+    "passed": true,
+    "result_sha256": "c2d645a65874fc85e3bd65d99361c23ea24fa22b22137d9bcf8b45c71debac7c",
+    "source_case_id": "pilot-fabacdb1a59acd39cebbe9f2",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fabacdb1a59acd39cebbe9f2-hinglish",
+    "passed": true,
+    "result_sha256": "c2d645a65874fc85e3bd65d99361c23ea24fa22b22137d9bcf8b45c71debac7c",
+    "source_case_id": "pilot-fabacdb1a59acd39cebbe9f2",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e2a7b4e8da58aa81332d6622-hi",
+    "passed": true,
+    "result_sha256": "9b3846430fe517c52ab53b40fb3a06e27401aaac5e60ee4ea9c9dd48b0653197",
+    "source_case_id": "pilot-e2a7b4e8da58aa81332d6622",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e2a7b4e8da58aa81332d6622-hinglish",
+    "passed": true,
+    "result_sha256": "9b3846430fe517c52ab53b40fb3a06e27401aaac5e60ee4ea9c9dd48b0653197",
+    "source_case_id": "pilot-e2a7b4e8da58aa81332d6622",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fedcdf35010aecef6a70cdf6-hi",
+    "passed": true,
+    "result_sha256": "44200982fc9fec4cdb2ff6c4e654782db19b3a776239c294c38484dc19268183",
+    "source_case_id": "pilot-fedcdf35010aecef6a70cdf6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fedcdf35010aecef6a70cdf6-hinglish",
+    "passed": true,
+    "result_sha256": "44200982fc9fec4cdb2ff6c4e654782db19b3a776239c294c38484dc19268183",
+    "source_case_id": "pilot-fedcdf35010aecef6a70cdf6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eca87ac1489366ea6f3c3ec3-hi",
+    "passed": true,
+    "result_sha256": "afa07a5b0a2e8410c949394672d1f111f15c0aa2e3d64d7bfb5222fc68b7d64a",
+    "source_case_id": "pilot-eca87ac1489366ea6f3c3ec3",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eca87ac1489366ea6f3c3ec3-hinglish",
+    "passed": true,
+    "result_sha256": "afa07a5b0a2e8410c949394672d1f111f15c0aa2e3d64d7bfb5222fc68b7d64a",
+    "source_case_id": "pilot-eca87ac1489366ea6f3c3ec3",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd93657a3cc6e580d7a377da-hi",
+    "passed": true,
+    "result_sha256": "46148722c48eaeca2128ea416c87a9a6a6517274281eecedc195b546de6c9755",
+    "source_case_id": "pilot-fd93657a3cc6e580d7a377da",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fd93657a3cc6e580d7a377da-hinglish",
+    "passed": true,
+    "result_sha256": "46148722c48eaeca2128ea416c87a9a6a6517274281eecedc195b546de6c9755",
+    "source_case_id": "pilot-fd93657a3cc6e580d7a377da",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-de55977aadc9d4f30c0e47fe-hi",
+    "passed": true,
+    "result_sha256": "e7753b46342b98323ca353ca485f0bc0932d2ea58010b58832827226e78ea224",
+    "source_case_id": "pilot-de55977aadc9d4f30c0e47fe",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-de55977aadc9d4f30c0e47fe-hinglish",
+    "passed": true,
+    "result_sha256": "e7753b46342b98323ca353ca485f0bc0932d2ea58010b58832827226e78ea224",
+    "source_case_id": "pilot-de55977aadc9d4f30c0e47fe",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fac7c572c49db6d558e6d6cc-hi",
+    "passed": true,
+    "result_sha256": "7a76b3d0e9093099b0e4429b9a5c62f722ee24493ffe32042f37f8a07fa9839c",
+    "source_case_id": "pilot-fac7c572c49db6d558e6d6cc",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fac7c572c49db6d558e6d6cc-hinglish",
+    "passed": true,
+    "result_sha256": "7a76b3d0e9093099b0e4429b9a5c62f722ee24493ffe32042f37f8a07fa9839c",
+    "source_case_id": "pilot-fac7c572c49db6d558e6d6cc",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e32585e13e287daa4b8beda7-hi",
+    "passed": true,
+    "result_sha256": "c446ed16f96ed63485553d29e16d762b50561cf30fea587200eaab0b2b31d63f",
+    "source_case_id": "pilot-e32585e13e287daa4b8beda7",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e32585e13e287daa4b8beda7-hinglish",
+    "passed": true,
+    "result_sha256": "c446ed16f96ed63485553d29e16d762b50561cf30fea587200eaab0b2b31d63f",
+    "source_case_id": "pilot-e32585e13e287daa4b8beda7",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fee0c09f62e572346cc078d2-hi",
+    "passed": true,
+    "result_sha256": "4c831369085bb15e2617cc85338027a8dd01899b1280e1e16d91b7e1af5db07c",
+    "source_case_id": "pilot-fee0c09f62e572346cc078d2",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fee0c09f62e572346cc078d2-hinglish",
+    "passed": true,
+    "result_sha256": "4c831369085bb15e2617cc85338027a8dd01899b1280e1e16d91b7e1af5db07c",
+    "source_case_id": "pilot-fee0c09f62e572346cc078d2",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ed1873b5a01ed4a9c44a4a15-hi",
+    "passed": true,
+    "result_sha256": "9ae58acb8749f1459d1a5460b1f3142779c9cd717ac22a228e310395891070bd",
+    "source_case_id": "pilot-ed1873b5a01ed4a9c44a4a15",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ed1873b5a01ed4a9c44a4a15-hinglish",
+    "passed": true,
+    "result_sha256": "9ae58acb8749f1459d1a5460b1f3142779c9cd717ac22a228e310395891070bd",
+    "source_case_id": "pilot-ed1873b5a01ed4a9c44a4a15",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fdb8f60a3688ccf5f24f69dc-hi",
+    "passed": true,
+    "result_sha256": "69be91fb8000af8ab74c4bdcf97971ec9a4b5d6b0965cceb8027802439540f5f",
+    "source_case_id": "pilot-fdb8f60a3688ccf5f24f69dc",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fdb8f60a3688ccf5f24f69dc-hinglish",
+    "passed": true,
+    "result_sha256": "69be91fb8000af8ab74c4bdcf97971ec9a4b5d6b0965cceb8027802439540f5f",
+    "source_case_id": "pilot-fdb8f60a3688ccf5f24f69dc",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-df690a200bb6ca55565ce5f2-hi",
+    "passed": true,
+    "result_sha256": "7934f51fdb93ad8fb03633412bacda95104429ba974feb3ce26c6251ecb34f41",
+    "source_case_id": "pilot-df690a200bb6ca55565ce5f2",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-df690a200bb6ca55565ce5f2-hinglish",
+    "passed": true,
+    "result_sha256": "7934f51fdb93ad8fb03633412bacda95104429ba974feb3ce26c6251ecb34f41",
+    "source_case_id": "pilot-df690a200bb6ca55565ce5f2",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fad87a7fef5f2d8dea10519e-hi",
+    "passed": true,
+    "result_sha256": "21c2817a89627675ad88a6c8f2bf078599bc59ef1b8fcf4ebe8a2a82d924d820",
+    "source_case_id": "pilot-fad87a7fef5f2d8dea10519e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fad87a7fef5f2d8dea10519e-hinglish",
+    "passed": true,
+    "result_sha256": "21c2817a89627675ad88a6c8f2bf078599bc59ef1b8fcf4ebe8a2a82d924d820",
+    "source_case_id": "pilot-fad87a7fef5f2d8dea10519e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e346210eee32b56b5eefec6f-hi",
+    "passed": true,
+    "result_sha256": "33908a552a4d58db13a19bffc0b94b89997bd097a66d9b40880f00bdfef9628b",
+    "source_case_id": "pilot-e346210eee32b56b5eefec6f",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e346210eee32b56b5eefec6f-hinglish",
+    "passed": true,
+    "result_sha256": "33908a552a4d58db13a19bffc0b94b89997bd097a66d9b40880f00bdfef9628b",
+    "source_case_id": "pilot-e346210eee32b56b5eefec6f",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fee76838acd09ca79768a68c-hi",
+    "passed": true,
+    "result_sha256": "70a30592264329d1ffa596ed88f10789bbd0079ffc1323f7065fefa766708c96",
+    "source_case_id": "pilot-fee76838acd09ca79768a68c",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fee76838acd09ca79768a68c-hinglish",
+    "passed": true,
+    "result_sha256": "70a30592264329d1ffa596ed88f10789bbd0079ffc1323f7065fefa766708c96",
+    "source_case_id": "pilot-fee76838acd09ca79768a68c",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ed328b36d82b1be0da1e5472-hi",
+    "passed": true,
+    "result_sha256": "97bc15368a30c3c70efea1e345d42e85a21f2a549cb13bff9a7950bd53ccc499",
+    "source_case_id": "pilot-ed328b36d82b1be0da1e5472",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ed328b36d82b1be0da1e5472-hinglish",
+    "passed": true,
+    "result_sha256": "97bc15368a30c3c70efea1e345d42e85a21f2a549cb13bff9a7950bd53ccc499",
+    "source_case_id": "pilot-ed328b36d82b1be0da1e5472",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fdba1493501dcd211d7e2fb6-hi",
+    "passed": true,
+    "result_sha256": "a30281ae5d444e6cc4975535af270a03ecd7acb36060330c30e6f9c551c8ec8a",
+    "source_case_id": "pilot-fdba1493501dcd211d7e2fb6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fdba1493501dcd211d7e2fb6-hinglish",
+    "passed": true,
+    "result_sha256": "a30281ae5d444e6cc4975535af270a03ecd7acb36060330c30e6f9c551c8ec8a",
+    "source_case_id": "pilot-fdba1493501dcd211d7e2fb6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e068943d097d153a3353b042-hi",
+    "passed": true,
+    "result_sha256": "4483585057b6aebca01e40e99108dd1d2de851ca57ad96cd285b241d084336fc",
+    "source_case_id": "pilot-e068943d097d153a3353b042",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e068943d097d153a3353b042-hinglish",
+    "passed": true,
+    "result_sha256": "4483585057b6aebca01e40e99108dd1d2de851ca57ad96cd285b241d084336fc",
+    "source_case_id": "pilot-e068943d097d153a3353b042",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fadb104120304993a39f4883-hi",
+    "passed": true,
+    "result_sha256": "0192efdf53317ec44b2c9424b706057d853caf9dc1e66a141d12c88c86a7c304",
+    "source_case_id": "pilot-fadb104120304993a39f4883",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fadb104120304993a39f4883-hinglish",
+    "passed": true,
+    "result_sha256": "0192efdf53317ec44b2c9424b706057d853caf9dc1e66a141d12c88c86a7c304",
+    "source_case_id": "pilot-fadb104120304993a39f4883",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e42462d972a26976f0096ade-hi",
+    "passed": true,
+    "result_sha256": "c54466b26c211e018b45a6c8c15d76668452b81a5e4003ba61336f477be788ec",
+    "source_case_id": "pilot-e42462d972a26976f0096ade",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e42462d972a26976f0096ade-hinglish",
+    "passed": true,
+    "result_sha256": "c54466b26c211e018b45a6c8c15d76668452b81a5e4003ba61336f477be788ec",
+    "source_case_id": "pilot-e42462d972a26976f0096ade",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fee817529a8746fd096b8c89-hi",
+    "passed": true,
+    "result_sha256": "e12c5066e8658357920a716fa40cf3ca01d6fbe5b07b3bc7867478eb508b8337",
+    "source_case_id": "pilot-fee817529a8746fd096b8c89",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fee817529a8746fd096b8c89-hinglish",
+    "passed": true,
+    "result_sha256": "e12c5066e8658357920a716fa40cf3ca01d6fbe5b07b3bc7867478eb508b8337",
+    "source_case_id": "pilot-fee817529a8746fd096b8c89",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ed3bb97d4023acac047e72c4-hi",
+    "passed": true,
+    "result_sha256": "0d1124642c3bbb60ae121500eb653757a85ede56b31d8586b4d315aae20499d8",
+    "source_case_id": "pilot-ed3bb97d4023acac047e72c4",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ed3bb97d4023acac047e72c4-hinglish",
+    "passed": true,
+    "result_sha256": "0d1124642c3bbb60ae121500eb653757a85ede56b31d8586b4d315aae20499d8",
+    "source_case_id": "pilot-ed3bb97d4023acac047e72c4",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fdde2871fdfa7aca9199b760-hi",
+    "passed": true,
+    "result_sha256": "008f0c8e2d611b0c9bc0c91382513f000be6435e6a53b0454d3660484b9ab85b",
+    "source_case_id": "pilot-fdde2871fdfa7aca9199b760",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fdde2871fdfa7aca9199b760-hinglish",
+    "passed": true,
+    "result_sha256": "008f0c8e2d611b0c9bc0c91382513f000be6435e6a53b0454d3660484b9ab85b",
+    "source_case_id": "pilot-fdde2871fdfa7aca9199b760",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e12e1e7a7dff98bc22e85020-hi",
+    "passed": true,
+    "result_sha256": "c9b6c555c8e9793481aa0db68e0af9cba1cedabb09d1f107e49734bfa67b114c",
+    "source_case_id": "pilot-e12e1e7a7dff98bc22e85020",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e12e1e7a7dff98bc22e85020-hinglish",
+    "passed": true,
+    "result_sha256": "c9b6c555c8e9793481aa0db68e0af9cba1cedabb09d1f107e49734bfa67b114c",
+    "source_case_id": "pilot-e12e1e7a7dff98bc22e85020",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fae30362a77d82e1ef90891b-hi",
+    "passed": true,
+    "result_sha256": "5b3eb67b32ba1f1ab6040f61c651735d19d3e5f08204267a488343c1e9500706",
+    "source_case_id": "pilot-fae30362a77d82e1ef90891b",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fae30362a77d82e1ef90891b-hinglish",
+    "passed": true,
+    "result_sha256": "5b3eb67b32ba1f1ab6040f61c651735d19d3e5f08204267a488343c1e9500706",
+    "source_case_id": "pilot-fae30362a77d82e1ef90891b",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e4308690cd9363f5f961b399-hi",
+    "passed": true,
+    "result_sha256": "0031a65a2655cb2c35572c7df828363a174f95f205627797cf8cc33c5cd63526",
+    "source_case_id": "pilot-e4308690cd9363f5f961b399",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e4308690cd9363f5f961b399-hinglish",
+    "passed": true,
+    "result_sha256": "0031a65a2655cb2c35572c7df828363a174f95f205627797cf8cc33c5cd63526",
+    "source_case_id": "pilot-e4308690cd9363f5f961b399",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef126b9466373ec091fad40-hi",
+    "passed": true,
+    "result_sha256": "647c83a793c7850f13ea4c0f7d1c37ec4a654371d688cee43266aba2204173f4",
+    "source_case_id": "pilot-fef126b9466373ec091fad40",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef126b9466373ec091fad40-hinglish",
+    "passed": true,
+    "result_sha256": "647c83a793c7850f13ea4c0f7d1c37ec4a654371d688cee43266aba2204173f4",
+    "source_case_id": "pilot-fef126b9466373ec091fad40",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ed5f969d5a7842abc8cf4954-hi",
+    "passed": true,
+    "result_sha256": "1d491b5a3f8f5a2c1d4ef4473f5867f657b4717bea92a18a00061efd657601ca",
+    "source_case_id": "pilot-ed5f969d5a7842abc8cf4954",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ed5f969d5a7842abc8cf4954-hinglish",
+    "passed": true,
+    "result_sha256": "1d491b5a3f8f5a2c1d4ef4473f5867f657b4717bea92a18a00061efd657601ca",
+    "source_case_id": "pilot-ed5f969d5a7842abc8cf4954",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fde8f9511dfbd338d72957fb-hi",
+    "passed": true,
+    "result_sha256": "2d85e30b745d5840afbfe8a68b0b5f7e46cfe9d98c1ca57157e481405b3fc22e",
+    "source_case_id": "pilot-fde8f9511dfbd338d72957fb",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fde8f9511dfbd338d72957fb-hinglish",
+    "passed": true,
+    "result_sha256": "2d85e30b745d5840afbfe8a68b0b5f7e46cfe9d98c1ca57157e481405b3fc22e",
+    "source_case_id": "pilot-fde8f9511dfbd338d72957fb",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e15e02d95bdfbc27a616ad0b-hi",
+    "passed": true,
+    "result_sha256": "f4d6870f104413d19d3348f4e9173214b7c740f9ec1bc3638439c331595243bc",
+    "source_case_id": "pilot-e15e02d95bdfbc27a616ad0b",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e15e02d95bdfbc27a616ad0b-hinglish",
+    "passed": true,
+    "result_sha256": "f4d6870f104413d19d3348f4e9173214b7c740f9ec1bc3638439c331595243bc",
+    "source_case_id": "pilot-e15e02d95bdfbc27a616ad0b",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-faf090f322917d520d6e9d4e-hi",
+    "passed": true,
+    "result_sha256": "351c9154315a2c7425fbc9cef055282817705bf5018c94b34c054b0d47e9d8d6",
+    "source_case_id": "pilot-faf090f322917d520d6e9d4e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-faf090f322917d520d6e9d4e-hinglish",
+    "passed": true,
+    "result_sha256": "351c9154315a2c7425fbc9cef055282817705bf5018c94b34c054b0d47e9d8d6",
+    "source_case_id": "pilot-faf090f322917d520d6e9d4e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e4cf77cabce9668faea26598-hi",
+    "passed": true,
+    "result_sha256": "d529a3d8aa9e8742d3935868e21a67f42a571f2992d0b6e7382bb8391a63c4e4",
+    "source_case_id": "pilot-e4cf77cabce9668faea26598",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e4cf77cabce9668faea26598-hinglish",
+    "passed": true,
+    "result_sha256": "d529a3d8aa9e8742d3935868e21a67f42a571f2992d0b6e7382bb8391a63c4e4",
+    "source_case_id": "pilot-e4cf77cabce9668faea26598",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef461f2e95c889b0eb76fe6-hi",
+    "passed": true,
+    "result_sha256": "58416bb1da4a2a4285410b44766a23c71a72c23ab675d75826b6d5ed95f1f3d4",
+    "source_case_id": "pilot-fef461f2e95c889b0eb76fe6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef461f2e95c889b0eb76fe6-hinglish",
+    "passed": true,
+    "result_sha256": "58416bb1da4a2a4285410b44766a23c71a72c23ab675d75826b6d5ed95f1f3d4",
+    "source_case_id": "pilot-fef461f2e95c889b0eb76fe6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ed7c96ae9cfc9672405a1f3a-hi",
+    "passed": true,
+    "result_sha256": "f86054207ed2493a9b2c590ca0095ed0a22ddae556ef7a2283cfd5ee495f4d8a",
+    "source_case_id": "pilot-ed7c96ae9cfc9672405a1f3a",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ed7c96ae9cfc9672405a1f3a-hinglish",
+    "passed": true,
+    "result_sha256": "f86054207ed2493a9b2c590ca0095ed0a22ddae556ef7a2283cfd5ee495f4d8a",
+    "source_case_id": "pilot-ed7c96ae9cfc9672405a1f3a",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fdeffb26e4716b4b2ca3ab91-hi",
+    "passed": true,
+    "result_sha256": "2d85e30b745d5840afbfe8a68b0b5f7e46cfe9d98c1ca57157e481405b3fc22e",
+    "source_case_id": "pilot-fdeffb26e4716b4b2ca3ab91",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fdeffb26e4716b4b2ca3ab91-hinglish",
+    "passed": true,
+    "result_sha256": "2d85e30b745d5840afbfe8a68b0b5f7e46cfe9d98c1ca57157e481405b3fc22e",
+    "source_case_id": "pilot-fdeffb26e4716b4b2ca3ab91",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e1a19325807b0140ab0b6c78-hi",
+    "passed": true,
+    "result_sha256": "5f98109bdf05195e72ca4e8db6f920c152d419146c80abc4b4d79b94aa02643d",
+    "source_case_id": "pilot-e1a19325807b0140ab0b6c78",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e1a19325807b0140ab0b6c78-hinglish",
+    "passed": true,
+    "result_sha256": "5f98109bdf05195e72ca4e8db6f920c152d419146c80abc4b4d79b94aa02643d",
+    "source_case_id": "pilot-e1a19325807b0140ab0b6c78",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb0d1e4d2f54f885cad78b58-hi",
+    "passed": true,
+    "result_sha256": "3431734fb91e2851fc4cfb3701b06d5451f4821983de8c4027e1fa698fa75296",
+    "source_case_id": "pilot-fb0d1e4d2f54f885cad78b58",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb0d1e4d2f54f885cad78b58-hinglish",
+    "passed": true,
+    "result_sha256": "3431734fb91e2851fc4cfb3701b06d5451f4821983de8c4027e1fa698fa75296",
+    "source_case_id": "pilot-fb0d1e4d2f54f885cad78b58",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e5098f62b8087e0328b93ad5-hi",
+    "passed": true,
+    "result_sha256": "8e464cfdea865618d678259216b9fe5480783bd0517cff995b9dff6774049907",
+    "source_case_id": "pilot-e5098f62b8087e0328b93ad5",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e5098f62b8087e0328b93ad5-hinglish",
+    "passed": true,
+    "result_sha256": "8e464cfdea865618d678259216b9fe5480783bd0517cff995b9dff6774049907",
+    "source_case_id": "pilot-e5098f62b8087e0328b93ad5",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef68a1be2cb41d28629b1c7-hi",
+    "passed": true,
+    "result_sha256": "77d09884b404d4917d12eef7dc97f8edead201017d4ccd1fa3b3fd6304ee0817",
+    "source_case_id": "pilot-fef68a1be2cb41d28629b1c7",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef68a1be2cb41d28629b1c7-hinglish",
+    "passed": true,
+    "result_sha256": "77d09884b404d4917d12eef7dc97f8edead201017d4ccd1fa3b3fd6304ee0817",
+    "source_case_id": "pilot-fef68a1be2cb41d28629b1c7",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-edc80ea893df732d510c983f-hi",
+    "passed": true,
+    "result_sha256": "9d5b1829b762f3c48cb46a5b4461c3b43f5797563281b3e034d89232ca438219",
+    "source_case_id": "pilot-edc80ea893df732d510c983f",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-edc80ea893df732d510c983f-hinglish",
+    "passed": true,
+    "result_sha256": "9d5b1829b762f3c48cb46a5b4461c3b43f5797563281b3e034d89232ca438219",
+    "source_case_id": "pilot-edc80ea893df732d510c983f",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fdffc21f88ae27a8e87598e6-hi",
+    "passed": true,
+    "result_sha256": "2308847c79f9347eba380cda6420a331b2a25f24592ab465d37bc1954e0050aa",
+    "source_case_id": "pilot-fdffc21f88ae27a8e87598e6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fdffc21f88ae27a8e87598e6-hinglish",
+    "passed": true,
+    "result_sha256": "2308847c79f9347eba380cda6420a331b2a25f24592ab465d37bc1954e0050aa",
+    "source_case_id": "pilot-fdffc21f88ae27a8e87598e6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e1ddff7018f3316b31124ae0-hi",
+    "passed": true,
+    "result_sha256": "7c2c236fa679b128d298a918ec133bb791d98ca0974750ed8fd9138aa4066264",
+    "source_case_id": "pilot-e1ddff7018f3316b31124ae0",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e1ddff7018f3316b31124ae0-hinglish",
+    "passed": true,
+    "result_sha256": "7c2c236fa679b128d298a918ec133bb791d98ca0974750ed8fd9138aa4066264",
+    "source_case_id": "pilot-e1ddff7018f3316b31124ae0",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb1b4381eaec700f8641964e-hi",
+    "passed": true,
+    "result_sha256": "d20e36e9a0302bc35b5038b0516d13b907296165865dfdbc648160709cd559ef",
+    "source_case_id": "pilot-fb1b4381eaec700f8641964e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb1b4381eaec700f8641964e-hinglish",
+    "passed": true,
+    "result_sha256": "d20e36e9a0302bc35b5038b0516d13b907296165865dfdbc648160709cd559ef",
+    "source_case_id": "pilot-fb1b4381eaec700f8641964e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e5175afdc90e61e2e28e31e9-hi",
+    "passed": true,
+    "result_sha256": "b0d94398167ee972b8cfb63a32ae43c1511d5628b213addc90132d41931fe1a7",
+    "source_case_id": "pilot-e5175afdc90e61e2e28e31e9",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e5175afdc90e61e2e28e31e9-hinglish",
+    "passed": true,
+    "result_sha256": "b0d94398167ee972b8cfb63a32ae43c1511d5628b213addc90132d41931fe1a7",
+    "source_case_id": "pilot-e5175afdc90e61e2e28e31e9",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef74ee9305e0a005056914d-hi",
+    "passed": true,
+    "result_sha256": "b25a02b444690e0fe0ef8fb3cb0656cfdc83b9a5e3ebefb3af5cfa4186c63401",
+    "source_case_id": "pilot-fef74ee9305e0a005056914d",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef74ee9305e0a005056914d-hinglish",
+    "passed": true,
+    "result_sha256": "b25a02b444690e0fe0ef8fb3cb0656cfdc83b9a5e3ebefb3af5cfa4186c63401",
+    "source_case_id": "pilot-fef74ee9305e0a005056914d",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ee08e1267e014e98fc8fd683-hi",
+    "passed": true,
+    "result_sha256": "c716098bef8ba37594070fe5d560e2b058f0e8353837a91904fe68aff571d527",
+    "source_case_id": "pilot-ee08e1267e014e98fc8fd683",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ee08e1267e014e98fc8fd683-hinglish",
+    "passed": true,
+    "result_sha256": "c716098bef8ba37594070fe5d560e2b058f0e8353837a91904fe68aff571d527",
+    "source_case_id": "pilot-ee08e1267e014e98fc8fd683",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fe114c2c9e65059ba98338b6-hi",
+    "passed": true,
+    "result_sha256": "43938b9c46602e4433948ec6741563301d5a0db468cb96f630e1f660af0e6ea2",
+    "source_case_id": "pilot-fe114c2c9e65059ba98338b6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fe114c2c9e65059ba98338b6-hinglish",
+    "passed": true,
+    "result_sha256": "43938b9c46602e4433948ec6741563301d5a0db468cb96f630e1f660af0e6ea2",
+    "source_case_id": "pilot-fe114c2c9e65059ba98338b6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e24f5cc6c4eb714353643495-hi",
+    "passed": true,
+    "result_sha256": "882744cc269ec43a504a6866d94028e6ed76d437976502038cc0c5a2c7153229",
+    "source_case_id": "pilot-e24f5cc6c4eb714353643495",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e24f5cc6c4eb714353643495-hinglish",
+    "passed": true,
+    "result_sha256": "882744cc269ec43a504a6866d94028e6ed76d437976502038cc0c5a2c7153229",
+    "source_case_id": "pilot-e24f5cc6c4eb714353643495",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb1fe5907a928bdc0752ed25-hi",
+    "passed": true,
+    "result_sha256": "cbe6d4f2ada8f3d5b722f738623b8a9b25fd2205cf6ac991da6cc256cd72f6ae",
+    "source_case_id": "pilot-fb1fe5907a928bdc0752ed25",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb1fe5907a928bdc0752ed25-hinglish",
+    "passed": true,
+    "result_sha256": "cbe6d4f2ada8f3d5b722f738623b8a9b25fd2205cf6ac991da6cc256cd72f6ae",
+    "source_case_id": "pilot-fb1fe5907a928bdc0752ed25",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e5ac53ae8aefcd3074289d7c-hi",
+    "passed": true,
+    "result_sha256": "afd050051b3467a652f004cce076394a738000f33db5eba4dcaf1c585a3c9679",
+    "source_case_id": "pilot-e5ac53ae8aefcd3074289d7c",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e5ac53ae8aefcd3074289d7c-hinglish",
+    "passed": true,
+    "result_sha256": "afd050051b3467a652f004cce076394a738000f33db5eba4dcaf1c585a3c9679",
+    "source_case_id": "pilot-e5ac53ae8aefcd3074289d7c",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef8458bdb3d9af0f5a86c31-hi",
+    "passed": true,
+    "result_sha256": "c135e6bbe59428702c04bc50790d913b63f95ec27bb2ef295e248c21506bc3bf",
+    "source_case_id": "pilot-fef8458bdb3d9af0f5a86c31",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef8458bdb3d9af0f5a86c31-hinglish",
+    "passed": true,
+    "result_sha256": "c135e6bbe59428702c04bc50790d913b63f95ec27bb2ef295e248c21506bc3bf",
+    "source_case_id": "pilot-fef8458bdb3d9af0f5a86c31",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ee7ef88b5926b5f7781dddd1-hi",
+    "passed": true,
+    "result_sha256": "28ba10b91c7c27d474b5ecf2882f9c7b7ffdee1a5e48000053a2b559800b2f6d",
+    "source_case_id": "pilot-ee7ef88b5926b5f7781dddd1",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ee7ef88b5926b5f7781dddd1-hinglish",
+    "passed": true,
+    "result_sha256": "28ba10b91c7c27d474b5ecf2882f9c7b7ffdee1a5e48000053a2b559800b2f6d",
+    "source_case_id": "pilot-ee7ef88b5926b5f7781dddd1",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fe19d2482d9e445b8181ffd6-hi",
+    "passed": true,
+    "result_sha256": "27b4151837c1522d31b5f131d02151785484fbccc6a7d6320bda69a5a4f643fb",
+    "source_case_id": "pilot-fe19d2482d9e445b8181ffd6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fe19d2482d9e445b8181ffd6-hinglish",
+    "passed": true,
+    "result_sha256": "27b4151837c1522d31b5f131d02151785484fbccc6a7d6320bda69a5a4f643fb",
+    "source_case_id": "pilot-fe19d2482d9e445b8181ffd6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e4069956863e5f73e5092df1-hi",
+    "passed": true,
+    "result_sha256": "a11f0541ee33d0a031ac05d8bc1cb9f3d15490dd6b89ae834baa242e52523f2d",
+    "source_case_id": "pilot-e4069956863e5f73e5092df1",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e4069956863e5f73e5092df1-hinglish",
+    "passed": true,
+    "result_sha256": "a11f0541ee33d0a031ac05d8bc1cb9f3d15490dd6b89ae834baa242e52523f2d",
+    "source_case_id": "pilot-e4069956863e5f73e5092df1",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb22417b8426163e9a6327bf-hi",
+    "passed": true,
+    "result_sha256": "f30cb725eae615e2e70d7ade0b0af9552140dbcb6f542f26c947b23110460fc8",
+    "source_case_id": "pilot-fb22417b8426163e9a6327bf",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb22417b8426163e9a6327bf-hinglish",
+    "passed": true,
+    "result_sha256": "f30cb725eae615e2e70d7ade0b0af9552140dbcb6f542f26c947b23110460fc8",
+    "source_case_id": "pilot-fb22417b8426163e9a6327bf",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e65d6f2f4a8d551c1e836d7f-hi",
+    "passed": true,
+    "result_sha256": "9110455592470b631301c76f01bc49b0914cd5487fe508ed473609dc3c341254",
+    "source_case_id": "pilot-e65d6f2f4a8d551c1e836d7f",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e65d6f2f4a8d551c1e836d7f-hinglish",
+    "passed": true,
+    "result_sha256": "9110455592470b631301c76f01bc49b0914cd5487fe508ed473609dc3c341254",
+    "source_case_id": "pilot-e65d6f2f4a8d551c1e836d7f",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef8fe160c5fdd0fbe2ec4a6-hi",
+    "passed": true,
+    "result_sha256": "938c3fd5537cdf790976189d234c62d83f956737b276073b5291fb744ea39fa9",
+    "source_case_id": "pilot-fef8fe160c5fdd0fbe2ec4a6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fef8fe160c5fdd0fbe2ec4a6-hinglish",
+    "passed": true,
+    "result_sha256": "938c3fd5537cdf790976189d234c62d83f956737b276073b5291fb744ea39fa9",
+    "source_case_id": "pilot-fef8fe160c5fdd0fbe2ec4a6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eea42562915dc56affa86570-hi",
+    "passed": true,
+    "result_sha256": "9ae58acb8749f1459d1a5460b1f3142779c9cd717ac22a228e310395891070bd",
+    "source_case_id": "pilot-eea42562915dc56affa86570",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eea42562915dc56affa86570-hinglish",
+    "passed": true,
+    "result_sha256": "9ae58acb8749f1459d1a5460b1f3142779c9cd717ac22a228e310395891070bd",
+    "source_case_id": "pilot-eea42562915dc56affa86570",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fe452df9b80445975236fe87-hi",
+    "passed": true,
+    "result_sha256": "5c453ab0eb07771103910eefec720d59bef3f9aa4dc8ed6abbe9c4315f8c7fe4",
+    "source_case_id": "pilot-fe452df9b80445975236fe87",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fe452df9b80445975236fe87-hinglish",
+    "passed": true,
+    "result_sha256": "5c453ab0eb07771103910eefec720d59bef3f9aa4dc8ed6abbe9c4315f8c7fe4",
+    "source_case_id": "pilot-fe452df9b80445975236fe87",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e6367f3930954c7359956a7d-hi",
+    "passed": true,
+    "result_sha256": "952dfe21cca9a4bf3aec67282b0f00a26205d41cd107d098938c42b73472931e",
+    "source_case_id": "pilot-e6367f3930954c7359956a7d",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e6367f3930954c7359956a7d-hinglish",
+    "passed": true,
+    "result_sha256": "952dfe21cca9a4bf3aec67282b0f00a26205d41cd107d098938c42b73472931e",
+    "source_case_id": "pilot-e6367f3930954c7359956a7d",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb31cb5d4424632d5e8937b4-hi",
+    "passed": true,
+    "result_sha256": "cbe6d4f2ada8f3d5b722f738623b8a9b25fd2205cf6ac991da6cc256cd72f6ae",
+    "source_case_id": "pilot-fb31cb5d4424632d5e8937b4",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb31cb5d4424632d5e8937b4-hinglish",
+    "passed": true,
+    "result_sha256": "cbe6d4f2ada8f3d5b722f738623b8a9b25fd2205cf6ac991da6cc256cd72f6ae",
+    "source_case_id": "pilot-fb31cb5d4424632d5e8937b4",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e71f769ad4cbed93c9bb7dc0-hi",
+    "passed": true,
+    "result_sha256": "e121fb713abe7b070a32787024a041c07e860037e6e2bb309b7d33dfc0f4a923",
+    "source_case_id": "pilot-e71f769ad4cbed93c9bb7dc0",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e71f769ad4cbed93c9bb7dc0-hinglish",
+    "passed": true,
+    "result_sha256": "e121fb713abe7b070a32787024a041c07e860037e6e2bb309b7d33dfc0f4a923",
+    "source_case_id": "pilot-e71f769ad4cbed93c9bb7dc0",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-feffa8f4947e8d79f0233282-hi",
+    "passed": true,
+    "result_sha256": "f2868801d6c55c0fa4fc8cd7f6a06c0758b8c959132041ff6b6ba85343f535af",
+    "source_case_id": "pilot-feffa8f4947e8d79f0233282",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-feffa8f4947e8d79f0233282-hinglish",
+    "passed": true,
+    "result_sha256": "f2868801d6c55c0fa4fc8cd7f6a06c0758b8c959132041ff6b6ba85343f535af",
+    "source_case_id": "pilot-feffa8f4947e8d79f0233282",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eeb637619dacf9b6c75f817b-hi",
+    "passed": true,
+    "result_sha256": "97bc15368a30c3c70efea1e345d42e85a21f2a549cb13bff9a7950bd53ccc499",
+    "source_case_id": "pilot-eeb637619dacf9b6c75f817b",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eeb637619dacf9b6c75f817b-hinglish",
+    "passed": true,
+    "result_sha256": "97bc15368a30c3c70efea1e345d42e85a21f2a549cb13bff9a7950bd53ccc499",
+    "source_case_id": "pilot-eeb637619dacf9b6c75f817b",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fe75a28b97c37087f97a20ee-hi",
+    "passed": true,
+    "result_sha256": "44a24e00040f59abe1bfe0a56e35b2a27ce18954ae8cbc395efe480bbc5304be",
+    "source_case_id": "pilot-fe75a28b97c37087f97a20ee",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fe75a28b97c37087f97a20ee-hinglish",
+    "passed": true,
+    "result_sha256": "44a24e00040f59abe1bfe0a56e35b2a27ce18954ae8cbc395efe480bbc5304be",
+    "source_case_id": "pilot-fe75a28b97c37087f97a20ee",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e9eeecb8e2a00d8c3be081d1-hi",
+    "passed": true,
+    "result_sha256": "d431ff0c4441b7fbcf209dd56e3b8db8ef65e13ce2fd74b5e7c649551a28701b",
+    "source_case_id": "pilot-e9eeecb8e2a00d8c3be081d1",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e9eeecb8e2a00d8c3be081d1-hinglish",
+    "passed": true,
+    "result_sha256": "d431ff0c4441b7fbcf209dd56e3b8db8ef65e13ce2fd74b5e7c649551a28701b",
+    "source_case_id": "pilot-e9eeecb8e2a00d8c3be081d1",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb40b3888d98abad106b4d1e-hi",
+    "passed": true,
+    "result_sha256": "e71fd7ad9bbc6472991cb4f92679286d3172b8acfe6d278079627646a413fd02",
+    "source_case_id": "pilot-fb40b3888d98abad106b4d1e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb40b3888d98abad106b4d1e-hinglish",
+    "passed": true,
+    "result_sha256": "e71fd7ad9bbc6472991cb4f92679286d3172b8acfe6d278079627646a413fd02",
+    "source_case_id": "pilot-fb40b3888d98abad106b4d1e",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e73e7def5f857a6fc4f2a7b8-hi",
+    "passed": true,
+    "result_sha256": "b48d35452533f4e298b506e4c13cf062b58c5836c5a7bea62ad894603cfda5a5",
+    "source_case_id": "pilot-e73e7def5f857a6fc4f2a7b8",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e73e7def5f857a6fc4f2a7b8-hinglish",
+    "passed": true,
+    "result_sha256": "b48d35452533f4e298b506e4c13cf062b58c5836c5a7bea62ad894603cfda5a5",
+    "source_case_id": "pilot-e73e7def5f857a6fc4f2a7b8",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ff08279e56f340c8258ecabc-hi",
+    "passed": true,
+    "result_sha256": "908a00d27d20be5b1827473cd4960e1d615404b31d112c70d4032e4f24e7a116",
+    "source_case_id": "pilot-ff08279e56f340c8258ecabc",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ff08279e56f340c8258ecabc-hinglish",
+    "passed": true,
+    "result_sha256": "908a00d27d20be5b1827473cd4960e1d615404b31d112c70d4032e4f24e7a116",
+    "source_case_id": "pilot-ff08279e56f340c8258ecabc",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ef12e894f58e07f2df5b55fc-hi",
+    "passed": true,
+    "result_sha256": "dcb6507d56edfc898936231bd5e419f855c2073b6e83563ae66c555bc31b9e41",
+    "source_case_id": "pilot-ef12e894f58e07f2df5b55fc",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ef12e894f58e07f2df5b55fc-hinglish",
+    "passed": true,
+    "result_sha256": "dcb6507d56edfc898936231bd5e419f855c2073b6e83563ae66c555bc31b9e41",
+    "source_case_id": "pilot-ef12e894f58e07f2df5b55fc",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fe79cc002debca4c991fe5dc-hi",
+    "passed": true,
+    "result_sha256": "ff76195baae6a6a54136f8ef0e1eb84ae46aa415941e64b03843b3e29be7b265",
+    "source_case_id": "pilot-fe79cc002debca4c991fe5dc",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fe79cc002debca4c991fe5dc-hinglish",
+    "passed": true,
+    "result_sha256": "ff76195baae6a6a54136f8ef0e1eb84ae46aa415941e64b03843b3e29be7b265",
+    "source_case_id": "pilot-fe79cc002debca4c991fe5dc",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ee6c1d0134047126b246ad34-hi",
+    "passed": true,
+    "result_sha256": "ed14216ccf20d05f34fcea31000ca9ac3beb86fc293ab1a0d21568d5a547dc58",
+    "source_case_id": "pilot-ee6c1d0134047126b246ad34",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ee6c1d0134047126b246ad34-hinglish",
+    "passed": true,
+    "result_sha256": "ed14216ccf20d05f34fcea31000ca9ac3beb86fc293ab1a0d21568d5a547dc58",
+    "source_case_id": "pilot-ee6c1d0134047126b246ad34",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb43f485c23464a0f04bd3e9-hi",
+    "passed": true,
+    "result_sha256": "0bff3ca9f1fc61006f1c77749bfee050f1d2b547e341805087b702ba4235dc41",
+    "source_case_id": "pilot-fb43f485c23464a0f04bd3e9",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb43f485c23464a0f04bd3e9-hinglish",
+    "passed": true,
+    "result_sha256": "0bff3ca9f1fc61006f1c77749bfee050f1d2b547e341805087b702ba4235dc41",
+    "source_case_id": "pilot-fb43f485c23464a0f04bd3e9",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e75bafa2cc3599191c7b6c69-hi",
+    "passed": true,
+    "result_sha256": "73b0241a567f268bcd7e900863dc16896df35b95a6af89b22d776fa92e9ed8cc",
+    "source_case_id": "pilot-e75bafa2cc3599191c7b6c69",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e75bafa2cc3599191c7b6c69-hinglish",
+    "passed": true,
+    "result_sha256": "73b0241a567f268bcd7e900863dc16896df35b95a6af89b22d776fa92e9ed8cc",
+    "source_case_id": "pilot-e75bafa2cc3599191c7b6c69",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ff0e2982f3d3e34ac3af80e9-hi",
+    "passed": true,
+    "result_sha256": "529cb23620e47f1ddd0b56201087ef0c908ae2a2103482f89db57761b025c633",
+    "source_case_id": "pilot-ff0e2982f3d3e34ac3af80e9",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ff0e2982f3d3e34ac3af80e9-hinglish",
+    "passed": true,
+    "result_sha256": "529cb23620e47f1ddd0b56201087ef0c908ae2a2103482f89db57761b025c633",
+    "source_case_id": "pilot-ff0e2982f3d3e34ac3af80e9",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ef22f250b196a6326b67c57f-hi",
+    "passed": true,
+    "result_sha256": "9d80da2f7f5c3dda2f381327f1b622de31854bb4a9145928e49dead6a0c2d247",
+    "source_case_id": "pilot-ef22f250b196a6326b67c57f",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ef22f250b196a6326b67c57f-hinglish",
+    "passed": true,
+    "result_sha256": "9d80da2f7f5c3dda2f381327f1b622de31854bb4a9145928e49dead6a0c2d247",
+    "source_case_id": "pilot-ef22f250b196a6326b67c57f",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fea8aab9a037e84817bdc485-hi",
+    "passed": true,
+    "result_sha256": "e1526aae19a93735f0da6ac0b63215a0be5d3a5ae33ade519b90605fe2cde610",
+    "source_case_id": "pilot-fea8aab9a037e84817bdc485",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fea8aab9a037e84817bdc485-hinglish",
+    "passed": true,
+    "result_sha256": "e1526aae19a93735f0da6ac0b63215a0be5d3a5ae33ade519b90605fe2cde610",
+    "source_case_id": "pilot-fea8aab9a037e84817bdc485",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eec33c671a1d1e3f7b784fac-hi",
+    "passed": true,
+    "result_sha256": "d003c83b9425a425e410a0d551a08bdb947b89cbcd76fbeb2acd67b690e11cf5",
+    "source_case_id": "pilot-eec33c671a1d1e3f7b784fac",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eec33c671a1d1e3f7b784fac-hinglish",
+    "passed": true,
+    "result_sha256": "d003c83b9425a425e410a0d551a08bdb947b89cbcd76fbeb2acd67b690e11cf5",
+    "source_case_id": "pilot-eec33c671a1d1e3f7b784fac",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb471d3d6e046a1da70c9056-hi",
+    "passed": true,
+    "result_sha256": "f5158f9caebcace8c82c530ce692bfcaf7f4597e05d3d543db536c43430f6961",
+    "source_case_id": "pilot-fb471d3d6e046a1da70c9056",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb471d3d6e046a1da70c9056-hinglish",
+    "passed": true,
+    "result_sha256": "f5158f9caebcace8c82c530ce692bfcaf7f4597e05d3d543db536c43430f6961",
+    "source_case_id": "pilot-fb471d3d6e046a1da70c9056",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e776ee48e5a8aa3e1b10687a-hi",
+    "passed": true,
+    "result_sha256": "a2fd7d8d79a0d9676f75295e5e4a97001382f3c3ef53386e1715aeff6c35ce54",
+    "source_case_id": "pilot-e776ee48e5a8aa3e1b10687a",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e776ee48e5a8aa3e1b10687a-hinglish",
+    "passed": true,
+    "result_sha256": "a2fd7d8d79a0d9676f75295e5e4a97001382f3c3ef53386e1715aeff6c35ce54",
+    "source_case_id": "pilot-e776ee48e5a8aa3e1b10687a",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ff0f179976aed0972f2b41e6-hi",
+    "passed": true,
+    "result_sha256": "dbd2a7b9b7df6ccb1654cb330cef9154d8e59fdd67eb0870416d6c9eede8b06d",
+    "source_case_id": "pilot-ff0f179976aed0972f2b41e6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ff0f179976aed0972f2b41e6-hinglish",
+    "passed": true,
+    "result_sha256": "dbd2a7b9b7df6ccb1654cb330cef9154d8e59fdd67eb0870416d6c9eede8b06d",
+    "source_case_id": "pilot-ff0f179976aed0972f2b41e6",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ef62ae139368577cf806e8ff-hi",
+    "passed": true,
+    "result_sha256": "d73c985dcf3e629eaba8d81486d0708f5772398579113a1fe29bac85852a6604",
+    "source_case_id": "pilot-ef62ae139368577cf806e8ff",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ef62ae139368577cf806e8ff-hinglish",
+    "passed": true,
+    "result_sha256": "d73c985dcf3e629eaba8d81486d0708f5772398579113a1fe29bac85852a6604",
+    "source_case_id": "pilot-ef62ae139368577cf806e8ff",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-febd69c6089e0089f3cc8383-hi",
+    "passed": true,
+    "result_sha256": "cbde4978e7cb235dd8e451ac891ec5c5c538cfa03b570f6e9380baa851e7e3be",
+    "source_case_id": "pilot-febd69c6089e0089f3cc8383",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-febd69c6089e0089f3cc8383-hinglish",
+    "passed": true,
+    "result_sha256": "cbde4978e7cb235dd8e451ac891ec5c5c538cfa03b570f6e9380baa851e7e3be",
+    "source_case_id": "pilot-febd69c6089e0089f3cc8383",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eeedd8d5470eaf6fca15efd0-hi",
+    "passed": true,
+    "result_sha256": "97291782894daa6119978694d7d50ece8516cec906883e62a217cf2d6d8003a4",
+    "source_case_id": "pilot-eeedd8d5470eaf6fca15efd0",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-eeedd8d5470eaf6fca15efd0-hinglish",
+    "passed": true,
+    "result_sha256": "97291782894daa6119978694d7d50ece8516cec906883e62a217cf2d6d8003a4",
+    "source_case_id": "pilot-eeedd8d5470eaf6fca15efd0",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb74602391a89840ea7067a2-hi",
+    "passed": true,
+    "result_sha256": "20040844b7f8caedce9da730612b6882635b465709df99647c963b72e226ca1a",
+    "source_case_id": "pilot-fb74602391a89840ea7067a2",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb74602391a89840ea7067a2-hinglish",
+    "passed": true,
+    "result_sha256": "20040844b7f8caedce9da730612b6882635b465709df99647c963b72e226ca1a",
+    "source_case_id": "pilot-fb74602391a89840ea7067a2",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e797b102b3c037d17d8f8e2b-hi",
+    "passed": true,
+    "result_sha256": "975242f93884a78e3cc6cfb6a146fee6c136a474582eb73b134fd2ea408f555a",
+    "source_case_id": "pilot-e797b102b3c037d17d8f8e2b",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-e797b102b3c037d17d8f8e2b-hinglish",
+    "passed": true,
+    "result_sha256": "975242f93884a78e3cc6cfb6a146fee6c136a474582eb73b134fd2ea408f555a",
+    "source_case_id": "pilot-e797b102b3c037d17d8f8e2b",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ff0f90b55ae8a4fe0b471eeb-hi",
+    "passed": true,
+    "result_sha256": "0d7d44e4b3760f60a5531c856188c07f6286732fae996550178d550191d7007f",
+    "source_case_id": "pilot-ff0f90b55ae8a4fe0b471eeb",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-ff0f90b55ae8a4fe0b471eeb-hinglish",
+    "passed": true,
+    "result_sha256": "0d7d44e4b3760f60a5531c856188c07f6286732fae996550178d550191d7007f",
+    "source_case_id": "pilot-ff0f90b55ae8a4fe0b471eeb",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-f13ec3d11fd7234f11f71b6d-hi",
+    "passed": true,
+    "result_sha256": "695ca92299f89080b118b17af53803fbe44ee0804de04b45a424343898d4d07b",
+    "source_case_id": "pilot-f13ec3d11fd7234f11f71b6d",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-f13ec3d11fd7234f11f71b6d-hinglish",
+    "passed": true,
+    "result_sha256": "695ca92299f89080b118b17af53803fbe44ee0804de04b45a424343898d4d07b",
+    "source_case_id": "pilot-f13ec3d11fd7234f11f71b6d",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fedabb372387888b3b91534a-hi",
+    "passed": true,
+    "result_sha256": "cacfc21741430c09b9a9429b225c39a795b2992a863d4648fe565994a1468791",
+    "source_case_id": "pilot-fedabb372387888b3b91534a",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fedabb372387888b3b91534a-hinglish",
+    "passed": true,
+    "result_sha256": "cacfc21741430c09b9a9429b225c39a795b2992a863d4648fe565994a1468791",
+    "source_case_id": "pilot-fedabb372387888b3b91534a",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-efe9444ed39feed52fac5498-hi",
+    "passed": true,
+    "result_sha256": "d3b7b9989ef979005e17f01377d9cf07dac8da09fceed8ff2e5a434ca4757670",
+    "source_case_id": "pilot-efe9444ed39feed52fac5498",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-efe9444ed39feed52fac5498-hinglish",
+    "passed": true,
+    "result_sha256": "d3b7b9989ef979005e17f01377d9cf07dac8da09fceed8ff2e5a434ca4757670",
+    "source_case_id": "pilot-efe9444ed39feed52fac5498",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb765aa164d6fcf75e008ebb-hi",
+    "passed": true,
+    "result_sha256": "cde6c1042a57f9998c83b54519cab13de0c3fbd7ffed91f8f012c1e7082dc803",
+    "source_case_id": "pilot-fb765aa164d6fcf75e008ebb",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  },
+  {
+    "case_id": "pilot-fb765aa164d6fcf75e008ebb-hinglish",
+    "passed": true,
+    "result_sha256": "cde6c1042a57f9998c83b54519cab13de0c3fbd7ffed91f8f012c1e7082dc803",
+    "source_case_id": "pilot-fb765aa164d6fcf75e008ebb",
+    "evidence_scope": "identical typed command plan and source data; language semantics not verified"
+  }
+]

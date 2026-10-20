@@ -1,0 +1,269 @@
+{
+  "dataset_a": {
+    "name": "Wholesale Customers",
+    "domain": "Business / Customer",
+    "source": "https://archive.ics.uci.edu/ml/machine-learning-databases/00292/Wholesale%20customers%20data.csv",
+    "file": "dataset_a_wholesale_customers.csv",
+    "shape": [
+      440,
+      8
+    ],
+    "columns": [
+      "Channel",
+      "Region",
+      "Fresh",
+      "Milk",
+      "Grocery",
+      "Frozen",
+      "Detergents_Paper",
+      "Delicassen"
+    ]
+  },
+  "dataset_b": {
+    "name": "German Credit Risk",
+    "domain": "Finance / Economics",
+    "source": "OpenML Data ID 31 (Statlog German Credit)",
+    "file": "dataset_b_german_credit.csv",
+    "shape": [
+      1000,
+      21
+    ],
+    "columns": [
+      "checking_status",
+      "duration",
+      "credit_history",
+      "purpose",
+      "credit_amount",
+      "savings_status",
+      "employment",
+      "installment_commitment",
+      "personal_status",
+      "other_parties",
+      "residence_since",
+      "property_magnitude",
+      "age",
+      "other_payment_plans",
+      "housing",
+      "existing_credits",
+      "job",
+      "num_dependents",
+      "own_telephone",
+      "foreign_worker",
+      "class"
+    ]
+  },
+  "dataset_c": {
+    "name": "Concrete Compressive Strength",
+    "domain": "Manufacturing / Quality",
+    "source": "UCI / OpenML Data ID 4353",
+    "file": "dataset_c_concrete_strength.csv",
+    "shape": [
+      1030,
+      9
+    ],
+    "columns": [
+      "Cement (component 1)(kg in a m^3 mixture)",
+      "Blast Furnace Slag (component 2)(kg in a m^3 mixture)",
+      "Fly Ash (component 3)(kg in a m^3 mixture)",
+      "Water  (component 4)(kg in a m^3 mixture)",
+      "Superplasticizer (component 5)(kg in a m^3 mixture)",
+      "Coarse Aggregate  (component 6)(kg in a m^3 mixture)",
+      "Fine Aggregate (component 7)(kg in a m^3 mixture)",
+      "Age (day)",
+      "Concrete compressive strength(MPa. megapascals)"
+    ]
+  },
+  "dataset_d": {
+    "name": "Abalone Physical Measurements",
+    "domain": "Scientific",
+    "source": "https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data",
+    "file": "dataset_d_abalone_scientific.csv",
+    "shape": [
+      4177,
+      9
+    ],
+    "columns": [
+      "sex",
+      "length",
+      "diameter",
+      "height",
+      "whole_weight",
+      "shucked_weight",
+      "viscera_weight",
+      "shell_weight",
+      "rings"
+    ]
+  },
+  "dataset_e": {
+    "name": "Heart Disease Cleveland",
+    "domain": "Healthcare",
+    "source": "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data",
+    "file": "dataset_e_heart_disease.csv",
+    "shape": [
+      303,
+      14
+    ],
+    "columns": [
+      "age",
+      "sex",
+      "cp",
+      "trestbps",
+      "chol",
+      "fbs",
+      "restecg",
+      "thalach",
+      "exang",
+      "oldpeak",
+      "slope",
+      "ca",
+      "thal",
+      "target"
+    ]
+  },
+  "dataset_f": {
+    "name": "Student Academic Performance",
+    "domain": "Demographic / Survey",
+    "source": "OpenML Data ID 44962 / UCI Student Performance",
+    "file": "dataset_f_student_performance.csv",
+    "shape": [
+      517,
+      13
+    ],
+    "columns": [
+      "X",
+      "Y",
+      "month",
+      "day",
+      "FFMC",
+      "DMC",
+      "DC",
+      "ISI",
+      "temp",
+      "RH",
+      "wind",
+      "rain",
+      "area"
+    ]
+  },
+  "dataset_g": {
+    "name": "Mauna Loa Weekly Atmospheric CO2",
+    "domain": "Time Series Forecasting",
+    "source": "NOAA / Scripps Institution of Oceanography (via statsmodels)",
+    "file": "dataset_g_co2_timeseries.csv",
+    "shape": [
+      2225,
+      2
+    ],
+    "columns": [
+      "date",
+      "co2_ppm"
+    ]
+  },
+  "dataset_h": {
+    "name": "Mushroom Classification",
+    "domain": "High Cardinality Categorical",
+    "source": "https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data",
+    "file": "dataset_h_mushroom_high_cardinality.csv",
+    "shape": [
+      8124,
+      23
+    ],
+    "columns": [
+      "class",
+      "cap_shape",
+      "cap_surface",
+      "cap_color",
+      "bruises",
+      "odor",
+      "gill_attachment",
+      "gill_spacing",
+      "gill_size",
+      "gill_color",
+      "stalk_shape",
+      "stalk_root",
+      "stalk_surface_above_ring",
+      "stalk_surface_below_ring",
+      "stalk_color_above_ring",
+      "stalk_color_below_ring",
+      "veil_type",
+      "veil_color",
+      "ring_number",
+      "ring_type",
+      "spore_print_color",
+      "population",
+      "habitat"
+    ]
+  },
+  "dataset_i": {
+    "name": "Parkinsons Telemonitoring Multi-Entity Panel",
+    "domain": "Multi-Entity Grouped",
+    "source": "https://archive.ics.uci.edu/ml/machine-learning-databases/parkinsons/telemonitoring/parkinsons_updrs.data",
+    "file": "dataset_i_multi_entity_longitudinal.csv",
+    "shape": [
+      5875,
+      22
+    ],
+    "columns": [
+      "subject#",
+      "age",
+      "sex",
+      "test_time",
+      "motor_UPDRS",
+      "total_UPDRS",
+      "Jitter(%)",
+      "Jitter(Abs)",
+      "Jitter:RAP",
+      "Jitter:PPQ5",
+      "Jitter:DDP",
+      "Shimmer",
+      "Shimmer(dB)",
+      "Shimmer:APQ3",
+      "Shimmer:APQ5",
+      "Shimmer:APQ11",
+      "Shimmer:DDA",
+      "NHR",
+      "HNR",
+      "RPDE",
+      "DFA",
+      "PPE"
+    ]
+  },
+  "dataset_j": {
+    "name": "Automobile 1985 Imports",
+    "domain": "Messy Real-World Data",
+    "source": "https://archive.ics.uci.edu/ml/machine-learning-databases/autos/imports-85.data",
+    "file": "dataset_j_automobile_messy.csv",
+    "shape": [
+      205,
+      26
+    ],
+    "columns": [
+      "symboling",
+      "normalized_losses",
+      "make",
+      "fuel_type",
+      "aspiration",
+      "num_of_doors",
+      "body_style",
+      "drive_wheels",
+      "engine_location",
+      "wheel_base",
+      "length",
+      "width",
+      "height",
+      "curb_weight",
+      "engine_type",
+      "num_of_cylinders",
+      "engine_size",
+      "fuel_system",
+      "bore",
+      "stroke",
+      "compression_ratio",
+      "horsepower",
+      "peak_rpm",
+      "city_mpg",
+      "highway_mpg",
+      "price"
+    ]
+  }
+}

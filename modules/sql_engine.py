@@ -152,6 +152,25 @@ class AdvancedSQLEngine:
         logger.info(f"Generated {join_clause} SQL for {table1} and {table2}")
         return sql.strip()
 
+    @staticmethod
+    def generate_asof_join_sql(table1: str, table2: str, on_col: str, match_col: str) -> str:
+        """
+        Generates DuckDB temporal ASOF JOIN SQL query.
+        """
+        if not all([table1, table2, on_col, match_col]):
+            logger.error("All parameters must be provided to generate ASOF join SQL.")
+            raise ValueError("All parameters must be provided to generate ASOF join SQL.")
+
+        sql = f"""
+        SELECT *
+        FROM {table1}
+        ASOF JOIN {table2}
+        ON {table1}.{match_col} = {table2}.{match_col}
+        AND {table1}.{on_col} >= {table2}.{on_col};
+        """
+        logger.info(f"Generated ASOF JOIN SQL for {table1} and {table2}")
+        return sql.strip()
+
 
 # Global Singleton Instance
 sql_engine = AdvancedSQLEngine()

@@ -85,26 +85,21 @@ export default function DBConnectionModal({ isOpen, onClose, onImportSuccess }) 
     setTestSuccess(null);
 
     try {
-      const resp = await fetch(`${API}/api/db/test`, {
-        method: 'POST',
-        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify(getPayload()),
-      });
-
-      const data = await resp.json();
-
-      if (!resp.ok) {
-        throw new Error(data.detail || data.message || 'Failed to connect to database');
+      const payload = getPayload();
+      if (payload.db_type === 'sqlite') {
+        const resp = await fetch(`${API}/api/datasets/connect`, {
+          method: 'POST',
+          headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ file_path: payload.database || payload.file_path, source_type: 'sqlite' })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.detail || data.message || 'Failed to connect to SQLite database');
+        setTestSuccess(`Successfully connected to SQLite database '${data.name || 'database'}'!`);
+        if (onImportSuccess) onImportSuccess(data);
+        return;
       }
 
-      const tables = data.tables || [];
-      setFetchedTables(tables);
-      setTestSuccess(`Successfully connected! Found ${tables.length} table${tables.length === 1 ? '' : 's'}.`);
-      
-      if (tables.length > 0) {
-        setSelectedTable(tables[0]);
-        setSqlQuery(`SELECT * FROM "${tables[0]}"`);
-      }
+      setErrorMsg('Direct remote SQL server connections are quarantined in this release. Use local SQLite, CSV, Parquet, or Excel files.');
     } catch (err) {
       setErrorMsg(err.message || 'Connection test failed. Check server status or credentials.');
     } finally {
@@ -118,32 +113,22 @@ export default function DBConnectionModal({ isOpen, onClose, onImportSuccess }) 
     setErrorMsg(null);
 
     try {
-      const payload = {
-        ...getPayload(),
-        table_name: selectedTable,
-        query: sqlQuery.trim() || (selectedTable ? `SELECT * FROM "${selectedTable}"` : ''),
-      };
-
-      const resp = await fetch(`${API}/api/db/import`, {
-        method: 'POST',
-        headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify(payload),
-      });
-
-      const data = await resp.json();
-
-      if (!resp.ok) {
-        throw new Error(data.detail || data.message || 'Database table import failed');
+      const payload = getPayload();
+      if (payload.db_type === 'sqlite') {
+        const resp = await fetch(`${API}/api/datasets/connect`, {
+          method: 'POST',
+          headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ file_path: payload.database || payload.file_path, source_type: 'sqlite' })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.detail || data.message || 'Database table import failed');
+        if (onImportSuccess) onImportSuccess(data);
+        return;
       }
 
-      if (onImportSuccess) {
-        onImportSuccess(data);
-      }
-      if (onClose) {
-        onClose();
-      }
+      setErrorMsg('Remote SQL database import is quarantined. Connect SQLite, CSV, or Parquet files directly.');
     } catch (err) {
-      setErrorMsg(err.message || 'Import failed. Check SQL query syntax or connection.');
+      setErrorMsg(err.message || 'Database table import failed');
     } finally {
       setIsImporting(false);
     }

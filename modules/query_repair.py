@@ -67,7 +67,7 @@ class QueryRepair:
         timeout_sec: float = 2.0
     ) -> Optional[SemanticPlan]:
         ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat")
-        model_name = os.getenv("OLLAMA_MODEL", "llama3.2")
+        model_name = os.getenv("OLLAMA_MODEL", "qwen2.5:3b-instruct")
 
         prompt = (
             "You are a Data Science Query Repair Assistant.\n"

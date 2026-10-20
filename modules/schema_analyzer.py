@@ -16,7 +16,12 @@ class SchemaAnalyzer:
 
     @classmethod
     def compute_df_hash(cls, df: pd.DataFrame) -> str:
-        shape_str = f"{df.shape}_{list(df.columns)}"
+        sample_str = ""
+        if not df.empty:
+            sample_head = df.head(3).to_string()
+            sample_tail = df.tail(3).to_string()
+            sample_str = f"_{sample_head}_{sample_tail}"
+        shape_str = f"{df.shape}_{list(df.columns)}{sample_str}"
         return hashlib.md5(shape_str.encode('utf-8')).hexdigest()
 
     @classmethod

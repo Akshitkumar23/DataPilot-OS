@@ -1,0 +1,20 @@
+{
+  "total": 40,
+  "prepared": 38,
+  "rejected": [
+    {
+      "case_id": "core-filter_data-hinglish",
+      "error_type": "ValueError",
+      "reason": "RETRIEVAL_MISS: reference tool absent from production retrieval"
+    },
+    {
+      "case_id": "core-detect_anomalies-en",
+      "error_type": "ValueError",
+      "reason": "RETRIEVAL_MISS: reference tool absent from production retrieval"
+    }
+  ],
+  "training_ready": false,
+  "reason": "Migration diagnostic; split/review/scientific gates remain required.",
+  "corpus_sha256": "a14373ebcce098d9e0e64a1586247412da16102e5269834d24d48c977288d719",
+  "renderer_sha256": "0e704ffcfd7970a159614790f6e29ac5578707ccface4334da495b19945df4c7"
+}

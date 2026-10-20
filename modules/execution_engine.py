@@ -99,12 +99,12 @@ if os.path.exists(input_df_path):
         local_vars["df"] = pd.read_parquet(input_df_path)
     except Exception:
         pass
-elif os.path.exists(input_df_pkl):
+if "df" not in local_vars and os.path.exists(input_df_pkl):
     try:
         local_vars["df"] = pd.read_pickle(input_df_pkl)
     except Exception:
         pass
-elif os.path.exists(input_df_csv):
+if "df" not in local_vars and os.path.exists(input_df_csv):
     try:
         local_vars["df"] = pd.read_csv(input_df_csv)
     except Exception:
@@ -117,6 +117,27 @@ success = True
 error_msg = None
 plot_images = []
 
+def safe_show(*args, **kwargs):
+    if plt.get_fignums():
+        for fig_num in list(plt.get_fignums()):
+            if len(plot_images) >= 10:
+                break
+            try:
+                fig = plt.figure(fig_num)
+                with io.BytesIO() as buf:
+                    fig.savefig(buf, format='png', bbox_inches='tight', dpi=120)
+                    buf.seek(0)
+                    img_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+                    plot_images.append(f"data:image/png;base64,{img_b64}")
+            except Exception:
+                pass
+        try:
+            plt.close('all')
+        except Exception:
+            pass
+
+plt.show = safe_show
+
 try:
     plt.close('all')
     with open(code_file_path, "r", encoding="utf-8") as f:
@@ -125,19 +146,12 @@ try:
     compiled = compile(user_code, filename="<generated_code>", mode="exec")
     exec(compiled, local_vars)
 
-    # Capture matplotlib figures safely into base64
-    if plt.get_fignums():
-        for fig_num in plt.get_fignums():
-            fig = plt.figure(fig_num)
-            buf = io.BytesIO()
-            fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
-            buf.seek(0)
-            img_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
-            plot_images.append(f"data:image/png;base64,{img_b64}")
-        plt.close('all')
+    # Capture any remaining un-shown matplotlib figures safely into base64
+    safe_show()
 
-    # Save output DataFrame if present/modified
-    out_df = local_vars.get("df", None)
+    # Save output DataFrame if present/modified (Prioritize result_df over input df)
+    out_df = local_vars.get("result_df", local_vars.get("df", None))
+
     if isinstance(out_df, pd.DataFrame):
         try:
             out_df.to_parquet(output_df_path)
@@ -148,8 +162,9 @@ try:
                 pass
 
 except Exception as e:
+    import traceback
     success = False
-    error_msg = f"{type(e).__name__}: {str(e)}"
+    error_msg = f"{type(e).__name__}: {str(e)}\\n" + str(traceback.format_exc())
 
 sys.stdout = old_stdout
 sys.stderr = old_stderr
@@ -212,9 +227,15 @@ class ModularExecutionEngine:
             output_df_parquet = os.path.join(temp_dir, "output_df.parquet")
             output_df_pkl = os.path.join(temp_dir, "output_df.pkl")
 
+            # Code execution setup
+
+
+
+
             # Write code to file
             with open(user_code_path, "w", encoding="utf-8") as f:
                 f.write(code)
+
 
             # Write runner script
             with open(runner_script_path, "w", encoding="utf-8") as f:
@@ -268,7 +289,10 @@ class ModularExecutionEngine:
                         proc.kill()
                 else:
                     proc.kill()
-                proc.wait()
+                try:
+                    proc.communicate(timeout=2)
+                except Exception:
+                    pass
 
                 if timed_out:
                     logger.warning(f"Subprocess code execution timed out after {timeout} seconds")
@@ -295,7 +319,7 @@ class ModularExecutionEngine:
                         "dataframe": None
                     }
 
-            proc.wait()
+            stdout_rem, stderr_rem = proc.communicate()
 
             if os.path.exists(output_json_path):
                 try:
@@ -304,14 +328,13 @@ class ModularExecutionEngine:
                 except Exception as e:
                     res_data = {
                         "success": False,
-                        "stdout": "",
+                        "stdout": stdout_rem or "",
                         "stderr": str(e),
                         "error": f"Failed to parse subprocess output JSON: {str(e)}",
                         "plot_image": None,
                         "plot_images": []
                     }
             else:
-                stdout_rem, stderr_rem = proc.communicate()
                 res_data = {
                     "success": False,
                     "stdout": stdout_rem or "",
@@ -327,7 +350,7 @@ class ModularExecutionEngine:
                     out_df = pd.read_parquet(output_df_parquet)
                 except Exception:
                     pass
-            elif os.path.exists(output_df_pkl):
+            if out_df is None and os.path.exists(output_df_pkl):
                 try:
                     out_df = pd.read_pickle(output_df_pkl)
                 except Exception:
@@ -409,15 +432,16 @@ class ModularExecutionEngine:
             return {"status": "success", "rows": len(df), "message": "Data engine ready."}
 
     def _run_analytics_engine(self, action: str, df: pd.DataFrame, kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        target_col = kwargs.get("target_col", df.columns[-1] if len(df.columns) > 0 else "")
         if action == "auto_eda":
-            eda_results = self.eda_sub_engine.generate_eda_summary(df)
-            insights = self.insights_sub_engine.extract_automated_insights(df)
+            eda_results = self.eda_sub_engine.generate_eda_report(df)
+            insights = self.insights_sub_engine.run_root_cause_analysis(df, target_col) if target_col in df.columns and pd.api.types.is_numeric_dtype(df[target_col]) else {"summary": "Root cause analysis skipped."}
             return {"status": "success", "eda": eda_results, "insights": insights}
         elif action == "kpi_summary":
-            insights = self.insights_sub_engine.extract_automated_insights(df)
+            insights = self.insights_sub_engine.run_root_cause_analysis(df, target_col) if target_col in df.columns and pd.api.types.is_numeric_dtype(df[target_col]) else {"summary": "KPI summary generated."}
             return {"status": "success", "insights": insights}
         else:
-            eda_results = self.eda_sub_engine.generate_eda_summary(df)
+            eda_results = self.eda_sub_engine.generate_eda_report(df)
             return {"status": "success", "eda": eda_results}
 
     def _run_ml_engine(self, action: str, df: pd.DataFrame, kwargs: Dict[str, Any]) -> Dict[str, Any]:
@@ -441,14 +465,13 @@ class ModularExecutionEngine:
         return {"status": "success", "code": code_snippet, "message": f"ARIMA time-series forecast code generated for '{target_col}'."}
 
     def _run_viz_engine(self, action: str, df: pd.DataFrame, kwargs: Dict[str, Any]) -> Dict[str, Any]:
-        plot_type = kwargs.get("plot_type", "correlation")
-        code_snippet = self.viz_sub_engine.generate_correlation_heatmap_code("df")
+        title = kwargs.get("title", "Correlation Heatmap")
+        code_snippet = self.viz_sub_engine.generate_heatmap("df", title=title)
         return {"status": "success", "code": code_snippet, "message": "Visualization chart code generated successfully."}
 
     def _run_report_engine(self, action: str, df: pd.DataFrame, kwargs: Dict[str, Any]) -> Dict[str, Any]:
         title = kwargs.get("title", "Executive Data Analysis Report")
-        insights = kwargs.get("insights", ["Automated Business Data Profile Executed."])
-        report_markdown = self.report_sub_engine.generate_executive_report_markdown(df, dataset_name=title, quality_score=95, insights=insights, code_snippets=[])
+        report_markdown = self.report_sub_engine.generate_executive_summary_report(df, dataset_name=title)
         return {"status": "success", "report_markdown": report_markdown}
 
 

@@ -1,17 +1,20 @@
 import {
   Home, PlugZap, Eraser, Shuffle, BrainCircuit, BarChart3, LineChart,
-  FolderOpen, Save, Undo2, Redo2, Code2, Database, Table, ChevronUp, ChevronDown
+  FolderOpen, Save, Undo2, Redo2, Code2, Database, Table, ChevronUp, ChevronDown,
+  Bot
 } from 'lucide-react';
 
 const TABS = [
-  { id: 'home',      label: 'Home',        icon: Home         },
-  { id: 'preview',   label: 'Data Grid',   icon: Table        },
-  { id: 'connect',   label: 'Connect',     icon: PlugZap      },
-  { id: 'clean',     label: 'Clean',       icon: Eraser       },
-  { id: 'transform', label: 'Transform',   icon: Shuffle      },
-  { id: 'stats',     label: 'EDA & Stats', icon: LineChart    },
-  { id: 'ml',        label: 'ML Studio',   icon: BrainCircuit },
-  { id: 'report',    label: 'Report',      icon: BarChart3    },
+  { id: 'home',      label: 'Home',            icon: Home         },
+  { id: 'agent',     label: 'Workspace Agent', icon: Bot          },
+  { id: 'preview',   label: 'Data Grid',       icon: Table        },
+  { id: 'connect',   label: 'Connect',         icon: PlugZap      },
+  { id: 'clean',     label: 'Clean',           icon: Eraser       },
+  { id: 'transform', label: 'Transform',       icon: Shuffle      },
+  { id: 'stats',     label: 'EDA & Stats',     icon: LineChart    },
+  { id: 'ml',        label: 'ML Studio',       icon: BrainCircuit },
+  { id: 'reports',   label: 'Reports',         icon: BarChart3    },
+  { id: 'code',      label: 'Code & SQL',      icon: Code2        },
 ];
 
 export default function Ribbon({
@@ -33,25 +36,27 @@ export default function Ribbon({
   return (
     <div className={`ribbon ${isCollapsed ? 'ribbon--collapsed' : ''}`} style={{
       height: isCollapsed ? 32 : 'var(--ribbon-h)',
-      transition: 'height 0.2s ease'
+      transition: 'height 0.2s ease',
+      WebkitAppRegion: 'no-drag'
     }}>
       {/* Module tabs */}
       <div className="ribbon__tabs">
         {TABS.map((tab) => {
           const Icon = tab.icon;
-          const disabled = tab.id !== 'home' && tab.id !== 'connect' && !datasetLoaded;
+          const disabled = tab.id !== 'home' && tab.id !== 'connect' && tab.id !== 'agent' && !datasetLoaded;
+          const isActive = activeModule === tab.id || (tab.id === 'reports' && activeModule === 'report') || (tab.id === 'report' && activeModule === 'reports');
           return (
             <button
               key={tab.id}
-              className={`ribbon__tab ${activeModule === tab.id ? 'active' : ''}`}
-              onClick={() => !disabled && onModuleChange(tab.id)}
+              className={`ribbon__tab ${isActive ? 'active' : ''}`}
+              onClick={() => !disabled && onModuleChange?.(tab.id)}
               disabled={disabled}
               style={{
                 opacity: disabled ? 0.4 : 1,
                 cursor: disabled ? 'not-allowed' : 'pointer',
                 padding: isCollapsed ? '0 10px' : undefined
               }}
-              title={disabled ? 'Load a dataset first' : tab.label}
+              title={disabled ? 'Load a dataset first to access this module' : tab.label}
             >
               <Icon size={isCollapsed ? 15 : 14} />
               {!isCollapsed && <span>{tab.label}</span>}
@@ -82,26 +87,19 @@ export default function Ribbon({
             <div className="ribbon__divider" style={{ height: 20 }} />
             <button
               className="btn btn--ghost btn--sm"
-              onClick={onUndo}
-              disabled={!canUndo}
-              title="Undo last operation"
-              style={{ opacity: canUndo ? 1 : 0.35 }}
+              onClick={onSaveFile}
+              disabled={isSaving}
+              title="Save / Export Dataset"
+              style={{ color: '#10b981', fontWeight: 600 }}
             >
-              <Undo2 size={13} />
+              <Save size={13} />
+              <span className="ribbon-action-label">{isSaving ? 'Saving...' : 'Save'}</span>
             </button>
-            <button
-              className="btn btn--ghost btn--sm"
-              onClick={onRedo}
-              disabled={!canRedo}
-              title="Redo operation"
-              style={{ opacity: canRedo ? 1 : 0.35 }}
-            >
-              <Redo2 size={13} />
-            </button>
+            {/* Undo/Redo buttons are hidden until Phase 8 historical state rollback is connected */}
             <div className="ribbon__divider" style={{ height: 20 }} />
             <button
               className="btn btn--sm btn--ghost"
-              onClick={onOpenCodeInspector}
+              onClick={onOpenCodeInspector ? onOpenCodeInspector : () => onModuleChange?.('code')}
               title="Inspect generated Python & DuckDB SQL code"
               style={{ color: 'var(--accent)', borderColor: 'var(--border-accent)' }}
             >

@@ -52,14 +52,26 @@ class PlanNormalizer:
             if op.group_by and len(op.group_by) > 0:
                 params["group_by"] = op.group_by[0]
                 params["c_cat"] = op.group_by[0]
+                params["group_by_list"] = op.group_by
+
+            # Propagate top-level semantic plan filters
+            if semantic_plan.filters and len(semantic_plan.filters) > 0:
+                params["filters"] = [f.model_dump() if hasattr(f, "model_dump") else dict(f) for f in semantic_plan.filters]
+
+            # Map explicit operation dependencies or fall back to default
+            if hasattr(op, "depends_on") and op.depends_on:
+                step_deps = [f"step_{d}" for d in op.depends_on if isinstance(d, int)]
+            else:
+                step_deps = [f"step_{idx-1}"] if idx > 1 else []
 
             step = ExecutionStep(
                 id=f"step_{idx}",
                 capability=capability,
                 parameters=params,
-                depends_on=[f"step_{idx-1}"] if idx > 1 else []
+                depends_on=step_deps
             )
             steps.append(step)
+
 
         if not steps:
             steps.append(ExecutionStep(id="step_1", capability="sig_eda_dashboard", parameters={}))

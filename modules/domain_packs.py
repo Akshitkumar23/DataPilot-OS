@@ -99,34 +99,41 @@ def plot_hr_kpis(kpis):
             logger.error(f"Error calculating HR KPIs: {e}")
             raise
 
-    def calculate_finance_pack(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def calculate_finance_pack(self, data_or_df: Any = None, *args, **kwargs) -> Dict[str, Any]:
         """
         Calculate Finance KPIs and generate visualization code.
-        
-        Metrics: Gross Margin %, EBITDA Margin %, ROE, ROA, Debt-to-Equity, Cash Flow.
-        
-        Args:
-            data (Dict[str, Any]): Dictionary containing finance data.
-            
-        Returns:
-            Dict[str, Any]: Dictionary containing calculated KPIs and chart generation code.
+        Supports both Dict inputs and DataFrame positional calls.
         """
         logger.info("Calculating Finance Pack KPIs.")
         try:
-            kpis = {
-                "Gross_Margin_Pct": data.get("gross_margin", 0.0),
-                "EBITDA_Margin_Pct": data.get("ebitda_margin", 0.0),
-                "ROE": data.get("roe", 0.0),
-                "ROA": data.get("roa", 0.0),
-                "Debt_to_Equity": data.get("debt_to_equity", 0.0),
-                "Cash_Flow": data.get("cash_flow", 0.0),
-            }
+            if isinstance(data_or_df, pd.DataFrame):
+                df = data_or_df
+                c1 = args[0] if len(args) > 0 else (df.columns[0] if len(df.columns) > 0 else "Sales")
+                c2 = args[1] if len(args) > 1 else (df.columns[1] if len(df.columns) > 1 else "Profit")
+                kpis = {
+                    "Total_Revenue": float(df[c1].sum()) if c1 in df.columns and pd.api.types.is_numeric_dtype(df[c1]) else 0.0,
+                    "Total_Profit": float(df[c2].sum()) if c2 in df.columns and pd.api.types.is_numeric_dtype(df[c2]) else 0.0,
+                    "Gross_Margin_Pct": round(float(df[c2].sum() / df[c1].sum() * 100), 2) if c1 in df.columns and c2 in df.columns and float(df[c1].sum()) != 0 else 0.0
+                }
+            elif isinstance(data_or_df, dict):
+                data = data_or_df
+                kpis = {
+                    "Gross_Margin_Pct": data.get("gross_margin", 0.0),
+                    "EBITDA_Margin_Pct": data.get("ebitda_margin", 0.0),
+                    "ROE": data.get("roe", 0.0),
+                    "ROA": data.get("roa", 0.0),
+                    "Debt_to_Equity": data.get("debt_to_equity", 0.0),
+                    "Cash_Flow": data.get("cash_flow", 0.0),
+                }
+            else:
+                kpis = {"Gross_Margin_Pct": 0.0, "EBITDA_Margin_Pct": 0.0}
+
             chart_code = '''
 import matplotlib.pyplot as plt
 def plot_finance_kpis(kpis):
     fig, ax = plt.subplots()
-    metrics = ['Gross Margin %', 'EBITDA Margin %', 'ROE', 'ROA']
-    values = [kpis.get('Gross_Margin_Pct', 0), kpis.get('EBITDA_Margin_Pct', 0), kpis.get('ROE', 0), kpis.get('ROA', 0)]
+    metrics = list(kpis.keys())
+    values = list(kpis.values())
     ax.bar(metrics, values, color='green')
     plt.title('Financial Metrics')
     return fig
@@ -136,27 +143,32 @@ def plot_finance_kpis(kpis):
             logger.error(f"Error calculating Finance KPIs: {e}")
             raise
 
-    def calculate_operations_pack(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def calculate_operations_pack(self, data_or_df: Any = None, *args, **kwargs) -> Dict[str, Any]:
         """
         Calculate Operations KPIs and generate visualization code.
-        
-        Metrics: OEE %, Machine Downtime, Reject Rate %, Lead Time, SLA Fill Rate %.
-        
-        Args:
-            data (Dict[str, Any]): Dictionary containing operations data.
-            
-        Returns:
-            Dict[str, Any]: Dictionary containing calculated KPIs and chart generation code.
+        Supports both Dict inputs and DataFrame positional calls.
         """
         logger.info("Calculating Operations Pack KPIs.")
         try:
-            kpis = {
-                "OEE_Pct": data.get("oee", 0.0),
-                "Machine_Downtime": data.get("downtime", 0.0),
-                "Reject_Rate_Pct": data.get("reject_rate", 0.0),
-                "Lead_Time": data.get("lead_time", 0.0),
-                "SLA_Fill_Rate_Pct": data.get("sla_fill_rate", 0.0),
-            }
+            if isinstance(data_or_df, pd.DataFrame):
+                df = data_or_df
+                c1 = args[0] if len(args) > 0 else (df.columns[0] if len(df.columns) > 0 else "Lead_Time")
+                c2 = args[1] if len(args) > 1 else (df.columns[1] if len(df.columns) > 1 else "SLA")
+                kpis = {
+                    "Avg_Lead_Time": float(df[c1].mean()) if c1 in df.columns and pd.api.types.is_numeric_dtype(df[c1]) else 0.0,
+                    "Avg_SLA_Score": float(df[c2].mean()) if c2 in df.columns and pd.api.types.is_numeric_dtype(df[c2]) else 0.0
+                }
+            elif isinstance(data_or_df, dict):
+                data = data_or_df
+                kpis = {
+                    "OEE_Pct": data.get("oee", 0.0),
+                    "Machine_Downtime": data.get("downtime", 0.0),
+                    "Reject_Rate_Pct": data.get("reject_rate", 0.0),
+                    "Lead_Time": data.get("lead_time", 0.0),
+                    "SLA_Fill_Rate_Pct": data.get("sla_fill_rate", 0.0),
+                }
+            else:
+                kpis = {"Avg_Lead_Time": 0.0, "Avg_SLA_Score": 0.0}
             chart_code = '''
 import matplotlib.pyplot as plt
 def plot_operations_kpis(kpis):

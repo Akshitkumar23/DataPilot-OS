@@ -1,0 +1,197 @@
+{
+  "schema_version": "datapilot-release-corpus-gate-v1",
+  "ready": false,
+  "record_count": 1400,
+  "label_counts": {
+    "contract-verified": 1400
+  },
+  "language_counts": {
+    "null": 1400
+  },
+  "human_authored_language_counts": {},
+  "multi_step_count": 0,
+  "live_executable_tools": [
+    "aggregate_data",
+    "audit_metric_distribution",
+    "autocorrelation",
+    "categorical_outcome_association",
+    "clean_data",
+    "cluster_data",
+    "conditional_rate",
+    "correlate_data",
+    "decompose_time_series",
+    "detect_anomalies",
+    "eda_data",
+    "event_window_analysis",
+    "explain_features",
+    "filter_data",
+    "forecast_data",
+    "group_data",
+    "pca_analysis",
+    "sort_data",
+    "statistical_test",
+    "train_model"
+  ],
+  "split_tool_coverage": {
+    "train": [
+      "aggregate_data",
+      "audit_metric_distribution",
+      "autocorrelation",
+      "categorical_outcome_association",
+      "clean_data",
+      "cluster_data",
+      "conditional_rate",
+      "correlate_data",
+      "decompose_time_series",
+      "detect_anomalies",
+      "eda_data",
+      "event_window_analysis",
+      "explain_features",
+      "filter_data",
+      "forecast_data",
+      "group_data",
+      "pca_analysis",
+      "sort_data",
+      "statistical_test",
+      "train_model"
+    ],
+    "validation": [
+      "aggregate_data",
+      "audit_metric_distribution",
+      "autocorrelation",
+      "categorical_outcome_association",
+      "clean_data",
+      "cluster_data",
+      "conditional_rate",
+      "correlate_data",
+      "decompose_time_series",
+      "detect_anomalies",
+      "eda_data",
+      "event_window_analysis",
+      "explain_features",
+      "filter_data",
+      "forecast_data",
+      "group_data",
+      "pca_analysis",
+      "sort_data",
+      "statistical_test",
+      "train_model"
+    ],
+    "test": [
+      "eda_data",
+      "filter_data",
+      "group_data",
+      "statistical_test"
+    ]
+  },
+  "quality": {
+    "splits": {
+      "train": {
+        "records": 1100,
+        "unique_dataset_plans": 365,
+        "tools": {
+          "filter_data": 50,
+          "sort_data": 50,
+          "conditional_rate": 50,
+          "group_data": 50,
+          "aggregate_data": 50,
+          "audit_metric_distribution": 50,
+          "correlate_data": 50,
+          "forecast_data": 50,
+          "clean_data": 50,
+          "detect_anomalies": 50,
+          "eda_data": 50,
+          "train_model": 50,
+          "cluster_data": 50,
+          "statistical_test": 50,
+          "categorical_outcome_association": 50,
+          "pca_analysis": 50,
+          "explain_features": 50,
+          "autocorrelation": 50,
+          "decompose_time_series": 50,
+          "event_window_analysis": 50,
+          "clarification": 100
+        },
+        "human_reviewed": 0
+      },
+      "validation": {
+        "records": 100,
+        "unique_dataset_plans": 40,
+        "tools": {
+          "filter_data": 5,
+          "sort_data": 5,
+          "conditional_rate": 5,
+          "group_data": 5,
+          "aggregate_data": 5,
+          "audit_metric_distribution": 5,
+          "correlate_data": 5,
+          "forecast_data": 5,
+          "clean_data": 5,
+          "detect_anomalies": 5,
+          "eda_data": 5,
+          "train_model": 5,
+          "cluster_data": 5,
+          "statistical_test": 5,
+          "categorical_outcome_association": 5,
+          "pca_analysis": 5,
+          "explain_features": 5,
+          "autocorrelation": 5,
+          "decompose_time_series": 5,
+          "event_window_analysis": 5
+        },
+        "human_reviewed": 0
+      },
+      "test": {
+        "records": 200,
+        "unique_dataset_plans": 4,
+        "tools": {
+          "group_data": 50,
+          "statistical_test": 50,
+          "eda_data": 50,
+          "filter_data": 50
+        },
+        "human_reviewed": 0
+      }
+    },
+    "train_validation_family_overlap": 40,
+    "development_test_family_overlap": 0,
+    "development_test_dataset_overlap": [],
+    "missing_test_families": [
+      "aggregate_data",
+      "audit_metric_distribution",
+      "autocorrelation",
+      "categorical_outcome_association",
+      "clarification",
+      "clean_data",
+      "cluster_data",
+      "conditional_rate",
+      "correlate_data",
+      "decompose_time_series",
+      "detect_anomalies",
+      "event_window_analysis",
+      "explain_features",
+      "forecast_data",
+      "pca_analysis",
+      "sort_data",
+      "train_model"
+    ],
+    "ready_for_new_training": false,
+    "blockers": [
+      "40 dataset-plan families shared by train and validation",
+      "Test coverage missing: aggregate_data, audit_metric_distribution, autocorrelation, categorical_outcome_association, clarification, clean_data, cluster_data, conditional_rate, correlate_data, decompose_time_series, detect_anomalies, event_window_analysis, explain_features, forecast_data, pca_analysis, sort_data, train_model",
+      "Test contains fewer than 20 independent dataset-plan families"
+    ],
+    "note": "Contract verification is not human review or result correctness."
+  },
+  "blockers": [
+    "40 dataset-plan families shared by train and validation",
+    "Test coverage missing: aggregate_data, audit_metric_distribution, autocorrelation, categorical_outcome_association, clarification, clean_data, cluster_data, conditional_rate, correlate_data, decompose_time_series, detect_anomalies, event_window_analysis, explain_features, forecast_data, pca_analysis, sort_data, train_model",
+    "Test contains fewer than 20 independent dataset-plan families",
+    "Every production record must be human-reviewed; 0/1400 qualify",
+    "multi-step examples 0 < required 100",
+    "human-authored Hindi examples 0 < required 100",
+    "human-authored Hinglish examples 0 < required 100",
+    "test missing live tools: aggregate_data, audit_metric_distribution, autocorrelation, categorical_outcome_association, clean_data, cluster_data, conditional_rate, correlate_data, decompose_time_series, detect_anomalies, event_window_analysis, explain_features, forecast_data, pca_analysis, sort_data, train_model",
+    "independent test families 4 < required 20"
+  ]
+}

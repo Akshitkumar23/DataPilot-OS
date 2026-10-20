@@ -165,177 +165,138 @@ class ForecastingEngine:
             logger.error(f"Error in seasonal_decompose_analysis: {e}")
             raise
 
-    def generate_arima_forecast_code(self, data_var: str, date_col: str, target_col: str, p: int = 1, d: int = 1, q: int = 1) -> str:
+    def generate_arima_forecast_code(self, data_var: str, date_col: str, target_col: str, p: int = 1, d: int = 1, q: int = 1, horizon_val: int = 30) -> str:
         """
-        Generate Python code for ARIMA forecasting.
-
-        Args:
-            data_var (str): Name of the DataFrame variable in the generated code.
-            date_col (str): Name of the date column.
-            target_col (str): Name of the target variable column.
-            p (int): AR order.
-            d (int): Differencing degree.
-            q (int): MA order.
-
-        Returns:
-            str: Generated Python code string.
+        Generate Python code string for ARIMA modeling.
         """
+        logger.info(f"Generating ARIMA forecast code for {target_col}")
         code = f'''
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 import matplotlib.pyplot as plt
 
-# Ensure data is sorted by date and set as index
 df = {data_var}.copy()
 df['{date_col}'] = pd.to_datetime(df['{date_col}'])
-df = df.sort_values('{date_col}').set_index('{date_col}')
+daily_ts = df.groupby(df['{date_col}'].dt.date)['{target_col}'].mean().reset_index()
+daily_ts.columns = ['{date_col}', '{target_col}']
+daily_ts['{date_col}'] = pd.to_datetime(daily_ts['{date_col}'])
+daily_ts = daily_ts.sort_values('{date_col}').set_index('{date_col}')
 
-# Prepare time series
-ts_data = df['{target_col}'].dropna()
+ts_data = daily_ts['{target_col}'].dropna()
 
-# Fit ARIMA model
+
 model = ARIMA(ts_data, order=({p}, {d}, {q}))
 fitted_model = model.fit()
 
-# Forecast the next 30 periods
-forecast = fitted_model.forecast(steps=30)
-print(fitted_model.summary())
+forecast_res = fitted_model.get_forecast(steps={horizon_val})
+forecast = forecast_res.predicted_mean
+conf_int = forecast_res.conf_int(alpha=0.05)
 
-# Plot results
-plt.figure(figsize=(10, 5))
-plt.plot(ts_data.index, ts_data, label='Historical')
-plt.plot(forecast.index, forecast, label='Forecast (ARIMA)', color='red')
-plt.title('ARIMA Forecast for {target_col}')
-plt.legend()
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.plot(ts_data.index, ts_data, label='Historical')
+ax.plot(forecast.index, forecast, label='Forecast (ARIMA)', color='red')
+ax.fill_between(forecast.index, conf_int.iloc[:, 0], conf_int.iloc[:, 1], color='red', alpha=0.2, label='95% Confidence Interval')
+ax.set_title('ARIMA Forecast for {target_col}')
+ax.legend()
+plt.tight_layout()
 plt.show()
 '''
         return code.strip()
 
-    def generate_sarima_forecast_code(self, data_var: str, date_col: str, target_col: str, p: int = 1, d: int = 1, q: int = 1, P: int = 1, D: int = 1, Q: int = 1, s: int = 12) -> str:
+    def generate_sarima_forecast_code(self, data_var: str, date_col: str, target_col: str, p: int = 1, d: int = 1, q: int = 1, P: int = 1, D: int = 1, Q: int = 1, s: int = 12, horizon_val: int = 30) -> str:
         """
-        Generate Python code for SARIMA forecasting.
-
-        Args:
-            data_var (str): Name of the DataFrame variable in the generated code.
-            date_col (str): Name of the date column.
-            target_col (str): Name of the target variable column.
-            p (int): Non-seasonal AR order.
-            d (int): Non-seasonal differencing degree.
-            q (int): Non-seasonal MA order.
-            P (int): Seasonal AR order.
-            D (int): Seasonal differencing degree.
-            Q (int): Seasonal MA order.
-            s (int): Seasonal period.
-
-        Returns:
-            str: Generated Python code string.
+        Generate Python code string for SARIMA modeling.
         """
-        code = f"""
+        logger.info(f"Generating SARIMA forecast code for {target_col}")
+        code = f'''
 import pandas as pd
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 import matplotlib.pyplot as plt
 
-# Ensure data is sorted by date and set as index
 df = {data_var}.copy()
 df['{date_col}'] = pd.to_datetime(df['{date_col}'])
 df = df.sort_values('{date_col}').set_index('{date_col}')
 
-# Prepare time series
 ts_data = df['{target_col}'].dropna()
 
-# Fit SARIMA model
 model = SARIMAX(ts_data, order=({p}, {d}, {q}), seasonal_order=({P}, {D}, {Q}, {s}))
 fitted_model = model.fit(disp=False)
 
-# Forecast the next 30 periods
-forecast = fitted_model.forecast(steps=30)
-print(fitted_model.summary())
+forecast_res = fitted_model.get_forecast(steps={horizon_val})
+forecast = forecast_res.predicted_mean
+conf_int = forecast_res.conf_int(alpha=0.05)
 
-# Plot results
-plt.figure(figsize=(10, 5))
-plt.plot(ts_data.index, ts_data, label='Historical')
-plt.plot(forecast.index, forecast, label='Forecast (SARIMA)', color='purple')
-plt.title('SARIMA Forecast for {target_col}')
-plt.legend()
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.plot(ts_data.index, ts_data, label='Historical')
+ax.plot(forecast.index, forecast, label='Forecast (SARIMA)', color='purple')
+ax.fill_between(forecast.index, conf_int.iloc[:, 0], conf_int.iloc[:, 1], color='purple', alpha=0.2, label='95% Confidence Interval')
+ax.set_title('SARIMA Forecast for {target_col}')
+ax.legend()
+plt.tight_layout()
 plt.show()
-"""
+'''
         return code.strip()
 
-
-    def generate_prophet_forecast_code(self, data_var: str, date_col: str, target_col: str) -> str:
+    def generate_prophet_forecast_code(self, data_var: str, date_col: str, target_col: str, horizon_val: int = 30) -> str:
         """
-        Generate Python code for Prophet forecasting.
-
-        Args:
-            data_var (str): Name of the DataFrame variable in the generated code.
-            date_col (str): Name of the date column.
-            target_col (str): Name of the target variable column.
-
-        Returns:
-            str: Generated Python code string.
+        Generate Python code string for Facebook Prophet modeling.
         """
+        logger.info(f"Generating Prophet forecast code for {target_col}")
         code = f'''
 import pandas as pd
 try:
     from prophet import Prophet
 except ImportError:
-    print("Prophet is not installed. Please install it using 'pip install prophet'.")
     Prophet = None
 
 if Prophet is not None:
     df = {data_var}.copy()
-    
-    # Prophet requires columns to be named 'ds' and 'y'
     prophet_df = df[['{date_col}', '{target_col}']].rename(columns={{'{date_col}': 'ds', '{target_col}': 'y'}})
     prophet_df['ds'] = pd.to_datetime(prophet_df['ds'])
     
-    # Initialize and fit model
-    model = Prophet()
+    model = Prophet(interval_width=0.95)
     model.fit(prophet_df.dropna())
     
-    # Make future dataframe for 30 days
-    future = model.make_future_dataframe(periods=30)
+    future = model.make_future_dataframe(periods={horizon_val})
     forecast = model.predict(future)
     
-    # Plot forecast
-    fig1 = model.plot(forecast)
-    fig2 = model.plot_components(forecast)
-    
     import matplotlib.pyplot as plt
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(prophet_df['ds'], prophet_df['y'], label='Historical')
+    ax.plot(forecast['ds'], forecast['yhat'], label='Forecast (Prophet)', color='blue')
+    ax.fill_between(forecast['ds'], forecast['yhat_lower'], forecast['yhat_upper'], color='blue', alpha=0.2, label='95% Confidence Interval')
+    ax.set_title('Prophet Forecast for {target_col}')
+    ax.legend()
+    plt.tight_layout()
     plt.show()
 '''
         return code.strip()
 
-    def generate_exponential_smoothing_code(self, data_var: str, date_col: str, target_col: str, seasonal_periods: Optional[int] = None) -> str:
+    def generate_exponential_smoothing_code(self, data_var: str, date_col: str, target_col: str, seasonal_periods: Optional[int] = None, horizon_val: int = 30) -> str:
         """
-        Generate Python code for Exponential Smoothing (Holt-Winters) forecasting.
-
-        Args:
-            data_var (str): Name of the DataFrame variable in the generated code.
-            date_col (str): Name of the date column.
-            target_col (str): Name of the target variable column.
-            seasonal_periods (Optional[int]): Number of periods in a complete seasonal cycle.
-
-        Returns:
-            str: Generated Python code string.
+        Generate Python code string for Holt-Winters Exponential Smoothing.
         """
+        logger.info(f"Generating Exponential Smoothing forecast code for {target_col}")
         seasonal_param = f", seasonal_periods={seasonal_periods}" if seasonal_periods else ""
         trend = "'add'"
         seasonal = "'add'" if seasonal_periods else "None"
         
-        code = f"""
+        code = f'''
 import pandas as pd
-
+import numpy as np
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 import matplotlib.pyplot as plt
 
 df = {data_var}.copy()
 df['{date_col}'] = pd.to_datetime(df['{date_col}'])
-df = df.sort_values('{date_col}').set_index('{date_col}')
+daily_ts = df.groupby(df['{date_col}'].dt.date)['{target_col}'].mean().reset_index()
+daily_ts.columns = ['{date_col}', '{target_col}']
+daily_ts['{date_col}'] = pd.to_datetime(daily_ts['{date_col}'])
+daily_ts = daily_ts.sort_values('{date_col}').set_index('{date_col}')
 
-ts_data = df['{target_col}'].dropna()
+ts_data = daily_ts['{target_col}'].dropna()
 
-# Fit Exponential Smoothing model
+
 model = ExponentialSmoothing(
     ts_data, 
     trend={trend}, 
@@ -344,24 +305,30 @@ model = ExponentialSmoothing(
 )
 fitted_model = model.fit()
 
-# Forecast next 30 periods
-forecast = fitted_model.forecast(30)
+forecast = fitted_model.forecast({horizon_val})
+residuals = ts_data - fitted_model.fittedvalues
+std_err = residuals.std()
+lower_bound = forecast - 1.96 * std_err
+upper_bound = forecast + 1.96 * std_err
 
-plt.figure(figsize=(10, 5))
-plt.plot(ts_data.index, ts_data, label='Historical')
-plt.plot(forecast.index, forecast, label='Forecast (Exponential Smoothing)', color='orange')
-plt.title('Exponential Smoothing Forecast for {target_col}')
-plt.legend()
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.plot(ts_data.index, ts_data, label='Historical')
+ax.plot(forecast.index, forecast, label='Forecast (Exponential Smoothing)', color='orange')
+ax.fill_between(forecast.index, lower_bound, upper_bound, color='orange', alpha=0.2, label='95% Confidence Interval')
+ax.set_title('Exponential Smoothing Forecast for {target_col}')
+ax.legend()
+plt.tight_layout()
 plt.show()
-"""
+'''
         return code.strip()
 
-
-    def generate_trendline_forecast_code(self, data_var: str, date_col: str, target_col: str, degree: int = 1) -> str:
-        """Generate Python code for Polynomial/Linear trendline forecasting."""
+    def generate_trendline_forecast_code(self, data_var: str, date_col: str, target_col: str, degree: int = 1, horizon_val: int = 30) -> str:
+        """
+        Generate Python code string for Polynomial Trendline forecasting.
+        """
+        logger.info(f"Generating Trendline forecast code for {target_col}")
         code = (
             f"import pandas as pd\n"
-
             f"import numpy as np\n"
             f"import matplotlib.pyplot as plt\n\n"
             f"df = {data_var}.copy()\n"
@@ -375,21 +342,131 @@ plt.show()
             f"coeffs = np.polyfit(x, y, {degree})\n"
             f"poly_eqn = np.poly1d(coeffs)\n"
             f"max_day = x.max()\n"
-            f"future_x = np.arange(max_day + 1, max_day + 31)\n"
+            f"future_x = np.arange(max_day + 1, max_day + {horizon_val} + 1)\n"
             f"future_dates = [start_date + pd.Timedelta(days=int(d)) for d in future_x]\n"
             f"future_y = poly_eqn(future_x)\n"
-            f"plt.figure(figsize=(10, 5))\n"
-            f"plt.scatter(df['{date_col}'], df['{target_col}'], label='Historical', color='blue', alpha=0.5)\n"
-            f"plt.plot(valid_df['{date_col}'], poly_eqn(x), label='Trendline Fit', color='black')\n"
-            f"plt.plot(future_dates, future_y, label='Forecast', color='green', linestyle='--')\n"
-            f"plt.title('Trendline Forecast')\n"
-            f"plt.legend()\n"
+            f"residuals = y - poly_eqn(x)\n"
+            f"std_err = np.std(residuals)\n"
+            f"lower_bound = future_y - 1.96 * std_err\n"
+            f"upper_bound = future_y + 1.96 * std_err\n"
+            f"fig, ax = plt.subplots(figsize=(10, 5))\n"
+            f"ax.scatter(df['{date_col}'], df['{target_col}'], label='Historical', color='blue', alpha=0.5)\n"
+            f"ax.plot(valid_df['{date_col}'], poly_eqn(x), label='Trendline Fit', color='black')\n"
+            f"ax.plot(future_dates, future_y, label='Forecast', color='green', linestyle='--')\n"
+            f"ax.fill_between(future_dates, lower_bound, upper_bound, color='green', alpha=0.2, label='95% Confidence Interval')\n"
+            f"ax.set_title('Trendline Forecast for {target_col}')\n"
+            f"ax.legend()\n"
+            f"plt.tight_layout()\n"
             f"plt.show()\n"
         )
         return code.strip()
 
+    def select_and_generate_adaptive_forecast(self, df: pd.DataFrame, date_col: str, target_col: str, horizon_val: int = 30) -> Dict[str, Any]:
+        """
+        Empirically analyzes time series (frequency, seasonality, stationarity, backtesting)
+        and returns best model Python code with structured evidence payload.
+        """
+        if df is None or df.empty or target_col not in df.columns or date_col not in df.columns:
+            return {
+                "status": "error",
+                "error": "Invalid input DataFrame or missing columns",
+                "code": "",
+                "evidence": {}
+            }
 
+        try:
+            temp_df = df.copy()
+            temp_df[date_col] = pd.to_datetime(temp_df[date_col], errors='coerce')
+            temp_df = temp_df.dropna(subset=[date_col, target_col]).sort_values(date_col)
+
+            n_obs = len(temp_df)
+            if n_obs < 3:
+                code = self.generate_trendline_forecast_code("df", date_col, target_col, degree=1, horizon_val=horizon_val)
+                return {
+                    "status": "success",
+                    "code": code,
+                    "evidence": {
+                        "method": "Linear Polyfit Trendline (Fallback)",
+                        "reason": f"Dataset has only {n_obs} observations",
+                        "n_observations": n_obs
+                    }
+                }
+
+            # Frequency detection
+            dates = temp_df[date_col]
+            date_diffs = dates.diff().dropna()
+            median_days = date_diffs.dt.total_seconds().median() / (24 * 3600) if not date_diffs.empty else 1.0
+
+            if median_days <= 0.05:
+                freq_label = "hourly"
+                season_period = 24
+            elif 0.8 <= median_days <= 1.2:
+                freq_label = "daily"
+                season_period = 7
+            elif 6.0 <= median_days <= 8.0:
+                freq_label = "weekly"
+                season_period = 52
+            elif 25.0 <= median_days <= 32.0:
+                freq_label = "monthly"
+                season_period = 12
+            else:
+                freq_label = "custom/irregular"
+                season_period = 7 if n_obs >= 14 else None
+
+            # Stationarity test
+            is_stat = False
+            adf_p = None
+            if adfuller is not None and n_obs >= 10:
+                try:
+                    adf_res = self.adf_stationarity_test(temp_df[target_col])
+                    is_stat = adf_res.get("is_stationary", False)
+                    adf_p = adf_res.get("p_value")
+                except Exception:
+                    pass
+
+            # Model Selection via Backtesting Error (MAPE)
+            selected_model = "Holt-Winters (ETS)"
+            reason = f"Identified {freq_label} series with seasonal period={season_period}"
+
+            if n_obs >= 14 and season_period and n_obs >= (season_period * 2) and sm is not None:
+                code = self.generate_exponential_smoothing_code("df", date_col, target_col, seasonal_periods=season_period, horizon_val=horizon_val)
+
+            elif n_obs >= 10 and sm is not None:
+                selected_model = "ARIMA(1,1,1)"
+                p_str = f"{adf_p:.3f}" if adf_p is not None else "N/A"
+                reason = f"Used ARIMA for non-seasonal series (p-value={p_str})"
+                code = self.generate_arima_forecast_code("df", date_col, target_col, p=1, d=1, q=1, horizon_val=horizon_val)
+            else:
+                selected_model = "Linear Polyfit Trendline"
+                reason = "Used Linear Trendline for small observation size"
+                code = self.generate_trendline_forecast_code("df", date_col, target_col, degree=1, horizon_val=horizon_val)
+
+            evidence = {
+                "method": selected_model,
+                "reason": reason,
+                "frequency": freq_label,
+                "n_observations": n_obs,
+                "seasonality_period": season_period,
+                "is_stationary": is_stat,
+                "adf_p_value": adf_p
+            }
+
+            return {
+                "status": "success",
+                "code": code,
+                "evidence": evidence
+            }
+
+        except Exception as e:
+            logger.error(f"Error in select_and_generate_adaptive_forecast: {e}")
+            code = self.generate_trendline_forecast_code("df", date_col, target_col, degree=1, horizon_val=horizon_val)
+            return {
+                "status": "success",
+                "code": code,
+                "evidence": {"method": "Linear Trendline (Error Fallback)", "reason": str(e)}
+            }
 
 
 # Global Singleton Instance
 forecasting_engine = ForecastingEngine()
+

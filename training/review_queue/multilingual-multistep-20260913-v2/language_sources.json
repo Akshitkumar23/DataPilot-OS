@@ -1,0 +1,20 @@
+{
+  "schema_version": "datapilot-language-source-manifest-v1",
+  "candidate_authorship": "AI-assisted; terminology-informed; not copied examples and not human-reviewed",
+  "sources": [
+    {
+      "id": "cstt_ai_ml_glossary",
+      "publisher": "Commission for Scientific and Technical Terminology, Ministry of Education, Government of India",
+      "title": "Artificial Intelligence-Machine Learning Glossary (English-Hindi)",
+      "url": "https://www.shabd.education.gov.in/lexicon.jsp?lexicon=cstt_fund_AIML_EngHin_glossary",
+      "use": "Hindi technical terminology reference only"
+    },
+    {
+      "id": "rajbhasha_technical_hindi_guidance",
+      "publisher": "Department of Official Language, Ministry of Home Affairs, Government of India",
+      "title": "Rajbhasha Bharati — technical Hindi standardisation discussion",
+      "url": "https://rajbhasha.gov.in/sites/default/files/Rajbhasha%20Bharti%20for%20Net%2026-6-25.pdf",
+      "use": "Evidence that technical Hindi usage is variable; motivates human naturalness review"
+    }
+  ]
+}

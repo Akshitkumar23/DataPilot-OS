@@ -1,8 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ZoomIn, ZoomOut, RotateCcw, Download, X, Maximize2, Move } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Download, X, Maximize2, Move, Copy, Check, Sun, Moon } from 'lucide-react';
+import { copyImageToClipboard } from '../utils/imageClipboard';
+
+const normalizeImageSrc = (src) => {
+  if (!src || typeof src !== 'string') return null;
+  if (src.startsWith('data:image') || src.startsWith('http://') || src.startsWith('https://') || src.startsWith('blob:')) {
+    return src;
+  }
+  return `data:image/png;base64,${src}`;
+};
 
 export default function PlotZoomModal({ imageSrc, onClose, title = "Data Plot Visualization" }) {
+  const normalizedSrc = normalizeImageSrc(imageSrc);
   const [zoom, setZoom] = useState(1);
+  const [copied, setCopied] = useState(false);
+  const [lightBg, setLightBg] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -13,7 +25,7 @@ export default function PlotZoomModal({ imageSrc, onClose, title = "Data Plot Vi
     setZoom(1);
     setRotation(0);
     setPan({ x: 0, y: 0 });
-  }, [imageSrc]);
+  }, [normalizedSrc]);
 
   // Close on Escape key press
   useEffect(() => {
@@ -26,7 +38,7 @@ export default function PlotZoomModal({ imageSrc, onClose, title = "Data Plot Vi
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  if (!imageSrc) return null;
+  if (!normalizedSrc) return null;
 
   const handleZoomIn = (e) => {
     if (e) e.stopPropagation();
@@ -79,10 +91,21 @@ export default function PlotZoomModal({ imageSrc, onClose, title = "Data Plot Vi
     setIsDragging(false);
   };
 
+  const handleCopy = async (e) => {
+    if (e) e.stopPropagation();
+    try {
+      await copyImageToClipboard(normalizedSrc);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy image', err);
+    }
+  };
+
   const handleDownload = (e) => {
     if (e) e.stopPropagation();
     const link = document.createElement('a');
-    link.href = imageSrc;
+    link.href = normalizedSrc;
     link.download = `datapilot_plot_${Date.now()}.png`;
     document.body.appendChild(link);
     link.click();
@@ -100,8 +123,8 @@ export default function PlotZoomModal({ imageSrc, onClose, title = "Data Plot Vi
         position: 'fixed',
         inset: 0,
         zIndex: 99999,
-        background: 'rgba(5, 8, 6, 0.94)',
-        backdropFilter: 'blur(16px)',
+        background: lightBg ? '#ffffff' : '#090d16',
+        backdropFilter: lightBg ? 'none' : 'blur(16px)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -174,6 +197,15 @@ export default function PlotZoomModal({ imageSrc, onClose, title = "Data Plot Vi
         </button>
 
         <button
+          onClick={(e) => { if (e) e.stopPropagation(); setLightBg(!lightBg); }}
+          onMouseDown={(e) => e.stopPropagation()}
+          title="Toggle Canvas Background"
+          style={btnStyle}
+        >
+          {lightBg ? <Moon size={14} /> : <Sun size={14} />}
+        </button>
+
+        <button
           onClick={handleReset}
           onMouseDown={(e) => e.stopPropagation()}
           title="Reset Zoom (100%)"
@@ -183,6 +215,15 @@ export default function PlotZoomModal({ imageSrc, onClose, title = "Data Plot Vi
         </button>
 
         <div style={{ width: 1, height: 16, background: '#1a2921' }} />
+
+        <button
+          onClick={handleCopy}
+          onMouseDown={(e) => e.stopPropagation()}
+          title="Copy Image to Clipboard"
+          style={btnStyle}
+        >
+          {copied ? <Check size={14} color="#4ade80" /> : <Copy size={14} />}
+        </button>
 
         <button
           onClick={handleDownload}
@@ -234,7 +275,7 @@ export default function PlotZoomModal({ imageSrc, onClose, title = "Data Plot Vi
         }}
       >
         <img
-          src={imageSrc}
+          src={normalizedSrc}
           alt="Zoomed Plot Visualization"
           style={{
             maxWidth: '85vw',
